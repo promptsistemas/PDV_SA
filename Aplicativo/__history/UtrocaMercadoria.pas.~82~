@@ -1,0 +1,1140 @@
+unit UtrocaMercadoria;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ImgList,
+  Vcl.ExtCtrls, Data.FMTBcd, Data.DB, Datasnap.DBClient, Datasnap.Provider,
+  Data.SqlExpr, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids,
+  Vcl.Buttons, Vcl.Imaging.jpeg, Printers;
+
+type
+  TfrmTrocaMercadoria = class(TForm)
+    ImageList1: TImageList;
+    ToolBar1: TToolBar;
+    TB_NOVO: TToolButton;
+    TB_ALTERAR: TToolButton;
+    TB_EXCLUIR: TToolButton;
+    TB_CANCELAR: TToolButton;
+    TB_SALVAR: TToolButton;
+    TB_PESQUISAR: TToolButton;
+    TB_SAIR: TToolButton;
+    qTroca: TSQLQuery;
+    dspTroca: TDataSetProvider;
+    cdsTroca: TClientDataSet;
+    dsTroca: TDataSource;
+    qItemTroca: TSQLQuery;
+    dspItemTroca: TDataSetProvider;
+    cdsItemTroca: TClientDataSet;
+    dsItemTroca: TDataSource;
+    qItemTrocaID_ITEM_PDV: TIntegerField;
+    qItemTrocaNR_ORCAMENTO: TIntegerField;
+    qItemTrocaID_PRODUTO: TIntegerField;
+    qItemTrocaQUANT: TIntegerField;
+    qItemTrocaVL_UNIT: TFMTBCDField;
+    qItemTrocaVL_TOTAL: TFMTBCDField;
+    qItemTrocaDESC_ITEM: TFMTBCDField;
+    qItemTrocaPERC_DES: TFMTBCDField;
+    qItemTrocaTRANSF: TStringField;
+    qItemTrocaID_LOJA: TIntegerField;
+    qItemTrocaSTATUS: TStringField;
+    qItemTrocaCOD_BARRA: TStringField;
+    qItemTrocaDESCRICAO: TStringField;
+    qItemTrocaUNIDADE: TStringField;
+    cdsItemTrocaID_ITEM_PDV: TIntegerField;
+    cdsItemTrocaNR_ORCAMENTO: TIntegerField;
+    cdsItemTrocaID_PRODUTO: TIntegerField;
+    cdsItemTrocaQUANT: TIntegerField;
+    cdsItemTrocaVL_UNIT: TFMTBCDField;
+    cdsItemTrocaVL_TOTAL: TFMTBCDField;
+    cdsItemTrocaDESC_ITEM: TFMTBCDField;
+    cdsItemTrocaPERC_DES: TFMTBCDField;
+    cdsItemTrocaTRANSF: TStringField;
+    cdsItemTrocaID_LOJA: TIntegerField;
+    cdsItemTrocaSTATUS: TStringField;
+    cdsItemTrocaCOD_BARRA: TStringField;
+    cdsItemTrocaDESCRICAO: TStringField;
+    cdsItemTrocaUNIDADE: TStringField;
+    qTrocaID_PDV: TIntegerField;
+    qTrocaNR_ORCAMENTO: TIntegerField;
+    qTrocaID_LOJA: TIntegerField;
+    qTrocaID_GRUPO: TIntegerField;
+    qTrocaDT_ORCAMENTO: TDateField;
+    qTrocaVL_ORCAMENTO: TFMTBCDField;
+    qTrocaVL_DESCONTO: TFMTBCDField;
+    qTrocaVL_LIQUIDO: TFMTBCDField;
+    qTrocaSTATUS: TStringField;
+    qTrocaTRANSF: TStringField;
+    qTrocaNOME_CLIENTE: TStringField;
+    qTrocaCPF_CLIENTE: TStringField;
+    qTrocaID_VENDEDOR: TIntegerField;
+    qTrocaCAIXA: TIntegerField;
+    qTrocaNOME: TStringField;
+    cdsTrocaID_PDV: TIntegerField;
+    cdsTrocaNR_ORCAMENTO: TIntegerField;
+    cdsTrocaID_LOJA: TIntegerField;
+    cdsTrocaID_GRUPO: TIntegerField;
+    cdsTrocaDT_ORCAMENTO: TDateField;
+    cdsTrocaVL_ORCAMENTO: TFMTBCDField;
+    cdsTrocaVL_DESCONTO: TFMTBCDField;
+    cdsTrocaVL_LIQUIDO: TFMTBCDField;
+    cdsTrocaSTATUS: TStringField;
+    cdsTrocaTRANSF: TStringField;
+    cdsTrocaNOME_CLIENTE: TStringField;
+    cdsTrocaCPF_CLIENTE: TStringField;
+    cdsTrocaID_VENDEDOR: TIntegerField;
+    cdsTrocaCAIXA: TIntegerField;
+    cdsTrocaNOME: TStringField;
+    P_TROCA: TPanel;
+    Label1: TLabel;
+    DBEdit1: TDBEdit;
+    Label2: TLabel;
+    DBEdit2: TDBEdit;
+    Label6: TLabel;
+    DBEdit6: TDBEdit;
+    Label3: TLabel;
+    DBEdit3: TDBEdit;
+    Label4: TLabel;
+    DBEdit4: TDBEdit;
+    Label5: TLabel;
+    DBEdit5: TDBEdit;
+    Label7: TLabel;
+    EdtUsuario: TEdit;
+    GroupBox1: TGroupBox;
+    L_LOJA: TLabel;
+    L_NOME_LOJA: TLabel;
+    L_ID_GRUPO: TLabel;
+    P_BOTOES1: TPanel;
+    DBGrid1: TDBGrid;
+    Label8: TLabel;
+    BB_INCLUIR: TBitBtn;
+    BB_ALTERAR: TBitBtn;
+    BB_CANCELAR: TBitBtn;
+    BB_SALVAR: TBitBtn;
+    BB_EXCLUIR: TBitBtn;
+    BB_FINALIZAR: TBitBtn;
+    P_PRODUTO: TPanel;
+    DBEdit7: TDBEdit;
+    DBText1: TDBText;
+    DBEdit8: TDBEdit;
+    DBEdit9: TDBEdit;
+    DBEdit10: TDBEdit;
+    Label9: TLabel;
+    Descrição: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    SpeedButton1: TSpeedButton;
+    GroupBox2: TGroupBox;
+    DBText2: TDBText;
+    DBText3: TDBText;
+    DBText4: TDBText;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    L_MSG: TLabel;
+    Label17: TLabel;
+    qTrocaID_USUARIO: TIntegerField;
+    cdsTrocaID_USUARIO: TIntegerField;
+    P_VLVENDA1: TPanel;
+    Label18: TLabel;
+    RadioGroup1: TRadioGroup;
+    BitBtn2: TBitBtn;
+    BitBtn1: TBitBtn;
+    P_DESCONTO: TPanel;
+    Panel5: TPanel;
+    DBEdit12: TDBEdit;
+    BB_CONFIRMAR: TBitBtn;
+    BitBtn3: TBitBtn;
+    Label19: TLabel;
+    qTrocaHR_ORCAMENTO: TTimeField;
+    cdsTrocaHR_ORCAMENTO: TTimeField;
+    Panel6: TPanel;
+    SpeedButton3: TSpeedButton;
+    Memo1: TMemo;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure TB_SAIRClick(Sender: TObject);
+    procedure TB_NOVOClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure TB_SALVARClick(Sender: TObject);
+    procedure dspTrocaGetTableName(Sender: TObject; DataSet: TDataSet;
+      var TableName: string);
+    procedure dspItemTrocaGetTableName(Sender: TObject; DataSet: TDataSet;
+      var TableName: string);
+    procedure TB_PESQUISARClick(Sender: TObject);
+    procedure TB_CANCELARClick(Sender: TObject);
+    procedure TB_ALTERARClick(Sender: TObject);
+    procedure TB_EXCLUIRClick(Sender: TObject);
+    procedure DBEdit7Exit(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure DBEdit7KeyPress(Sender: TObject; var Key: Char);
+    procedure BB_SALVARClick(Sender: TObject);
+    procedure BB_INCLUIRClick(Sender: TObject);
+    procedure DBEdit10Exit(Sender: TObject);
+    procedure BB_CANCELARClick(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure DBEdit8Exit(Sender: TObject);
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure BB_EXCLUIRClick(Sender: TObject);
+    procedure BB_FINALIZARClick(Sender: TObject);
+    procedure BB_ALTERARClick(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure DBEdit7KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure BB_CONFIRMARClick(Sender: TObject);
+    procedure BitBtn3Click(Sender: TObject);
+    procedure SpeedButton3Click(Sender: TObject);
+    procedure DBEdit12Exit(Sender: TObject);
+  private
+    { Private declarations }
+    Procedure GerenciaBotoes;
+    Procedure GerenciaBotoes2;
+    Procedure SomaTotais;
+    Procedure chamadesconto;
+    Procedure ImprimirMemo(Memo: TMemo);
+    Procedure ImprimirTermica;
+  public
+    { Public declarations }
+  Procedure AddDisplay(Texto : String = ''; Style : TFontStyles = []; Size : Integer = 10);
+  end;
+
+var
+  frmTrocaMercadoria: TfrmTrocaMercadoria;
+  tpRegistro : string;
+  CaminhoImpressora: string;
+
+implementation
+
+{$R *.dfm}
+
+uses U_LIB, UD_PESQUISA, uDm, uPdv, uRetaguarda, uDesconto, uPagamentoPdv;
+
+procedure TfrmTrocaMercadoria.AddDisplay(Texto: String; Style: TFontStyles;
+  Size: Integer);
+begin
+{  RichEdit1.SelAttributes.Style:=Style;
+  RichEdit1.SelAttributes.Size:=Size;
+  RichEdit1.Lines.Add(Texto);}
+end;
+
+procedure TfrmTrocaMercadoria.BB_ALTERARClick(Sender: TObject);
+begin
+  cdsItemTroca.Edit;
+  GerenciaBotoes2;
+  DBEdit7.SetFocus;
+end;
+
+procedure TfrmTrocaMercadoria.BB_CANCELARClick(Sender: TObject);
+begin
+  cdsItemTroca.Cancel;
+  GerenciaBotoes2;
+  DBGrid1.SetFocus;
+end;
+
+procedure TfrmTrocaMercadoria.BB_CONFIRMARClick(Sender: TObject);
+begin
+  if cdsTrocaVL_LIQUIDO.AsFloat > 0 then
+  begin
+    ShowMessage('Desconto Não Permitido!');
+    DBEdit12.SetFocus;
+    Exit;
+  end
+  else
+  begin
+    cdsTroca.ApplyUpdates(0);
+    P_DESCONTO.Visible := False;
+  end;
+end;
+
+procedure TfrmTrocaMercadoria.BB_EXCLUIRClick(Sender: TObject);
+begin
+  if Application.MessageBox('Deseja Excluir Este Item?','Confirmação',MB_YESNO+MB_ICONQUESTION) = idyes then
+  begin
+    cdsItemTroca.Delete;
+    cdsItemTroca.ApplyUpdates(0);
+    cdsItemTroca.Refresh;
+  end
+  else
+  begin
+    ShowMessage('Exclusão Cancelada!!!');
+  end;
+  SomaTotais;
+end;
+
+procedure TfrmTrocaMercadoria.BB_FINALIZARClick(Sender: TObject);
+var
+ valor : string;
+begin
+  valor := FormatFloat('###,###0.00',cdsTrocaVL_LIQUIDO.AsFloat);
+  if cdsTrocaVL_LIQUIDO.AsFloat < -0.10 then
+  begin
+   ShowMessage(' ATENÇÃO... VALOR DA TROCA NÃO PODE SER MENOR QUE O VALOR DEVOLVIDO!!! ');
+   Exit;
+   GerenciaBotoes2;
+  end;
+  if cdsTrocaVL_ORCAMENTO.AsFloat = cdsTrocaVL_DESCONTO.AsFloat then
+  begin
+   //SAIDA ESTOQUE
+   DM.cdsMovEstoque.Close;
+   DM.cdsMovEstoque.Open;
+   DM.cdsInsertSaidaTroca.Params[0].AsInteger := cdsTrocaID_LOJA.AsInteger;
+   DM.cdsInsertSaidaTroca.Params[1].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+   DM.cdsInsertSaidaTroca.Params[2].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+   DM.cdsInsertSaidaTroca.Params[3].AsString  :='S_Troca_L_'+cdsTrocaID_LOJA.AsString;
+   DM.cdsInsertSaidaTroca.Execute;
+   DM.cdsMovEstoque.ApplyUpdates(0);
+   DM.cdsMovEstoque.Refresh;
+   //ENTRADA ESTOQUE
+   DM.cdsMovEstoque.Close;
+   DM.cdsMovEstoque.Open;
+   DM.cdsInsertEntradaTroca.Params[0].AsInteger := cdsTrocaID_LOJA.AsInteger;
+   DM.cdsInsertEntradaTroca.Params[1].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+   DM.cdsInsertEntradaTroca.Params[2].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+   DM.cdsInsertEntradaTroca.Params[3].AsString  :='E_Troca_L_'+cdsTrocaID_LOJA.AsString;
+   DM.cdsInsertEntradaTroca.Execute;
+   DM.cdsMovEstoque.ApplyUpdates(0);
+   DM.cdsMovEstoque.Refresh;
+
+    //TROCA
+     DM.cdsMovEstoque.Close;
+     DM.cdsMovEstoque.Open;
+     DM.cdsGravaEstoqueProdutoTroca.Params[0].AsInteger :=  cdsTrocaID_LOJA.AsInteger;
+     DM.cdsGravaEstoqueProdutoTroca.Params[1].AsDate    :=  StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+     DM.cdsGravaEstoqueProdutoTroca.Params[2].AsString  :=  'D';
+     DM.cdsGravaEstoqueProdutoTroca.Execute;
+     DM.cdsMovEstoque.ApplyUpdates(0);
+     DM.cdsMovEstoque.Refresh;
+
+     if Application.MessageBox('Deseja Imprimir Troca?','Confirmação',MB_YESNO+MB_ICONQUESTION) = idyes then
+     begin
+       ImprimirTermica;
+     end;
+      //
+
+   cdsTroca.Edit;
+   cdsTrocaSTATUS.Value:='D';
+   cdsTroca.ApplyUpdates(0);
+   cdsTroca.Refresh;
+   ShowMessage(' TROCA REALIZADA COM SUCESSO !!!! ');
+   GerenciaBotoes2;
+  end;
+
+  if cdsTrocaVL_ORCAMENTO.AsFloat < cdsTrocaVL_DESCONTO.AsFloat then
+  begin
+     ShowMessage(' ATENÇÃO... VALOR DIFERENÇA NEGATIVO.  '+'R$ '+valor);
+     DM.cdsMovEstoque.Close;
+     DM.cdsMovEstoque.Open;
+     DM.cdsInsertSaidaTroca.Params[0].AsInteger := cdsTrocaID_LOJA.AsInteger;
+     DM.cdsInsertSaidaTroca.Params[1].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+     DM.cdsInsertSaidaTroca.Params[2].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+     DM.cdsInsertSaidaTroca.Params[3].AsString  :='S_Troca_L_'+cdsTrocaID_LOJA.AsString;
+     DM.cdsInsertSaidaTroca.Execute;
+     DM.cdsMovEstoque.ApplyUpdates(0);
+     DM.cdsMovEstoque.Refresh;
+     //ENTRADA ESTOQUE
+     DM.cdsMovEstoque.Close;
+     DM.cdsMovEstoque.Open;
+     DM.cdsInsertEntradaTroca.Params[0].AsInteger := cdsTrocaID_LOJA.AsInteger;
+     DM.cdsInsertEntradaTroca.Params[1].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+     DM.cdsInsertEntradaTroca.Params[2].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+     DM.cdsInsertEntradaTroca.Params[3].AsString  :='E_Troca_L_'+cdsTrocaID_LOJA.AsString;
+     DM.cdsInsertEntradaTroca.Execute;
+     DM.cdsMovEstoque.ApplyUpdates(0);
+     DM.cdsMovEstoque.Refresh;
+
+    //TROCA
+     DM.cdsMovEstoque.Close;
+     DM.cdsMovEstoque.Open;
+     DM.cdsGravaEstoqueProdutoTroca.Params[0].AsInteger :=  cdsTrocaID_LOJA.AsInteger;
+     DM.cdsGravaEstoqueProdutoTroca.Params[1].AsDate    :=  StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+     DM.cdsGravaEstoqueProdutoTroca.Params[2].AsString  :=  'D';
+     DM.cdsGravaEstoqueProdutoTroca.Execute;
+     DM.cdsMovEstoque.ApplyUpdates(0);
+     DM.cdsMovEstoque.Refresh;
+
+      //
+       if Application.MessageBox('Deseja Imprimir Troca?','Confirmação',MB_YESNO+MB_ICONQUESTION) = idyes then
+       begin
+         ImprimirTermica;
+       end;
+      //
+     cdsTroca.Edit;
+     cdsTrocaSTATUS.Value:='D';
+     cdsTroca.ApplyUpdates(0);
+     cdsTroca.Refresh;
+     ShowMessage(' TROCA REALIZADA COM SUCESSO !!!! ');
+     GerenciaBotoes;
+     GerenciaBotoes2;
+
+  end;
+
+  if cdsTrocaVL_ORCAMENTO.AsFloat > cdsTrocaVL_DESCONTO.AsFloat then
+  begin
+   ShowMessage(' ATENÇÃO... VALOR A SER RECEBIDO.  '+'R$ '+valor);
+   //SAIDA ESTOQUE
+   DM.cdsMovEstoque.Close;
+   DM.cdsMovEstoque.Open;
+   DM.cdsInsertSaidaTroca.Params[0].AsInteger := cdsTrocaID_LOJA.AsInteger;
+   DM.cdsInsertSaidaTroca.Params[1].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+   DM.cdsInsertSaidaTroca.Params[2].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+   DM.cdsInsertSaidaTroca.Params[3].AsString  :='S_Troca_L_'+cdsTrocaID_LOJA.AsString;
+   DM.cdsInsertSaidaTroca.Execute;
+   DM.cdsMovEstoque.ApplyUpdates(0);
+   DM.cdsMovEstoque.Refresh;
+   //ENTRADA ESTOQUE
+   DM.cdsMovEstoque.Close;
+   DM.cdsMovEstoque.Open;
+   DM.cdsInsertEntradaTroca.Params[0].AsInteger := cdsTrocaID_LOJA.AsInteger;
+   DM.cdsInsertEntradaTroca.Params[1].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+   DM.cdsInsertEntradaTroca.Params[2].AsDate    :=StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+   DM.cdsInsertEntradaTroca.Params[3].AsString  :='E_Troca_L_'+cdsTrocaID_LOJA.AsString;
+   DM.cdsInsertEntradaTroca.Execute;
+   DM.cdsMovEstoque.ApplyUpdates(0);
+   DM.cdsMovEstoque.Refresh;
+
+
+   //TROCA
+   DM.cdsMovEstoque.Close;
+   DM.cdsMovEstoque.Open;
+   DM.cdsGravaEstoqueProdutoTroca.Params[0].AsInteger :=  cdsTrocaID_LOJA.AsInteger;
+   DM.cdsGravaEstoqueProdutoTroca.Params[1].AsDate    :=  StrToDate(cdsTrocaDT_ORCAMENTO.AsString);
+   DM.cdsGravaEstoqueProdutoTroca.Params[2].AsString  :=  'D';
+   DM.cdsGravaEstoqueProdutoTroca.Execute;
+   DM.cdsMovEstoque.ApplyUpdates(0);
+   DM.cdsMovEstoque.Refresh;
+
+   if Application.MessageBox('Deseja Imprimir Troca?','Confirmação',MB_YESNO+MB_ICONQUESTION) = idyes then
+   begin
+     ImprimirTermica;
+   end;
+   //
+
+   cdsTroca.Edit;
+   cdsTrocaSTATUS.Value:='D';
+   cdsTroca.ApplyUpdates(0);
+   cdsTroca.Refresh;
+   ShowMessage(' TROCA REALIZADA COM SUCESSO !!!! ');
+   GerenciaBotoes2;
+  end;
+   //OBSERVAR DAQUI PARA BAIXO NOVAMENTE
+
+{   cdsTroca.Edit;
+   cdsTrocaSTATUS.Value:='D';
+   cdsTroca.ApplyUpdates(0);
+   cdsTroca.Refresh;
+   ShowMessage(' TROCA REALIZADA COM SUCESSO !!!! ');
+   GerenciaBotoes2;}
+end;
+
+procedure TfrmTrocaMercadoria.BB_INCLUIRClick(Sender: TObject);
+begin
+  TpRegistro := 'Insert';
+  cdsItemTroca.Open;
+  cdsItemTroca.Append;
+  cdsItemTrocaNR_ORCAMENTO.AsInteger := cdsTrocaNR_ORCAMENTO.AsInteger;
+  cdsItemTrocaDESC_ITEM.AsFloat :=0;
+  cdsItemTrocaPERC_DES.AsFloat :=0;
+  cdsItemTrocaTRANSF.AsString :='N';
+  cdsItemTrocaID_LOJA.AsInteger := cdsTrocaID_LOJA.AsInteger;
+  GerenciaBotoes2;
+  DBEdit7.SetFocus;
+
+//  AddDisplay('ITEM, CÓDIGO, DESCRIÇÃO, QTD, Valor',[fsBold],10);
+
+end;
+
+procedure TfrmTrocaMercadoria.BB_SALVARClick(Sender: TObject);
+begin
+  if TpRegistro = 'Insert' Then
+  begin
+    if DBEdit8.Text = '' then
+    begin
+      ShowMessage('Campo "Quant." não pode ser Vazio ');
+      DBEdit8.SetFocus;
+      Exit;
+    end;
+
+   { DM.cdsDinamica.Close;
+    DM.cdsDinamica.IndexFieldNames :='';
+    DM.cdsDinamica.CommandText := 'SELECT MAX(ID_ITEM_PDV) FROM TB_ITEM_PDV ';
+    DM.cdsDinamica.Open;
+
+    cdsItemTrocaID_ITEM_PDV.AsInteger  := DM.cdsDinamica.Fields[0].AsInteger +1;}
+
+    if cdsItemTroca.ApplyUpdates(0) <> 0 then
+    begin
+      ShowMessage('O Sistema não conseguiu gravar este Registro. Tente novamente ou contate o Suporte.');
+    end
+    else
+    begin
+      cdsItemTroca.ApplyUpdates(0);
+      SomaTotais;
+      GerenciaBotoes2;
+      BB_INCLUIRClick(Self);
+    end;
+  end;
+  if TpRegistro = 'Edit' Then
+  begin
+    if cdsItemTroca.ApplyUpdates(0) <> 0 then
+    begin
+      ShowMessage('O Sistema não conseguiu gravar este Registro. Tente novamente ou contate o Suporte.');
+    end
+    else
+    begin
+      cdsItemTroca.ApplyUpdates(0);
+      SomaTotais;
+      GerenciaBotoes2;
+      BB_INCLUIRClick(Self);
+    end;
+  end;
+  GerenciaBotoes2;
+end;
+
+procedure TfrmTrocaMercadoria.BitBtn1Click(Sender: TObject);
+begin
+  P_VLVENDA1.Visible := False;
+  TB_CANCELARClick(Self);
+
+end;
+
+procedure TfrmTrocaMercadoria.BitBtn2Click(Sender: TObject);
+begin
+  P_VLVENDA1.Visible := False;
+  TB_SALVARClick(Self);
+end;
+
+procedure TfrmTrocaMercadoria.BitBtn3Click(Sender: TObject);
+begin
+  cdsTroca.Cancel;
+  P_DESCONTO.Visible := False;
+  BB_CANCELARClick(BB_CANCELAR);
+end;
+
+procedure TfrmTrocaMercadoria.chamadesconto;
+begin
+  BB_CANCELARClick(BB_CANCELAR);
+  P_DESCONTO.Visible := True;
+
+    cdsTroca.Close;
+    cdsTroca.Params[0].AsInteger := StrToInt(DM.CAIXA_LOJA);
+    cdsTroca.Open;
+    cdsTroca.Edit;
+
+    if cdsTroca.IsEmpty then
+    begin
+
+    end
+    else
+    begin
+      cdsItemTroca.Close;
+      cdsItemTroca.Params[0].AsInteger := cdsTrocaNR_ORCAMENTO.AsInteger;
+      cdsItemTroca.Params[1].AsInteger := cdsTrocaID_LOJA.AsInteger;
+      cdsItemTroca.Open;
+    end;
+
+
+  DBEdit12.SetFocus;
+end;
+
+procedure TfrmTrocaMercadoria.DBEdit10Exit(Sender: TObject);
+begin
+  if Application.MessageBox('Confirma Registro?','Confirmação',MB_YESNO+MB_ICONQUESTION) =IDYES then
+  begin
+    BB_SALVARClick(Self);
+  end
+  else
+  begin
+    BB_CANCELARClick(Self);
+  end;
+
+end;
+
+procedure TfrmTrocaMercadoria.DBEdit12Exit(Sender: TObject);
+begin
+  if cdsTrocaVL_LIQUIDO.AsFloat > 0 then
+  begin
+    ShowMessage('Desconto Não Permitido');
+    DBEdit12.SetFocus;
+    Exit;
+  end;
+end;
+
+ocedure TfrmTrocaMercadoria.DBEdit7Exit(Sender: TObject);
+begin
+  DM.cdsProduto.Open;
+  if DBEdit7.Text = '' Then
+  begin
+    BB_CANCELAR.SetFocus;
+    exit;
+  end;
+  if DM.cdsProduto.Locate('COD_BARRA',cdsItemTrocaCOD_BARRA.AsString,[]) then
+  begin
+    cdsItemTrocaCOD_BARRA.AsString          := DM.cdsProdutoCOD_BARRA.AsString;
+    cdsItemTrocaID_PRODUTO.AsInteger        := DM.cdsProdutoID_PRODUTO.AsInteger;
+    cdsItemTrocaDESCRICAO.AsString          := DM.cdsProdutoDESCRICAO.AsString;
+    cdsItemTrocaUNIDADE.AsString            := DM.cdsProdutoUNIDADE.AsString;
+//    cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_UNIT.AsFloat;
+      if RadioGroup1.ItemIndex = 0  then
+      begin
+        cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_VENDA.AsFloat;
+      end;
+      if RadioGroup1.ItemIndex = 1  then
+      begin
+        cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_VENDA_ATAC.AsFloat;
+      end;
+      if RadioGroup1.ItemIndex = 2  then
+      begin
+        cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_VENDA_PRAZO1.AsFloat;
+      end;
+      if RadioGroup1.ItemIndex = 3  then
+      begin
+        cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_VENDA_PRAZO2.AsFloat;
+      end;
+      if RadioGroup1.ItemIndex = 4  then
+      begin
+        cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_VENDA_PRAZO3.AsFloat;
+      end;
+
+
+    if Application.MessageBox('Produto Devolvido?','Confirmação',MB_YESNO+MB_ICONHAND)= idyes then
+    begin
+      cdsItemTrocaSTATUS.Value:='D';
+      DBEdit8.SetFocus;
+    end
+    else
+    begin
+      cdsItemTrocaSTATUS.Value:='L';
+      DBEdit8.SetFocus;
+    end;
+
+  end
+  else
+  begin
+    ShowMessage('          A T E N Ç Ã O  !!!!!!!!!   '+#13+
+                '                                     '+#13+
+                '   Código Não Encontrado             '+#13+
+                '                                     ');
+    SpeedButton1Click(Self);
+  end;
+
+end;
+
+procedure TfrmTrocaMercadoria.DBEdit7KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+ if (Shift = [ssCtrl]) and (Key = 68) then
+  begin
+    ChamaDesconto;
+  end;
+end;
+
+procedure TfrmTrocaMercadoria.DBEdit7KeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end
+  else if Key = #32 then
+  begin
+    Key := #0;
+    SpeedButton1Click(self);
+  end;
+end;
+
+procedure TfrmTrocaMercadoria.DBEdit8Exit(Sender: TObject);
+begin
+  cdsItemTrocaVL_TOTAL.AsFloat :=
+   (cdsItemTrocaVL_UNIT.AsFloat * cdsItemTrocaQUANT.AsFloat);
+end;
+
+procedure TfrmTrocaMercadoria.DBGrid1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If cdsItemTrocaSTATUS.Value = 'L'  then // condição
+   DBGrid1.Canvas.Font.Color:= clRed // coloque aqui a cor desejada
+  ELSE
+   DBGrid1.Canvas.Font.Color:= clBlue; // coloque aqui a cor desejada
+   DBGrid1.DefaultDrawDataCell(Rect, DBGrid1.columns[datacol].field, State);
+   DBGrid1.Canvas.Font.Style :=(Sender as TDBGrid).Canvas.Font.Style + [FSBOLD]; //Deixa em negrito
+end;
+
+procedure TfrmTrocaMercadoria.dspItemTrocaGetTableName(Sender: TObject;
+  DataSet: TDataSet; var TableName: string);
+begin
+  TableName := 'TB_ITEM_PDV';
+end;
+
+procedure TfrmTrocaMercadoria.dspTrocaGetTableName(Sender: TObject;
+  DataSet: TDataSet; var TableName: string);
+begin
+  TableName:='TB_PDV';
+end;
+
+procedure TfrmTrocaMercadoria.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := caFree;
+  frmTrocaMercadoria := nil;
+end;
+
+procedure TfrmTrocaMercadoria.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end;
+end;
+
+procedure TfrmTrocaMercadoria.FormShow(Sender: TObject);
+Var
+ IdLoja, nomeLoja,grupo  : string;
+begin
+  IdLoja := frmRetagurda.recInformacoes.lojaCredenciada;
+
+  if IdLoja <> '' then
+  begin
+    DM.cdsTabelaLoja.Close;
+    DM.cdsTabelaLoja.CommandText :='SELECT L.ID_LOJA,L.COD_MUNICIPIO,L.R_SOCIAL,L.FANTASIA,M.NOME_MUNICIPIO,L.ID_GRUPO_LOJA FROM TB_LOJAS L '+
+                             'LEFT OUTER JOIN TB_MUNICIPIOS M ON (M.COD_MUNICIPIO = L.COD_MUNICIPIO) '+
+                             'WHERE L.ID_LOJA = '+IdLoja;
+    DM.cdsTabelaLoja.Open;
+
+    nomeLoja := DM.cdsTabelaLoja.Fields[3].AsString;
+    grupo    := DM.cdsTabelaLoja.Fields[5].AsString;
+    L_LOJA.Caption := IdLoja;
+    L_NOME_LOJA.Caption:= nomeLoja;
+    L_ID_GRUPO.Caption := grupo;
+    DM.cdsDinamica.Close;
+    DM.cdsDinamica.IndexFieldNames :='';
+    DM.cdsDinamica.CommandText :=' SELECT L.ID_GRUPO_LOJA,GL.NOME_GRUPO,L.FANTASIA FROM TB_LOJAS L '+
+                                 ' LEFT OUTER JOIN TB_GRUPO_LOJA GL ON (GL.ID_GRUPO_LOJA = L.ID_GRUPO_LOJA) '+
+                                 ' WHERE L.ID_LOJA = '+IdLoja;
+    DM.cdsDinamica.Open;
+    frmRetagurda.recInformacoes.GrupoLoja := DM.cdsDinamica.Fields[0].AsInteger;
+    frmRetagurda.recInformacoes.NomeGrupo := DM.cdsDinamica.Fields[1].AsString;
+
+    cdsTroca.Close;
+    cdsTroca.Params[0].AsInteger := StrToInt(DM.CAIXA_LOJA);
+    cdsTroca.Open;
+
+
+    if cdsTroca.IsEmpty then
+    begin
+
+    end
+    else
+    begin
+      cdsItemTroca.Close;
+      cdsItemTroca.Params[0].AsInteger := cdsTrocaNR_ORCAMENTO.AsInteger;
+      cdsItemTroca.Params[1].AsInteger := cdsTrocaID_LOJA.AsInteger;
+      cdsItemTroca.Open;
+
+
+    if cdsTrocaVL_LIQUIDO.AsFloat < -0.10 then
+    begin
+      L_MSG.Caption := ' ATENÇÃO... VALOR DA TROCA NÃO PODE SER MENOR QUE O VALOR DEVOLVIDO!!! ';
+    end
+    else
+    begin
+      L_MSG.Caption := '.';
+    end;
+
+
+      EdtUsuario.Text := frmRetagurda.recInformacoes.login;
+    end;
+
+  end
+  else
+  begin
+    Application.MessageBox('Usuário sem Loja Definida. Favor Definir uma Loja','Atenção',MB_OK+MB_ICONWARNING);
+    Application.Terminate;
+  end;
+  DM.cdsTabelaLoja.Close;
+  DM.cdsTabelaLoja.IndexFieldNames:='';
+  GerenciaBotoes;
+  GerenciaBotoes2;
+  DBGrid1.SetFocus;
+
+end;
+
+procedure TfrmTrocaMercadoria.GerenciaBotoes;
+begin
+  TB_NOVO.Enabled     := not (cdsTroca.State in dsEditModes);
+  TB_SALVAR.Enabled   := NOT TB_NOVO.Enabled;
+  TB_EXCLUIR.Enabled  := TB_NOVO.Enabled and not (cdsTroca.IsEmpty);
+  TB_CANCELAR.Enabled := TB_SALVAR.Enabled;
+  TB_ALTERAR.Enabled  := TB_EXCLUIR.Enabled;
+  TB_SAIR.Enabled     := TB_NOVO.Enabled;
+  TB_PESQUISAR.Enabled:= TB_NOVO.Enabled;
+  P_TROCA.Enabled     := NOT TB_NOVO.Enabled;
+end;
+
+procedure TfrmTrocaMercadoria.GerenciaBotoes2;
+begin
+  if cdsTroca.RecordCount = 0 then
+  begin
+    BB_INCLUIR.Enabled    := False;
+    BB_ALTERAR.Enabled    := False;
+    BB_CANCELAR.Enabled   := False;
+    BB_SALVAR.Enabled     := False;
+    BB_EXCLUIR.Enabled    := False;
+    BB_FINALIZAR.Enabled  := False;
+  end
+  else
+  begin
+    BB_INCLUIR.Enabled       := not (cdsItemTroca.State in dsEditModes);
+    BB_SALVAR.Enabled        := NOT BB_INCLUIR.Enabled;
+    BB_EXCLUIR.Enabled       := BB_INCLUIR.Enabled and not (cdsItemTroca.IsEmpty);
+    BB_CANCELAR.Enabled      := BB_SALVAR.Enabled;
+    BB_ALTERAR.Enabled       := BB_EXCLUIR.Enabled;
+    //BB_FECHAR.Enabled        := BB_INCLUIR.Enabled;
+    BB_FINALIZAR.Enabled     := BB_EXCLUIR.Enabled; //and not (cdsItemTroca.IsEmpty);
+    P_PRODUTO.Enabled        := not BB_INCLUIR.Enabled;
+  end;
+end;
+
+
+procedure TfrmTrocaMercadoria.ImprimirMemo(Memo: TMemo);
+var
+  I: integer;
+  F: TextFile;
+begin
+  { Usa na impressora a mesma fonte do memo }
+  printer.Canvas.Font.Assign(Memo.Font);
+
+  AssignPrn(F);
+  Rewrite(F);
+  try
+    for I := 0 to Memo.Lines.Count - 1 do
+      WriteLn(F, Memo.Lines[I]);
+  finally
+    CloseFile(F);
+  end;
+end;
+
+procedure TfrmTrocaMercadoria.ImprimirTermica;
+var
+  Arquivo: TextFile;
+  iCount, iCount2, iProdutos, iQuantas, iVezes, iPag: integer;
+  dValor, dDesconto, dLiquido, TotalGeral, ValorPago, Troco: Double;
+  Status : string;
+begin
+  Memo1.Clear;
+  if printer.printers.count=0 then
+  showmessage('nao tem impressora instalada');
+
+  CaminhoImpressora := DM.IMPRESSORA;
+
+  with DM do
+  begin
+      dValor :=0;
+    iQuantas :=0;
+    dDesconto:=0;
+    dLiquido :=0;
+    //cdsItemTroca.IndexFieldNames :='ID_ITEM_PDV';
+    iProdutos := cdsItemTroca.RecordCount;
+    iVezes := Trunc(iProdutos/10000);
+    if Round(iProdutos) > 0 then
+      iVezes := iVezes +1;
+    cdsItemTroca.First;
+    for iCount := 1 to iVezes do
+    begin
+    //  Memo1.Lines := Screen.Fonts; //LISTA TODOS OS TIPOS DE FONTES
+    //  Memo1.Font.Name := 'ARIAL'; // ESCOLHE O TIPO DA FONTE
+    //  Memo1.Font.Handle := 20;   //TAMANHO DA FONTE
+
+      Memo1.Lines.Add(' ');
+      Memo1.Lines.Add('Orcamento N.'+DefineTamanhoString(cdsTrocaID_PDV.AsString,8,0)
+        +'  OPERADOR CAIXA:  '+frmRetagurda.recInformacoes.login);
+//        +'                     '+DefineTamanhoString(FormatDateTime('dd "de" mmmm "de" yyyy',Date),20,0)
+//        +' '+' Hora '+DefineTamanhoString(TimeToStr(Time),10,0));
+      Memo1.Lines.Add       ('----------------------------------------------------------------------------------');
+      Memo1.Lines.Add('DATA DA TROCA...: '+DefineTamanhoString(FormatDateTime('DD/MM/YYYY',cdsTrocaDT_ORCAMENTO.AsDateTime),10,0)+'   Hora Impressão..:'+TimeToStr(Time));
+
+                                       //Cabeçalho de Clientes
+      Memo1.Lines.Add       ('----------------------------------------------------------------------------------');
+      Memo1.Lines.Add('CLIENTE...: '+DefineTamanhoString(cdsTrocaNOME_CLIENTE.AsString,16,0));
+//      Memo1.Lines.Add(#27#15+'Vendedor(a)....: '+DefineTamanhoString(L_VENDEDOR.Caption,13,0));
+      Memo1.Lines.Add('                                                                                    ');
+      Memo1.Lines.Add('******  COMPROVANTE DE TROCA DE MERCADORIAS ******            ');
+      Memo1.Lines.Add('                                                                                    ');
+      Memo1.Lines.Add(' -----------------------------------------------------------------------------------');
+      Memo1.Lines.Add('                  *** S E M   V A L O R   F I S C A L ***                     ');
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+      Memo1.Lines.Add('ITEM CODIGO DESCRICAO QTD VL_UNIT(R$) TOTAL  (R$)     ');
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+
+      //INICIA OS PRODUTOS
+      FOR iCount2 := 1 to 10000 do
+      begin
+        inc(iQuantas);
+        if iQuantas <= iProdutos then
+        begin
+          if cdsItemTrocaSTATUS.Value = 'D' then
+            Status := 'Devolvido';
+          if cdsItemTrocaSTATUS.Value = 'L' then
+            Status := 'Trocado';
+
+          Memo1.Lines.Add(DefineTamanhoString(FormatFloat('###000',iQuantas),3,0)+ ' '+DefineTamanhoString(cdsItemTrocaCOD_BARRA.AsString,15,0)
+           +''+DefineTamanhoString(cdsItemTrocaDESCRICAO.AsString,30,0)+ ' '+STATUS);
+//            +' '+DefineTamanhoString(CDS_CUPON_PRODUTOcl_ds_unidade.AsString,4,0)
+           Memo1.Lines.Add('          '+DefineTamanhoString(FormatFloat('###,###,##0',cdsItemTrocaQUANT.AsFloat),4,1)
+            +' UNI X '+DefineTamanhoString(FormatFloat('###,###,##0.00',cdsItemTrocaVL_UNIT.AsFloat),6,1)
+            +'              '+DefineTamanhoString(FormatFloat('###,###,##0.00',cdsItemTrocaVL_TOTAL.AsFloat),8,1));
+
+          dValor := cdsTrocaVL_ORCAMENTO.AsFloat;  //dValor + cdsItemTrocaVL_TOTAL.AsFloat;
+          dDesconto := cdsTrocaVL_DESCONTO.AsFloat;
+          TotalGeral :=  cdsTrocaVL_LIQUIDO.AsFloat;
+//          ValorPago  :=  StrToFloat(StringReplace(frmPagamentoPdv.Edit6.Text,'.','',[rfReplaceAll]));
+//          Troco      :=  StrToFloat(StringReplace(frmPagamentoPdv.L_TROCO.Caption,'.','',[rfReplaceAll]));
+          cdsItemTroca.Next;
+        end
+        else
+        begin
+//          F_MENU_CLIENTE.Memo1.Lines.Add(#27#18+' ');
+        end;
+      end;
+        Memo1.Lines.Add('------------------------------------------------------------------------------------');
+        Memo1.Lines.Add('Valor Troca     R$...:'+DefineTamanhoString(FormatFloat('###,###,##0.00',dValor),10,1));
+        Memo1.Lines.Add('Valor Devolvido R$...:'+DefineTamanhoString(FormatFloat('###,###,##0.00',dDesconto),10,1));
+        Memo1.Lines.Add('Valor Diferenca R$...:'+DefineTamanhoString(FormatFloat('###,###,##0.00',TotalGeral),10,1));
+//        Memo1.Lines.Add('VALOR PAGO R$....:'+DefineTamanhoString(FormatFloat('###,###,##0.00',ValorPago),10,1));
+//        Memo1.Lines.Add('TROCO R$.........:'+DefineTamanhoString(FormatFloat('###,###,##0.00',Troco),10,1));
+        Memo1.Lines.Add('------------------------------------------------------------------------------------');
+        Memo1.Lines.Add('');
+        Memo1.Lines.Add('VENDEDOR(A)  '+DefineTamanhoString(cdsTrocaNOME.AsString,20,0));
+        Memo1.Lines.Add('');
+        Memo1.Lines.Add('');
+
+           //CONTA QUANT DE REGISTROS DA VENDA
+        DM.cdsDinamica.Close;
+        DM.cdsDinamica.IndexFieldNames :='';
+        DM.cdsDinamica.CommandText := ' SELECT SUM(IP.QUANT) FROM TB_ITEM_PDV IP WHERE IP.NR_ORCAMENTO = '+cdsTrocaNR_ORCAMENTO.AsString;
+        DM.cdsDinamica.Open;
+//        Memo1.Lines.Add('TOTAL DE PECAS        '+DefineTamanhoString(FormatFloat('###',DM.cdsDinamica.Fields[0].AsFloat),3,0));
+        Memo1.Lines.Add('');
+
+        //        Memo1.Lines.Strings[1] := Memo1.Lines.Strings[1] + 'TEXTO ADICIONAL';
+        Memo1.Lines.Add('                         OBRIGADO PELA PREFERÊNCIA     ');
+        Memo1.Lines.Add('                                      ');
+        Memo1.Lines.Add('                        **    V O L T E    S E M P R E  ** ');
+
+        dValor := 0;
+      end;
+  end;
+  AssignFile(Arquivo,CaminhoImpressora);
+  // AssignFile(Arquivo,'\\127.0.0.1\Doro');
+  //MP-2500T - PARA IMPRESSORA BEMATECH
+  Rewrite(Arquivo);
+  ImprimirMemo(Memo1);
+  CloseFile(Arquivo);
+
+end;
+
+procedure TfrmTrocaMercadoria.SomaTotais;
+var
+  Valor : string;
+begin
+  DM.cdsDinamica.Close;
+  DM.cdsDinamica.IndexFieldNames:='';
+  DM.cdsDinamica.CommandText:=' select sum(ip.vl_total) from tb_item_pdv ip'+
+                              ' where ip.nr_orcamento ='+cdsTrocaNR_ORCAMENTO.AsString+
+                              ' AND IP.status =''D''';
+  DM.cdsDinamica.Open;
+
+  cdsTroca.Edit;
+  cdsTrocaVL_DESCONTO.AsFloat := DM.cdsDinamica.Fields[0].AsFloat;
+  DM.cdsDinamica.Close;
+  DM.cdsDinamica.IndexFieldNames:='';
+  DM.cdsDinamica.CommandText:=' select sum(ip.vl_total) from tb_item_pdv ip'+
+                              ' where ip.nr_orcamento ='+cdsTrocaNR_ORCAMENTO.AsString+
+                              ' AND IP.status =''L''';
+  DM.cdsDinamica.Open;
+  cdsTrocaVL_ORCAMENTO.AsFloat := DM.cdsDinamica.Fields[0].AsFloat;
+
+  cdsTrocaVL_LIQUIDO.AsFloat :=  cdsTrocaVL_ORCAMENTO.AsFloat - cdsTrocaVL_DESCONTO.AsFloat ;
+  valor := FormatFloat('###,###0.00',cdsTrocaVL_LIQUIDO.AsFloat);
+  if cdsTrocaVL_LIQUIDO.AsFloat < 0 then
+  begin
+    L_MSG.Caption := ' ATENÇÃO... VALOR DA TROCA NÃO PODE SER MENOR QUE O VALOR DEVOLVIDO!!! ';
+  end;
+  if cdsTrocaVL_ORCAMENTO.AsFloat > cdsTrocaVL_DESCONTO.AsFloat then
+  begin
+   L_MSG.Caption :=' ATENÇÃO... VALOR A SER RECEBIDO.  '+'R$ '+valor;
+  end;
+
+  cdsTroca.ApplyUpdates(0);
+
+end;
+
+procedure TfrmTrocaMercadoria.SpeedButton1Click(Sender: TObject);
+begin
+  DM.cdsProduto.Close;
+  DM.cdsProduto.Open;
+  if Pesquisa(DM.cdsProduto,['DESCRICAO','COD_BARRA','VL_VENDA'],
+                              ['','',''],[35,13,10],'','0','','Produto','Produto','Produto') Then
+  Begin
+    cdsItemTrocaCOD_BARRA.AsString          := DM.cdsProdutoCOD_BARRA.AsString;
+    cdsItemTrocaID_PRODUTO.AsInteger        := DM.cdsProdutoID_PRODUTO.AsInteger;
+    cdsItemTrocaDESCRICAO.AsString          := DM.cdsProdutoDESCRICAO.AsString;
+    cdsItemTrocaUNIDADE.AsString            := DM.cdsProdutoUNIDADE.AsString;
+//    cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_UNIT.AsFloat;
+      if RadioGroup1.ItemIndex = 0  then
+      begin
+        cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_VENDA.AsFloat;
+      end;
+      if RadioGroup1.ItemIndex = 1  then
+      begin
+        cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_VENDA_ATAC.AsFloat;
+      end;
+      if RadioGroup1.ItemIndex = 2  then
+      begin
+        cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_VENDA_PRAZO1.AsFloat;
+      end;
+      if RadioGroup1.ItemIndex = 3  then
+      begin
+        cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_VENDA_PRAZO2.AsFloat;
+      end;
+      if RadioGroup1.ItemIndex = 4  then
+      begin
+        cdsItemTrocaVL_UNIT.AsFloat             := DM.cdsProdutoVL_VENDA_PRAZO3.AsFloat;
+      end;
+
+    if Application.MessageBox('Produto Devolvido?','Confirmação',MB_YESNO+MB_ICONHAND)= idyes then
+    begin
+      cdsItemTrocaSTATUS.Value:='D';
+      DBEdit8.SetFocus;
+    end
+    else
+    begin
+      cdsItemTrocaSTATUS.Value:='L';
+      DBEdit8.SetFocus;
+    end;
+
+    DBEdit8.SetFocus;
+  end;
+end;
+
+procedure TfrmTrocaMercadoria.SpeedButton3Click(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmTrocaMercadoria.TB_ALTERARClick(Sender: TObject);
+begin
+  cdsTroca.Edit;
+  GerenciaBotoes;
+  GerenciaBotoes2;
+end;
+
+procedure TfrmTrocaMercadoria.TB_CANCELARClick(Sender: TObject);
+begin
+  cdsTroca.Cancel;
+  GerenciaBotoes;
+  GerenciaBotoes2;
+end;
+
+procedure TfrmTrocaMercadoria.TB_EXCLUIRClick(Sender: TObject);
+begin
+  if Application.MessageBox('Deseja Excluir Esta Troca ?','Confirmação',MB_ICONQUESTION+MB_YESNO ) = idyes then
+  begin
+    cdsTroca.Edit;
+    cdsTrocaSTATUS.Value :='E';
+    cdsTroca.ApplyUpdates(0);
+    cdsTroca.Refresh;
+    GerenciaBotoes;
+  end
+  else
+  begin
+    ShowMessage('Troca Não Excluída');
+  end;
+    GerenciaBotoes;
+    GerenciaBotoes2;
+end;
+
+procedure TfrmTrocaMercadoria.TB_NOVOClick(Sender: TObject);
+var
+ sQlCaixa : string;
+begin
+  L_MSG.Caption :='.';
+  sQlCaixa := DM.CAIXA_LOJA;
+  EdtUsuario.Text := frmRetagurda.recInformacoes.login;
+
+  cdsTroca.Insert;
+  cdsTrocaID_LOJA.AsInteger := StrToInt(L_LOJA.Caption);
+  cdsTrocaID_GRUPO.AsInteger := StrToInt(L_ID_GRUPO.Caption);
+  cdsTrocaDT_ORCAMENTO.AsDateTime := Date;
+  cdsTrocaHR_ORCAMENTO.AsDateTime := Time;
+  cdsTrocaCAIXA.AsInteger := StrToInt(sQlCaixa);;
+  cdsTrocaID_USUARIO.AsInteger := frmRetagurda.recInformacoes.id_Usuario;
+  cdsTrocaNOME_CLIENTE.Value := 'CONSUMIDOR FINAL';
+  DM.cdsVendedor.Close;
+  DM.cdsVendedor.Params[0].AsInteger := StrToInt(L_LOJA.Caption);
+  DM.cdsVendedor.Open;
+
+  if Pesquisa(DM.cdsVendedor,['NOME','ID_VENDEDOR'],
+                                 ['',''],[30,2],'','0','','Vendedor','Vendedor','Vendedor') then
+  begin
+    cdsTrocaID_VENDEDOR.AsInteger  := DM.cdsVendedorID_VENDEDOR.AsInteger;
+    cdsTrocaNOME.Value             := DM.cdsVendedorNOME.Value;
+    P_VLVENDA1.Visible := True;
+  end;
+  GerenciaBotoes;
+  GerenciaBotoes2;
+end;
+
+procedure TfrmTrocaMercadoria.TB_PESQUISARClick(Sender: TObject);
+begin
+  Pesquisa(cdsTroca,['NR_ORCAMENTO','NOME_CLIENTE','DT_ORCAMENTO','VL_ORCAMENTO'],['Nº Orçamento','Cliente','Data Orçamento','Valor'],
+    [10,20,8,15],'','','','','Troca de Mercadoria','Troca de Mercadoria');
+  GerenciaBotoes;
+  GerenciaBotoes2;
+  SomaTotais;
+end;
+
+procedure TfrmTrocaMercadoria.TB_SAIRClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmTrocaMercadoria.TB_SALVARClick(Sender: TObject);
+begin
+    DM.cdsDinamica.Close;
+    DM.cdsDinamica.IndexFieldNames :='';
+    DM.cdsDinamica.CommandText := 'SELECT MAX(ID_PDV) FROM TB_PDV';
+    DM.cdsDinamica.Open;
+    cdsTrocaID_PDV.AsInteger := DM.cdsDinamica.Fields[0].AsInteger+1;
+    cdsTrocaSTATUS.Value := 'T';
+    cdsTrocaTRANSF.Value := 'N';
+    cdsTrocaVL_DESCONTO.AsFloat := 0;
+    cdsTrocaVL_ORCAMENTO.AsFloat:= 0;
+    cdsTrocaVL_LIQUIDO.AsFloat := 0;
+    cdsTrocaNOME_CLIENTE.Value := 'CONSUMIDOR FINAL';
+    cdsTrocaID_LOJA.AsInteger := StrToInt(L_LOJA.Caption);
+    cdsTrocaID_GRUPO.AsInteger := StrToInt(L_ID_GRUPO.Caption);
+    cdsTrocaDT_ORCAMENTO.AsDateTime := Date;
+    cdsTrocaID_VENDEDOR.AsInteger := DM.cdsVendedorID_VENDEDOR.AsInteger;
+    DM.cdsDinamica.Close;
+    DM.cdsDinamica.IndexFieldNames :='';
+    DM.cdsDinamica.CommandText := 'SELECT MAX(NR_ORCAMENTO) FROM TB_PDV';
+    DM.cdsDinamica.Open;
+    cdsTrocaNR_ORCAMENTO.AsInteger := DM.cdsDinamica.Fields[0].AsInteger+1;
+  if cdsTroca.ApplyUpdates(0) <> 0 then
+  begin
+    ShowMessage('O Sistema Não Conseguiu Salvar Esta Informação. Tente Novamente ou Contate o Suporte.');
+  end
+  else
+  begin
+    cdsTroca.ApplyUpdates(0);
+    BB_INCLUIRClick(Self);
+  end;
+  GerenciaBotoes;
+  GerenciaBotoes2;
+end;
+
+end.

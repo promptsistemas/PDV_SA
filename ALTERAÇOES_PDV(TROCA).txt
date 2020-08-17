@@ -1,0 +1,864 @@
+ALTERACOES S&A MODAS 2019
+
+
+CREATE TABLE TB_CONTAS_RECEBER (
+    ID_CONTAS_RECEBER   INTEGER NOT NULL,
+    ID_PDV              INTEGER,
+    ID_PLANO_PAGAMENTO  INTEGER,
+    ID_FORMA_PAGAMENTO  INTEGER,
+    ID_VENDEDOR         INTEGER,
+    ID_USUARIO          INTEGER,
+    ID_LOJA             INTEGER,
+    CAIXA               INTEGER,
+    DT_EMISSAO          DATE,
+    DT_VENCIMENTO       DATE,
+    DT_PAGAMENTO        DATE,
+    QT_DIAS             INTEGER,
+    QT_DIAS_ATRAZO      INTEGER,
+    QT_PARCELA          INTEGER,
+    NR_DOC              VARCHAR(15),
+    VL_COMPRA           NUMERIC(15,2),
+    VL_PARCELA          NUMERIC(15,2),
+    NR_PARCELA          VARCHAR(10),
+    STATUS              CHAR(1)
+);
+
+***************
+  ID_PDV
+  ID_PLANO_PAGAMENTO
+  ID_FORMA_PAGAMENTO
+
+***************
+
+CREATE SEQUENCE GEN_ID_CONTAS_RECEBER;
+ALTER SEQUENCE GEN_ID_CONTAS_RECEBER RESTART WITH 1;
+
+*********************************
+
+/* Trigger: TRI_GEN_ID_CONTAS_RECEBER */
+CREATE OR ALTER TRIGGER TRI_GEN_ID_CONTAS_RECEBER FOR TB_CONTAS_RECEBER
+ACTIVE BEFORE INSERT POSITION 0
+AS
+begin
+  IF (NEW.ID_CONTAS_RECEBER IS NULL) THEN
+  NEW.ID_CONTAS_RECEBER = NEXT VALUE FOR GEN_ID_CONTAS_RECEBER ;
+end
+^
+
+*********************
+
+ALTER TABLE TB_PDV
+ADD MODALIDADE INTEGER
+
+
+update TB_PDV p
+set p.MODALIDADE = 0
+
+********************
+
+ALTER TABLE TB_ITEM_PDV
+ADD VL_TOTAL_AV NUMERIC(15,2)
+
+
+ALTER TABLE TB_ITEM_PDV
+ADD VL_AVISTA NUMERIC(15,2)
+
+*********************
+ALTER TABLE TB_PDV
+ADD VL_TOTAL_AV NUMERIC(15,2)
+*********************
+
+ALTER TABLE TB_FORMA_PAGAMENTO
+ADD  ADMINISTRADORA            VARCHAR(30),
+ADD  TX_ADM                    NUMERIC(15,2) DEFAULT 0,
+ADD  ID_TIPO_PAGAMENTO        INTEGER
+
+
+ALTER TABLE TB_FORMA_PAGAMENTO ADD CONSTRAINT FK_TB_FORMA_PAGAMENTO_1 FOREIGN KEY (ID_TIPO_PAGAMENTO) REFERENCES TB_TIPO_PAGAMENTO (ID_TIPO_PAGAMENTO);
+**********************
+ALTER TABLE TB_MOV_ESTOQUE
+ADD ID_TIPO_PAGAMENTO INTEGER
+
+
+
+alter table TB_MOV_ESTOQUE add constraint FK_TB_MOV_ESTOQUE_2 foreign key (ID_TIPO_PAGAMENTO) references TB_PAGAMENTO_PDV(ID_PAGAMENTO_PDV)
+
+
+alter table TB_MOV_ESTOQUE add constraint FK_TB_MOV_ESTOQUE_2 foreign key (ID_TIPO_PAGAMENTO) references TB_TIPO_PAGAMENTO(ID_TIPO_PAGAMENTO)
+using index FK_TB_MOV_ESTOQUE_2
+
+**********************
+create procedure INSERT_SAIDA_ESTOQUE (
+    PE_ID_LOJA integer,
+    PE_DT_INI date,
+    PE_DT_FIN date,
+    PE_NR_DOC varchar(20)) 
+as
+declare variable V_DAY integer;
+declare variable V_DIA varchar(10);
+declare variable V_ID_MOV_ESTOQUE integer;
+declare variable V_DT_MOV date;
+declare variable V_ENTRADA numeric(15,2);
+declare variable V_SAIDA_DIV numeric(15,2);
+declare variable V_QT_VENDIDA numeric(15,2);
+declare variable V_ESTOQUE_DIARIO numeric(15,2);
+declare variable V_ESTOQUE_ANTERIOR numeric(15,2);
+declare variable V_ENTRADA_MERCADORIA numeric(15,2);
+declare variable V_NR_DOC varchar(20);
+declare variable V_TP_MOV varchar(7);
+declare variable V_NEW_SAIDA numeric(15,2);
+declare variable V_DT_EXISTE date;
+declare variable V_TOTAL numeric(15,2);
+declare variable V_VL_DESCONTO numeric(15,3);
+declare variable V_ID_TIPO_PAGAMENTO integer;
+declare variable V_ID_PDV integer;
+begin
+  FOR
+   SELECT
+     P.DT_ORCAMENTO,
+     PP.ID_TIPO_PAGAMENTO,
+   SUM(PP.VL_PAGAMENTO) AS TOTAL
+   FROM TB_PAGAMENTO_PDV PP
+   JOIN TB_PDV P ON (P.ID_PDV =PP.ID_PDV)
+   WHERE P.DT_ORCAMENTO BETWEEN :PE_DT_INI AND :PE_DT_FIN
+   AND P.ID_LOJA = :PE_ID_LOJA
+   AND P.STATUS ='F'
+   GROUP BY P.DT_ORCAMENTO,PP.ID_TIPO_PAGAMENTO
+   INTO
+    :V_DT_MOV,
+    :V_ID_TIPO_PAGAMENTO,
+    :V_TOTAL
+
+   /* SELECT
+      P.DT_ORCAMENTO,
+      P.ID_PDV,
+      SUM(IP.VL_TOTAL),
+      SUM(IP.QUANT)
+    FROM
+      TB_ITEM_PDV IP
+    JOIN TB_PDV P ON (P.NR_ORCAMENTO = IP.NR_ORCAMENTO)
+    WHERE
+      IP.ID_LOJA = :PE_ID_LOJA AND P.ID_LOJA = :PE_ID_LOJA
+    AND
+      P.STATUS = 'F' --VERICAR SE ESTA PARA O PDV OU PRO SFC
+    AND
+      IP.STATUS = 'V'
+    AND
+      P.DT_ORCAMENTO BETWEEN :PE_DT_INI AND :PE_DT_FIN
+    GROUP BY
+      P.DT_ORCAMENTO,P.ID_PDV
+    INTO
+      :V_DT_MOV,
+      :V_ID_PDV,
+      :V_TOTAL,
+      :V_NEW_SAIDA  */
+    DO
+    BEGIN
+
+    SELECT
+      P.DT_ORCAMENTO,
+      SUM(IP.QUANT)
+    FROM
+      TB_ITEM_PDV IP
+    JOIN TB_PDV P ON (P.NR_ORCAMENTO = IP.NR_ORCAMENTO)
+    WHERE
+      IP.ID_LOJA = :PE_ID_LOJA AND P.ID_LOJA = :PE_ID_LOJA
+    AND
+      P.STATUS = 'F' --VERICAR SE ESTA PARA O PDV OU PRO SFC
+    AND
+      IP.STATUS = 'V'
+    AND
+      P.DT_ORCAMENTO BETWEEN :PE_DT_INI AND :PE_DT_FIN
+     GROUP BY
+      P.DT_ORCAMENTO
+    INTO
+      :V_DT_MOV,
+      :V_NEW_SAIDA;
+
+      --pega o dia da semana
+      SELECT EXTRACT(WEEKDAY FROM :V_DT_MOV) FROM RDB$DATABASE INTO V_DAY;
+      IF (V_DAY=0) THEN
+          V_DIA = 'Domingo';
+      ELSE IF (V_DAY=1) THEN
+          V_DIA = 'Segunda';
+      ELSE IF (V_DAY=2) THEN
+          V_DIA = 'Terca';
+      ELSE IF (V_DAY=3) THEN
+          V_DIA = 'Quarta';
+      ELSE IF (V_DAY=4) THEN
+          V_DIA = 'Quinta';
+      ELSE IF (V_DAY=5) THEN
+          V_DIA = 'Sexta';
+      ELSE IF (V_DAY=6) THEN
+          V_DIA = 'Sabado';
+
+      --VERIFICA TIPO PAGAMENTO---
+
+        SELECT
+        PG.ID_TIPO_PAGAMENTO
+        FROM TB_PAGAMENTO_PDV PG
+        WHERE PG.ID_PDV = :V_ID_PDV
+        INTO
+         :V_ID_TIPO_PAGAMENTO;
+
+      --VERIFICAR DESCONTO --
+     /* SELECT
+      SUM(D.VL_DESCONTO)
+      FROM TB_PDV D
+      WHERE D.DT_ORCAMENTO = :V_DT_MOV
+      AND D.ID_LOJA = :PE_ID_LOJA
+      AND D.STATUS = 'F'
+      INTO
+       :V_VL_DESCONTO;
+
+       if (V_VL_DESCONTO IS NULL) then V_VL_DESCONTO = 0;
+
+       V_TOTAL = (:V_TOTAL-:V_VL_DESCONTO);-*/
+
+      --Verifica se ja existe Registro na Tabela com a Data Selecionada.
+      SELECT
+        ME.DT_MOV,
+        ME.id_mov_estoque
+      FROM
+        TB_MOV_ESTOQUE ME
+      WHERE
+        ME.DT_MOV = :V_DT_MOV
+      AND
+        ME.ENTRADA_MERCADORIA = 0
+      AND
+        ME.id_loja  = :pe_id_loja
+      AND
+        ME.nr_doc   = :pe_nr_doc
+      AND
+        ME.ID_TIPO_PAGAMENTO = :V_ID_TIPO_PAGAMENTO
+      AND
+        ME.tp_mov   = 'Saida'
+      GROUP BY
+        ME.DT_MOV,
+        ME.id_mov_estoque
+
+      INTO
+        :V_DT_EXISTE,
+        :v_id_mov_estoque;
+
+      if (V_DT_EXISTE IS NULL) then
+      BEGIN
+        SELECT
+          MAX(ME.ID_MOV_ESTOQUE)
+        FROM
+          TB_MOV_ESTOQUE ME
+        INTO
+         :V_ID_MOV_ESTOQUE;
+          if (V_ID_MOV_ESTOQUE IS NULL) then
+            V_ID_MOV_ESTOQUE = 0;
+
+          V_ID_MOV_ESTOQUE = :V_ID_MOV_ESTOQUE +1;
+
+          V_ENTRADA = 0;
+
+          V_ENTRADA = :V_TOTAL; /*:V_NEW_SAIDA *10;*/
+          if (V_ID_TIPO_PAGAMENTO = 1 ) then
+            V_QT_VENDIDA = :V_NEW_SAIDA;
+          else
+            V_QT_VENDIDA = 0;
+          V_ENTRADA_MERCADORIA = 0;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = :pe_nr_doc;--'Vendas_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = 'Saida';
+
+        --INSERI OS REGISTROS
+          INSERT INTO TB_MOV_ESTOQUE
+          ( ID_MOV_ESTOQUE,
+            ID_LOJA,
+            DT_MOV,
+            DIA,
+            ENTRADA,
+            SAIDA_DIV,
+            QT_VENDIDA,
+            ESTOQUE_DIARIO,
+            ESTOQUE_ANTERIOR,
+            ENTRADA_MERCADORIA,
+            NR_DOC,
+            TP_MOV,
+            ID_TIPO_PAGAMENTO
+          )
+          VALUES
+          (
+           :V_ID_MOV_ESTOQUE,
+           :PE_ID_LOJA,
+           :V_DT_MOV,
+           :V_DIA,
+           :V_ENTRADA,
+           :V_SAIDA_DIV,
+           :V_QT_VENDIDA,
+           :V_ESTOQUE_DIARIO,
+           :V_ESTOQUE_ANTERIOR,
+           :V_ENTRADA_MERCADORIA,
+           :V_NR_DOC,
+           :V_TP_MOV,
+           :V_ID_TIPO_PAGAMENTO
+          );
+        V_DT_EXISTE = NULL;
+      END
+      if (V_DT_EXISTE IS NOT NULL) then
+      BEGIN
+        --Atualize Registro Existente.
+          if (V_ID_TIPO_PAGAMENTO = 1 ) then
+            V_QT_VENDIDA = :V_NEW_SAIDA;
+          else
+            V_NEW_SAIDA = 0;
+
+          V_ENTRADA = :V_TOTAL;
+--          V_ENTRADA = :V_TOTAL;/*:V_NEW_SAIDA *10;*/
+          V_QT_VENDIDA = :V_NEW_SAIDA;
+          V_ENTRADA_MERCADORIA = 0;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = :pe_nr_doc;--'Vendas_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = 'Saida';
+        UPDATE TB_MOV_ESTOQUE
+        SET QT_VENDIDA = :V_NEW_SAIDA,
+               ENTRADA = :V_ENTRADA,/*:V_NEW_SAIDA *10,*/
+               NR_DOC  = :V_NR_DOC,
+               TP_MOV  = :V_TP_MOV,
+               ID_TIPO_PAGAMENTO = :V_ID_TIPO_PAGAMENTO
+        WHERE ID_LOJA  = :PE_ID_LOJA
+        AND   DT_MOV   = :V_DT_MOV
+        AND   ENTRADA_MERCADORIA = 0
+        AND   ID_MOV_ESTOQUE = :v_id_mov_estoque;
+
+      END
+      EXECUTE PROCEDURE ATU_MOV_ESTOQUE(:PE_ID_LOJA,:PE_DT_INI,:PE_DT_FIN);
+      V_DT_EXISTE = NULL;
+      V_ENTRADA = :V_ENTRADA;
+    END
+end
+**********************
+create procedure INSERT_SAIDA_TROCA (
+    PE_ID_LOJA integer,
+    PE_DT_INI date,
+    PE_DT_FIN date,
+    PE_NR_DOC varchar(20),
+    PE_ID_TIPO_PAGAMENTO integer) 
+as
+declare variable V_DAY integer;
+declare variable V_DIA varchar(10);
+declare variable V_ID_MOV_ESTOQUE integer;
+declare variable V_DT_MOV date;
+declare variable V_ENTRADA numeric(15,2);
+declare variable V_SAIDA_DIV numeric(15,2);
+declare variable V_QT_VENDIDA numeric(15,2);
+declare variable V_ESTOQUE_DIARIO numeric(15,2);
+declare variable V_ESTOQUE_ANTERIOR numeric(15,2);
+declare variable V_ENTRADA_MERCADORIA numeric(15,2);
+declare variable V_NR_DOC varchar(20);
+declare variable V_TP_MOV varchar(7);
+declare variable V_NEW_SAIDA numeric(15,2);
+declare variable V_DT_EXISTE date;
+declare variable V_TOTAL_MOV numeric(15,2);
+declare variable V_TOTAL numeric(15,2);
+declare variable V_ID_TIPO_PAGAMENTO integer;
+begin
+  FOR
+    SELECT
+     P.dt_orcamento,
+     SUM(IP.quant),
+     (
+       SELECT
+       SUM(PP.VL_PAGAMENTO)
+       FROM TB_PAGAMENTO_PDV PP
+       JOIN TB_PDV PD ON (PD.ID_PDV = PP.ID_PDV)
+       WHERE PD.DT_ORCAMENTO BETWEEN :PE_DT_INI AND :PE_DT_FIN
+       AND PP.ID_TIPO_PAGAMENTO = :PE_ID_TIPO_PAGAMENTO
+       AND PD.status ='D'
+       AND PD.id_loja = :pe_id_loja
+     )
+    FROM tb_item_pdv IP
+    JOIN tb_pdv P ON (P.nr_orcamento = IP.nr_orcamento)
+    JOIN TB_PAGAMENTO_PDV PV ON (PV.ID_PDV = P.ID_PDV)
+    WHERE
+      P.DT_ORCAMENTO BETWEEN :PE_DT_INI AND :PE_DT_FIN
+    AND
+      IP.status ='L'
+    AND
+      P.id_loja = :pe_id_loja
+    AND
+      PV.ID_TIPO_PAGAMENTO = :PE_ID_TIPO_PAGAMENTO
+
+    GROUP BY
+      P.DT_ORCAMENTO
+    INTO
+      :V_DT_MOV,
+      :V_NEW_SAIDA,
+      :V_TOTAL
+    DO
+    BEGIN
+      --pega o dia da semana
+      SELECT EXTRACT(WEEKDAY FROM :V_DT_MOV) FROM RDB$DATABASE INTO V_DAY;
+      IF (V_DAY=0) THEN
+          V_DIA = 'Domingo';
+      ELSE IF (V_DAY=1) THEN
+          V_DIA = 'Segunda';
+      ELSE IF (V_DAY=2) THEN
+          V_DIA = 'Terca';
+      ELSE IF (V_DAY=3) THEN
+          V_DIA = 'Quarta';
+      ELSE IF (V_DAY=4) THEN
+          V_DIA = 'Quinta';
+      ELSE IF (V_DAY=5) THEN
+          V_DIA = 'Sexta';
+      ELSE IF (V_DAY=6) THEN
+          V_DIA = 'Sabado';
+          V_ID_TIPO_PAGAMENTO = :PE_ID_TIPO_PAGAMENTO;
+      --Verifica se ja existe Registro na Tabela com a Data Selecionada.
+      SELECT
+        ME.DT_MOV,
+        ME.id_mov_estoque,
+        ME.QT_VENDIDA,
+        ME.ENTRADA
+      FROM
+        TB_MOV_ESTOQUE ME
+      WHERE
+        ME.DT_MOV = :V_DT_MOV
+      AND
+        ME.ENTRADA_MERCADORIA = 0
+      AND
+        ME.id_loja  = :pe_id_loja
+      AND
+        ME.nr_doc   = :pe_nr_doc
+      AND
+        ME.tp_mov   = 'Saida'
+      AND
+        ME.ID_TIPO_PAGAMENTO = :V_ID_TIPO_PAGAMENTO
+      GROUP BY
+        ME.DT_MOV,
+        ME.id_mov_estoque,
+        ME.QT_VENDIDA,
+        ME.ENTRADA
+      INTO
+        :V_DT_EXISTE,
+        :v_id_mov_estoque,
+        :V_QT_VENDIDA,
+        :V_TOTAL_MOV;
+
+      if (V_DT_EXISTE IS NULL) then
+      BEGIN
+        SELECT
+          MAX(ME.ID_MOV_ESTOQUE)
+        FROM
+          TB_MOV_ESTOQUE ME
+        INTO
+         :V_ID_MOV_ESTOQUE;
+          if (V_ID_MOV_ESTOQUE IS NULL) then
+            V_ID_MOV_ESTOQUE = 0;
+
+          V_ID_MOV_ESTOQUE = :V_ID_MOV_ESTOQUE +1;
+
+         if (:PE_ID_TIPO_PAGAMENTO = 0 ) then
+           V_ID_TIPO_PAGAMENTO = NULL;
+         else
+           V_ID_TIPO_PAGAMENTO = :PE_ID_TIPO_PAGAMENTO;
+
+
+          V_ENTRADA = :V_TOTAL; /*:V_NEW_SAIDA *10;*/
+          V_QT_VENDIDA = :V_NEW_SAIDA;
+          V_ENTRADA_MERCADORIA = 0;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = 'S_Troca_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = 'Saida';
+
+        --INSERI OS REGISTROS
+          INSERT INTO TB_MOV_ESTOQUE
+          ( ID_MOV_ESTOQUE,
+            ID_LOJA,
+            DT_MOV,
+            DIA,
+            ENTRADA,
+            SAIDA_DIV,
+            QT_VENDIDA,
+            ESTOQUE_DIARIO,
+            ESTOQUE_ANTERIOR,
+            ENTRADA_MERCADORIA,
+            NR_DOC,
+            TP_MOV,
+            ID_TIPO_PAGAMENTO
+          )
+          VALUES
+          (
+           :V_ID_MOV_ESTOQUE,
+           :PE_ID_LOJA,
+           :V_DT_MOV,
+           :V_DIA,
+           :V_TOTAL,
+           :V_SAIDA_DIV,
+           :V_QT_VENDIDA,
+           :V_ESTOQUE_DIARIO,
+           :V_ESTOQUE_ANTERIOR,
+           :V_ENTRADA_MERCADORIA,
+           :V_NR_DOC,
+           :V_TP_MOV,
+           :V_ID_TIPO_PAGAMENTO
+          );
+        V_DT_EXISTE = NULL;
+      END
+      if (V_DT_EXISTE IS NOT NULL) then
+      BEGIN
+             if (:PE_ID_TIPO_PAGAMENTO = 0 ) then
+               V_ID_TIPO_PAGAMENTO = NULL;
+             else
+               V_ID_TIPO_PAGAMENTO = :PE_ID_TIPO_PAGAMENTO;
+        --Atualize Registro Existente.
+          V_ENTRADA = :V_TOTAL;/*:V_NEW_SAIDA *10;*/
+          V_QT_VENDIDA = :V_NEW_SAIDA;
+          V_ENTRADA_MERCADORIA = 0;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = 'S_Troca_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = 'Saida';
+        UPDATE TB_MOV_ESTOQUE
+        SET QT_VENDIDA = :V_NEW_SAIDA,
+               ENTRADA = :V_TOTAL,/*:V_NEW_SAIDA *10,*/
+               NR_DOC  = :V_NR_DOC,
+               TP_MOV  = :V_TP_MOV,
+               ID_TIPO_PAGAMENTO = :V_ID_TIPO_PAGAMENTO
+        WHERE ID_LOJA  = :PE_ID_LOJA
+        AND   DT_MOV   = :V_DT_MOV
+        AND   ENTRADA_MERCADORIA = 0
+        AND    ID_MOV_ESTOQUE = :v_id_mov_estoque;
+
+      END
+      EXECUTE PROCEDURE ATU_MOV_ESTOQUE(:PE_ID_LOJA,:PE_DT_INI,:PE_DT_FIN);
+      V_DT_EXISTE = NULL;
+    END
+end
+
+**********************
+
+ALTERAR NO SERVIDOR
+
+
+ALTER TABLE TB_FORMA_PAGAMENTO
+ADD ADMINISTRADORA VARCHAR(30)
+
+
+ALTER TABLE TB_FORMA_PAGAMENTO
+ADD TX_ADM NUMERIC(15,2)
+
+
+ALTER TABLE TB_FORMA_PAGAMENTO
+ADD ID_TIPO_RECEBIMENTO INTEGER
+
+
+alter table TB_FORMA_PAGAMENTO
+add constraint FK_TB_FORMA_PAGAMENTO_1
+foreign key (ID_TIPO_RECEBIMENTO)
+references TB_TIPO_RECEBIMENTO(ID_TIPO_RECEBIMENTO)
+
+
+**********************
+create procedure RECEBE_FORMA_PAGAMENTO (
+    PE_ID_FORMA_PAGAMENTO integer,
+    PE_DESCRICAO_PAGAMENTO varchar(40),
+    PE_QT_PARCELAS integer,
+    PE_QT_DIAS_ENTRE_PARCELAS integer,
+    PE_QT_DIAS_PRIMEIRA_PARCELA integer,
+    PE_ADMINISTRADORA varchar(30),
+    PE_TX_ADM numeric(15,2),
+    PE_ID_TIPO_PAGAMENTO integer) 
+as
+declare variable V_ID_FORMA_PAGAMENTO integer;
+declare variable V_DESCRICAO_PAGAMENTO varchar(40);
+declare variable V_QT_PARCELAS integer;
+declare variable V_QT_DIAS_ENTRE_PARCELAS integer;
+declare variable V_QT_DIAS_PRIMEIRA_PARCELA integer;
+declare variable V_ADMINISTRADORA varchar(30);
+declare variable V_TX_ADM numeric(15,2);
+declare variable V_ID_TIPO_PAGAMENTO integer;
+begin
+    SELECT
+     FP.ID_FORMA_PAGAMENTO,
+     FP.DESCRICAO_PAGAMENTO,
+     FP.QT_PARCELAS,
+     FP.QT_DIAS_ENTRE_PARCELAS,
+     FP.QT_DIAS_PRIMEIRA_PARCELA,
+     FP.ADMINISTRADORA,
+     FP.TX_ADM,
+     FP.ID_TIPO_PAGAMENTO
+    FROM TB_FORMA_PAGAMENTO FP
+    WHERE FP.ID_FORMA_PAGAMENTO = :PE_ID_FORMA_PAGAMENTO
+    INTO
+     :V_ID_TIPO_PAGAMENTO,
+     :V_DESCRICAO_PAGAMENTO,
+     :V_QT_PARCELAS,
+     :V_QT_DIAS_ENTRE_PARCELAS,
+     :V_QT_DIAS_PRIMEIRA_PARCELA,
+     :V_ADMINISTRADORA,
+     :V_TX_ADM,
+     :V_ID_FORMA_PAGAMENTO;
+
+     if (V_ID_FORMA_PAGAMENTO IS NULL) then
+     BEGIN
+      INSERT INTO TB_FORMA_PAGAMENTO
+      (
+       ID_FORMA_PAGAMENTO,
+       DESCRICAO_PAGAMENTO,
+       QT_PARCELAS,
+       QT_DIAS_ENTRE_PARCELAS,
+       QT_DIAS_PRIMEIRA_PARCELA,
+       ADMINISTRADORA,
+       TX_ADM,
+       ID_TIPO_PAGAMENTO
+      )
+      VALUES
+      (
+       :PE_ID_FORMA_PAGAMENTO,
+       :PE_DESCRICAO_PAGAMENTO,
+       :PE_QT_PARCELAS,
+       :PE_QT_DIAS_ENTRE_PARCELAS,
+       :PE_QT_DIAS_PRIMEIRA_PARCELA,
+       :PE_ADMINISTRADORA,
+       :PE_TX_ADM,
+       :PE_ID_TIPO_PAGAMENTO
+       );
+    END
+     if (V_ID_FORMA_PAGAMENTO IS NOT NULL) then
+     BEGIN
+     UPDATE TB_FORMA_PAGAMENTO TTP
+     SET TTP.ID_FORMA_PAGAMENTO       = :PE_ID_FORMA_PAGAMENTO,
+         TTP.DESCRICAO_PAGAMENTO      = :PE_DESCRICAO_PAGAMENTO,
+         TTP.QT_PARCELAS              = :PE_QT_PARCELAS,
+         TTP.QT_DIAS_ENTRE_PARCELAS   = :PE_QT_DIAS_ENTRE_PARCELAS,
+         TTP.QT_DIAS_PRIMEIRA_PARCELA = :PE_QT_DIAS_PRIMEIRA_PARCELA,
+         TTP.ADMINISTRADORA           = :PE_ADMINISTRADORA,
+         TTP.TX_ADM                   = :PE_TX_ADM,
+         TTP.ID_TIPO_PAGAMENTO        = :PE_ID_TIPO_PAGAMENTO
+     WHERE
+        TTP.ID_FORMA_PAGAMENTO       = :PE_ID_FORMA_PAGAMENTO;
+    END
+end
+
+*********************
+
+create procedure RECEBE_TIPO_PAGAMENTO (
+    PE_ID_TIPO_PAGAMENTO integer,
+    PE_DESCRICAO_PAGAMENTO varchar(40)) 
+as
+declare variable V_ID_TIPO_PAGAMENTO integer;
+declare variable V_DESCRICAO_PAGAMENTO varchar(40);
+begin
+    SELECT
+     TP.ID_TIPO_PAGAMENTO,
+     TP.DESCRICAO_PAGAMENTO
+    FROM TB_TIPO_PAGAMENTO TP
+    WHERE
+     TP.ID_TIPO_PAGAMENTO = :PE_ID_TIPO_PAGAMENTO
+    INTO
+     :V_ID_TIPO_PAGAMENTO,
+     :V_DESCRICAO_PAGAMENTO;
+      if (V_ID_TIPO_PAGAMENTO IS NULL) then
+      BEGIN
+       INSERT INTO TB_TIPO_PAGAMENTO
+       (
+         ID_TIPO_PAGAMENTO,
+         DESCRICAO_PAGAMENTO
+       )
+       VALUES
+       (
+         :PE_ID_TIPO_PAGAMENTO,
+         :PE_DESCRICAO_PAGAMENTO
+       );
+      END
+      if (V_ID_TIPO_PAGAMENTO IS NOT NULL) then
+      BEGIN
+        UPDATE TB_TIPO_PAGAMENTO TTP
+          SET TTP.DESCRICAO_PAGAMENTO = :PE_DESCRICAO_PAGAMENTO
+        WHERE TTP.ID_TIPO_PAGAMENTO = :PE_ID_TIPO_PAGAMENTO;
+      END
+end
+
+****************
+
+alter table TB_PAGAMENTO_PDV add constraint FK_TB_PAGAMENTO_PDV_2 foreign key (ID_TIPO_PAGAMENTO) references TB_FORMA_PAGAMENTO(ID_FORMA_PAGAMENTO) using index FK_TB_PAGAMENTO_PDV_2
+alter table TB_MOV_ESTOQUE add constraint FK_TB_MOV_ESTOQUE_2 foreign key (ID_TIPO_PAGAMENTO) references TB_FORMA_PAGAMENTO(ID_FORMA_PAGAMENTO) using index FK_TB_MOV_ESTOQUE_2
+
+****************
+
+
+ATUALIZAR NO SERVIDOR
+
+
+
+create procedure RECEBE_ESTOQUE_PDV_TROCA (
+    PE_ID_LOJA integer,
+    PE_DT_MOV date,
+    PE_QUANT integer,
+    PE_TOTAL float,
+    PE_SAIDA integer,
+    PE_NR_DOC varchar(20),
+    PE_TP_MOV varchar(15),
+    PE_ID_TIPO_RECEBIMENTO integer) 
+as
+declare variable V_DAY integer;
+declare variable V_DIA varchar(10);
+declare variable V_ID_LOJA integer;
+declare variable V_ID_MOV_ESTOQUE integer;
+declare variable V_DT_MOV date;
+declare variable V_ENTRADA numeric(15,2);
+declare variable V_SAIDA_DIV numeric(15,2);
+declare variable V_QT_VENDIDA numeric(15,2);
+declare variable V_ESTOQUE_DIARIO numeric(15,2);
+declare variable V_ESTOQUE_ANTERIOR numeric(15,2);
+declare variable V_ENTRADA_MERCADORIA numeric(15,2);
+declare variable V_NR_DOC varchar(20);
+declare variable V_TP_MOV varchar(7);
+declare variable V_ID_TIPO_RECEBIMENTO integer;
+begin
+    SELECT
+      ME.ID_MOV_ESTOQUE,
+      ME.ID_LOJA,
+      ME.DT_MOV,
+      ME.DIA,
+      ME.ENTRADA,
+      ME.SAIDA_DIV,
+      ME.QT_VENDIDA,
+      ME.ESTOQUE_DIARIO,
+      ME.ESTOQUE_ANTERIOR,
+      ME.ENTRADA_MERCADORIA,
+      ME.NR_DOC,
+      ME.TP_MOV,
+      ME.ID_TIPO_RECEBIMENTO
+    FROM
+      TB_MOV_ESTOQUE ME
+    WHERE
+      ME.ID_LOJA = :PE_ID_LOJA
+    AND
+      ME.DT_MOV  = :PE_DT_MOV
+    AND
+      ME.nr_doc = :PE_NR_DOC --LIKE '%L%'
+    AND
+      ME.ID_TIPO_RECEBIMENTO = :PE_ID_TIPO_RECEBIMENTO
+    INTO
+      :V_ID_MOV_ESTOQUE,
+      :V_ID_LOJA,
+      :V_DT_MOV,
+      :V_DIA,
+      :V_ENTRADA,
+      :V_SAIDA_DIV,
+      :V_QT_VENDIDA,
+      :V_ESTOQUE_DIARIO,
+      :V_ESTOQUE_ANTERIOR,
+      :V_ENTRADA_MERCADORIA,
+      :V_NR_DOC,
+      :V_TP_MOV,
+      :V_ID_TIPO_RECEBIMENTO;
+       --Se Exitir Update(Atualiza Estoque).
+      if (V_DT_MOV IS NOT NULL) then
+      BEGIN
+        if (V_NR_DOC is null ) then  V_NR_DOC = :PE_NR_DOC; --V_NR_DOC = 'Vendas_'||'L_'||:PE_ID_LOJA;
+        if (V_TP_MOV is null ) then V_TP_MOV = :PE_TP_MOV; --'Saida';
+      --  if (V_ID_TIPO_RECEBIMENTO IS NULL) then V_ID_TIPO_RECEBIMENTO = 1;
+        UPDATE TB_MOV_ESTOQUE
+        SET QT_VENDIDA = :PE_QUANT,
+               ENTRADA = :PE_TOTAL,/*:PE_QUANT *10,*/
+               NR_DOC  = :V_NR_DOC,
+               TP_MOV  = :V_TP_MOV,
+               ENTRADA_MERCADORIA = :PE_SAIDA,
+               ID_TIPO_RECEBIMENTO = :PE_ID_TIPO_RECEBIMENTO
+        WHERE
+          ID_LOJA  = :PE_ID_LOJA
+        AND
+          DT_MOV   = :V_DT_MOV
+        AND
+          ID_MOV_ESTOQUE = :V_ID_MOV_ESTOQUE
+        AND
+          ID_TIPO_RECEBIMENTO = :PE_ID_TIPO_RECEBIMENTO;
+        END
+
+      --Se nao Exisitir Insert(Ineri Novo Registro)
+
+      if (V_DT_MOV IS NULL) then
+      BEGIN
+        --pega o dia da semana
+        SELECT EXTRACT(WEEKDAY FROM :PE_DT_MOV) FROM RDB$DATABASE INTO V_DAY;
+        IF (V_DAY=0) THEN
+            V_DIA = 'Domingo';
+        ELSE IF (V_DAY=1) THEN
+            V_DIA = 'Segunda';
+        ELSE IF (V_DAY=2) THEN
+            V_DIA = 'Terca';
+        ELSE IF (V_DAY=3) THEN
+            V_DIA = 'Quarta';
+        ELSE IF (V_DAY=4) THEN
+            V_DIA = 'Quinta';
+        ELSE IF (V_DAY=5) THEN
+            V_DIA = 'Sexta';
+        ELSE IF (V_DAY=6) THEN
+            V_DIA = 'Sabado';
+
+        SELECT
+          MAX(ME.ID_MOV_ESTOQUE)
+        FROM
+          TB_MOV_ESTOQUE ME
+        INTO
+         :V_ID_MOV_ESTOQUE;
+        if (V_ID_MOV_ESTOQUE IS NULL) then
+          V_ID_MOV_ESTOQUE = 0;
+
+          V_ID_MOV_ESTOQUE = :V_ID_MOV_ESTOQUE +1;
+
+          V_ENTRADA = :PE_TOTAL;/*:PE_QUANT *10;*/
+          V_QT_VENDIDA = :PE_QUANT;
+          V_ENTRADA_MERCADORIA = :PE_SAIDA;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = :PE_NR_DOC;--'Vendas_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = :PE_TP_MOV;--'Saida';
+          V_ID_TIPO_RECEBIMENTO = :PE_ID_TIPO_RECEBIMENTO;
+          if (v_id_tipo_recebimento is null) then
+           v_id_tipo_recebimento = 1;
+        --INSERI OS REGISTROS
+          INSERT INTO TB_MOV_ESTOQUE
+          ( ID_MOV_ESTOQUE,
+            ID_LOJA,
+            DT_MOV,
+            DIA,
+            ENTRADA,
+            SAIDA_DIV,
+            QT_VENDIDA,
+            ESTOQUE_DIARIO,
+            ESTOQUE_ANTERIOR,
+            ENTRADA_MERCADORIA,
+            NR_DOC,
+            TP_MOV,
+            ID_TIPO_RECEBIMENTO
+          )
+          VALUES
+          (
+           :V_ID_MOV_ESTOQUE,
+           :PE_ID_LOJA,
+           :PE_DT_MOV,
+           :V_DIA,
+           :V_ENTRADA,
+           :V_SAIDA_DIV,
+           :V_QT_VENDIDA,
+           :V_ESTOQUE_DIARIO,
+           :V_ESTOQUE_ANTERIOR,
+           :V_ENTRADA_MERCADORIA,
+           :V_NR_DOC,
+           :V_TP_MOV,
+           :PE_ID_TIPO_RECEBIMENTO
+          );
+      END
+end
+*********************
+
+alter table TB_MOV_ESTOQUE add constraint FK_TB_MOV_ESTOQUE_2 foreign key (ID_TIPO_RECEBIMENTO) references TB_FORMA_PAGAMENTO(ID_FORMA_PAGAMENTO) using index FK_TB_MOV_ESTOQUE_2
+
+*********************

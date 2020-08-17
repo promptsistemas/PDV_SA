@@ -1,0 +1,444 @@
+unit uRelvendasVendedor;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DBCtrls, StdCtrls, Buttons, Mask, FMTBcd, ExtCtrls, Grids,
+  DBGrids, DB, DBClient, Provider, SqlExpr, QuickRpt, QRCtrls, ComCtrls,
+  Vcl.Imaging.jpeg;
+
+type
+  TfrmRelvendasVendedor = class(TForm)
+    GroupBox1: TGroupBox;
+    Label1: TLabel;
+    DBLookupComboBox1: TDBLookupComboBox;
+    MaskEdit1: TMaskEdit;
+    Label5: TLabel;
+    MaskEdit2: TMaskEdit;
+    Label4: TLabel;
+    BB_PESQUISAR: TBitBtn;
+    BB_IMPRIMIR: TBitBtn;
+    BB_SAIR: TBitBtn;
+    qRelVendas: TSQLQuery;
+    dspRelVendas: TDataSetProvider;
+    cdsRelVendas: TClientDataSet;
+    dsRelVendas: TDataSource;
+    qRelVendasDT_ORCAMENTO: TDateField;
+    qRelVendasID_VENDEDOR: TIntegerField;
+    qRelVendasVENDEDOR: TStringField;
+    qRelVendasTOTAL: TFMTBCDField;
+    qRelVendasCOMISSAO: TFMTBCDField;
+    cdsRelVendasDT_ORCAMENTO: TDateField;
+    cdsRelVendasID_VENDEDOR: TIntegerField;
+    cdsRelVendasVENDEDOR: TStringField;
+    cdsRelVendasTOTAL: TFMTBCDField;
+    cdsRelVendasCOMISSAO: TFMTBCDField;
+    DBGrid1: TDBGrid;
+    DBNavigator1: TDBNavigator;
+    qRelVendasVL_COMISSAO: TFMTBCDField;
+    cdsRelVendasVL_COMISSAO: TFMTBCDField;
+    CheckBox1: TCheckBox;
+    GroupBox2: TGroupBox;
+    Label2: TLabel;
+    Label3: TLabel;
+    l_geral_vendas: TLabel;
+    l_geral_comissao: TLabel;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    QR_GERAL: TQuickRep;
+    QRBand1: TQRBand;
+    QRLabel1: TQRLabel;
+    QRLabel2: TQRLabel;
+    QRL_LOJA: TQRLabel;
+    qrl_periodo: TQRLabel;
+    QRShape1: TQRShape;
+    QRLabel3: TQRLabel;
+    QRLabel4: TQRLabel;
+    QRSysData1: TQRSysData;
+    QRSysData2: TQRSysData;
+    QRGroup1: TQRGroup;
+    QRLabel6: TQRLabel;
+    QRLabel7: TQRLabel;
+    QRLabel8: TQRLabel;
+    QRLabel9: TQRLabel;
+    QRLabel10: TQRLabel;
+    QRLabel11: TQRLabel;
+    QRBand2: TQRBand;
+    QRBand3: TQRBand;
+    QRChildBand1: TQRChildBand;
+    QRBand4: TQRBand;
+    QRBand5: TQRBand;
+    QRDBText1: TQRDBText;
+    QRDBText2: TQRDBText;
+    QRDBText3: TQRDBText;
+    QRDBText4: TQRDBText;
+    QRDBText5: TQRDBText;
+    QRDBText6: TQRDBText;
+    QRLabel12: TQRLabel;
+    QRL_TOTAL_VENDA: TQRLabel;
+    QRL_TOTAL_COMISSAO: TQRLabel;
+    QRLabel13: TQRLabel;
+    QRDBText7: TQRDBText;
+    QRShape2: TQRShape;
+    QRLabel14: TQRLabel;
+    QRLabel15: TQRLabel;
+    QRL_GERAL_VENDAS: TQRLabel;
+    QRL_GERAL_COMISSOES: TQRLabel;
+    QRLabel17: TQRLabel;
+    QRLabel147: TQRLabel;
+    QRLabel146: TQRLabel;
+    QRSysData26: TQRSysData;
+    QRLabel5: TQRLabel;
+    QRL_USUARIO: TQRLabel;
+    QRLabel16: TQRLabel;
+    QRL_TOTAL_PAGINAS: TQRLabel;
+    QRLabel18: TQRLabel;
+    QR_VENDEDOR: TQuickRep;
+    QRBand6: TQRBand;
+    QRLabel19: TQRLabel;
+    QRLabel20: TQRLabel;
+    QRL_LOJA_1: TQRLabel;
+    QRL_PERIODO_VENDEDOR: TQRLabel;
+    QRShape3: TQRShape;
+    QRLabel23: TQRLabel;
+    QRLabel24: TQRLabel;
+    QRSysData3: TQRSysData;
+    QRSysData4: TQRSysData;
+    QRLabel25: TQRLabel;
+    QRL_USER: TQRLabel;
+    QRGroup2: TQRGroup;
+    QRLabel27: TQRLabel;
+    QRLabel28: TQRLabel;
+    QRLabel29: TQRLabel;
+    QRLabel30: TQRLabel;
+    QRLabel31: TQRLabel;
+    QRLabel32: TQRLabel;
+    QRLabel33: TQRLabel;
+    QRDBText8: TQRDBText;
+    QRShape4: TQRShape;
+    QRBand7: TQRBand;
+    QRDBText9: TQRDBText;
+    QRDBText10: TQRDBText;
+    QRDBText11: TQRDBText;
+    QRDBText12: TQRDBText;
+    QRDBText13: TQRDBText;
+    QRDBText14: TQRDBText;
+    QRLabel34: TQRLabel;
+    QRBand9: TQRBand;
+    QRLabel38: TQRLabel;
+    QRLabel39: TQRLabel;
+    QRL_GERAL: TQRLabel;
+    QRL_COMISSAO: TQRLabel;
+    QRBand10: TQRBand;
+    QRLabel42: TQRLabel;
+    QRLabel43: TQRLabel;
+    QRLabel44: TQRLabel;
+    QRSysData5: TQRSysData;
+    QRLabel45: TQRLabel;
+    QRL_TOTAL_PAG_VEND: TQRLabel;
+    Image1: TImage;
+    procedure FormShow(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure BB_PESQUISARClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BB_SAIRClick(Sender: TObject);
+    procedure MaskEdit1Enter(Sender: TObject);
+    procedure MaskEdit1Exit(Sender: TObject);
+    function UltimoDiaMes(Mdt: TDateTime) : TDateTime;
+    procedure CheckBox1Click(Sender: TObject);
+    procedure BB_IMPRIMIRClick(Sender: TObject);
+    procedure QRBand2BeforePrint(Sender: TQRCustomBand;
+      var PrintBand: Boolean);
+    procedure QRGroup1BeforePrint(Sender: TQRCustomBand;
+      var PrintBand: Boolean);
+    procedure QR_GERALBeforePrint(Sender: TCustomQuickRep;
+      var PrintReport: Boolean);
+    procedure QRBand7BeforePrint(Sender: TQRCustomBand;
+      var PrintBand: Boolean);
+    procedure QR_VENDEDORBeforePrint(Sender: TCustomQuickRep;
+      var PrintReport: Boolean);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    dvlTotalVendas   : double;
+    dvlTotalComissao : double;
+    dvlgeralvendas   : double;
+    dvlgeralcomissao : double;
+ end;
+
+var
+  frmRelvendasVendedor: TfrmRelvendasVendedor;
+
+implementation
+
+uses U_LIB, UD_PESQUISA, uDm, uRetaguarda, uPdv;
+
+{$R *.dfm}
+
+procedure TfrmRelvendasVendedor.FormShow(Sender: TObject);
+begin
+  DM.cdsVendedor.Open;
+  CheckBox1.SetFocus;
+end;
+
+procedure TfrmRelvendasVendedor.FormKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end;
+end;
+
+procedure TfrmRelvendasVendedor.BB_PESQUISARClick(Sender: TObject);
+Var
+ pVendedor, gVendedor : String;
+begin
+  if (CheckBox1.Checked = true) and (DBLookupComboBox1.Text = '') then
+  begin
+    Application.MessageBox('Selecione um Vendedor, ou Desmaque a Opção "selecionar vendedor". ','Atenção!!!',MB_OK);
+    DBLookupComboBox1.SetFocus;
+    Exit;
+  end;
+  if (MaskEdit1.Text = '  /  /    ') or (MaskEdit2.Text = '  /  /    ') then
+  begin
+    Application.MessageBox('Favor Selecionar um Periodo.','Atenção!!!!!',MB_OK);
+    MaskEdit1.SetFocus;
+    Exit;
+  end;
+
+  if DBLookupComboBox1.Text = '' then
+  begin
+    gVendedor := ' SELECT  P.dt_orcamento, P.id_vendedor, V.nome AS VENDEDOR, SUM(P.vl_liquido) AS TOTAL,'+
+                 ' v.vl_comissao, SUM(P.vl_liquido)*(v.vl_comissao)/100 AS COMISSAO FROM tb_pdv P '+
+                 ' JOIN tb_vendedor V ON (V.id_vendedor = P.id_vendedor) '+
+                 ' WHERE P.id_vendedor IS NOT NULL '+
+                 ' AND P.STATUS =''F'''+
+                 ' AND P.dt_orcamento BETWEEN '+QuotedStr(FormatDateTime('mm/dd/yyyy',StrToDate(MaskEdit1.Text)))+
+                 ' AND '+QuotedStr(FormatDateTime('mm/dd/yyyy',StrToDate(MaskEdit2.Text)))+
+                 ' GROUP BY  P.dt_orcamento, P.id_vendedor,  V.nome, v.vl_comissao '+
+                 ' ORDER BY  v.nome ';
+    cdsRelVendas.Close;
+    cdsRelVendas.CommandText:=gVendedor;
+    cdsRelVendas.Open;
+
+    if cdsRelVendas.IsEmpty then
+    begin
+      Application.MessageBox('Nenhum Registro Encontrado.','Atenção!!!',MB_OK);
+      DBLookupComboBox1.SetFocus;
+      BB_IMPRIMIR.Enabled := False;
+    end
+    else
+    begin
+      BB_IMPRIMIR.Enabled := True;
+      DBGrid1.SetFocus;
+
+      DM.cdsDinamica.Close;
+      DM.cdsDinamica.IndexFieldNames:='';
+      DM.cdsDinamica.CommandText :=' SELECT  SUM(P.vl_liquido),SUM(P.vl_liquido * v.vl_comissao)/100 '+
+                                   ' FROM tb_pdv P '+
+                                   ' JOIN tb_vendedor V ON (V.id_vendedor = P.id_vendedor)'+
+                                   ' WHERE P.id_vendedor IS NOT NULL '+
+                                   ' AND P.STATUS =''F'''+
+                                   ' AND P.dt_orcamento BETWEEN '+QuotedStr(FormatDateTime('mm/dd/yyyy',StrToDate(MaskEdit1.Text)))+
+                                   ' AND '+QuotedStr(FormatDateTime('mm/dd/yyyy',StrToDate(MaskEdit2.Text)));
+      DM.cdsDinamica.Open;
+
+      l_geral_vendas.Caption := '(R$ '+FormatFloat('###,###0.00',dm.cdsDinamica.Fields[0].AsFloat)+')';
+      l_geral_comissao.Caption := '(R$ '+FormatFloat('###,###0.00',dm.cdsDinamica.Fields[1].AsFloat)+')';
+
+    end;
+  end
+  else
+  begin
+    pVendedor := ' SELECT  P.dt_orcamento, P.id_vendedor, V.nome AS VENDEDOR, SUM(P.vl_liquido) AS TOTAL,'+
+                 ' v.vl_comissao, SUM(P.vl_liquido)*(v.vl_comissao)/100 AS COMISSAO FROM tb_pdv P '+
+                 ' JOIN tb_vendedor V ON (V.id_vendedor = P.id_vendedor) '+
+                 ' WHERE P.id_vendedor IS NOT NULL '+
+                 ' AND P.STATUS =''F'''+
+                 ' AND P.dt_orcamento BETWEEN '+QuotedStr(FormatDateTime('mm/dd/yyyy',StrToDate(MaskEdit1.Text)))+
+                 ' AND '+QuotedStr(FormatDateTime('mm/dd/yyyy',StrToDate(MaskEdit2.Text)))+
+                 ' AND P.ID_VENDEDOR = '+DM.cdsVendedorID_VENDEDOR.AsString+
+                 ' GROUP BY  P.dt_orcamento, P.id_vendedor,  V.nome, v.vl_comissao '+
+                 ' ORDER BY  p.dt_orcamento, P.ID_VENDEDOR ';
+    cdsRelVendas.Close;
+    cdsRelVendas.CommandText:=PVendedor;
+    cdsRelVendas.Open;
+
+    if cdsRelVendas.IsEmpty then
+    begin
+      Application.MessageBox('Nenhum Registro Encontrado.','Atenção!!!',MB_OK);
+      DBLookupComboBox1.SetFocus;
+      BB_IMPRIMIR.Enabled := False;
+    end
+    else
+    begin
+      BB_IMPRIMIR.Enabled := True;
+      DBGrid1.SetFocus;
+
+      DM.cdsDinamica.Close;
+      DM.cdsDinamica.IndexFieldNames:='';
+      DM.cdsDinamica.CommandText :=' SELECT  SUM(P.vl_liquido),SUM(P.vl_liquido * v.vl_comissao)/100 '+
+                                   ' FROM tb_pdv P '+
+                                   ' JOIN tb_vendedor V ON (V.id_vendedor = P.id_vendedor)'+
+                                   ' WHERE P.id_vendedor IS NOT NULL '+
+                                   ' AND P.STATUS =''F'''+
+                                   ' AND P.ID_VENDEDOR = '+DM.cdsVendedorID_VENDEDOR.AsString+
+                                   ' AND P.dt_orcamento BETWEEN '+QuotedStr(FormatDateTime('mm/dd/yyyy',StrToDate(MaskEdit1.Text)))+
+                                   ' AND '+QuotedStr(FormatDateTime('mm/dd/yyyy',StrToDate(MaskEdit2.Text)));
+      DM.cdsDinamica.Open;
+
+      l_geral_vendas.Caption := '(R$ '+FormatFloat('###,###0.00',dm.cdsDinamica.Fields[0].AsFloat)+')';
+      l_geral_comissao.Caption := '(R$ '+FormatFloat('###,###0.00',dm.cdsDinamica.Fields[1].AsFloat)+')';
+
+    end;
+  end;
+end;
+
+procedure TfrmRelvendasVendedor.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  Action := caFree;
+  frmRelvendasVendedor := nil;
+  cdsRelVendas.Close;
+end;
+
+procedure TfrmRelvendasVendedor.BB_SAIRClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmRelvendasVendedor.MaskEdit1Enter(Sender: TObject);
+var
+  atual:TDate;
+     dia,mes,ano:Word;
+  dia1,mes1,ano1:Word;
+  mes2 : String;
+begin
+  atual:=Now;
+  DecodeDate(atual,ano,mes,dia);
+  if mes < 10 then
+  begin
+    mes2 := '0'+IntToStr(mes);
+    MaskEdit1.Text:='01'+'/'+(mes2)+'/'+IntToStr(ano);
+  end
+  else
+  begin
+    MaskEdit1.Text:='01'+'/'+IntToStr(mes)+'/'+IntToStr(ano);
+  end;
+end;
+
+procedure TfrmRelvendasVendedor.MaskEdit1Exit(Sender: TObject);
+var
+  texto:Tdate;
+begin
+  texto := UltimoDiaMes(Date);
+  MaskEdit2.Text := (datetostr(Texto));
+end;
+
+function TfrmRelvendasVendedor.UltimoDiaMes(Mdt: TDateTime): TDateTime;
+var
+  ano, mes, dia : word;
+  mDtTemp : TDateTime;
+begin
+  Decodedate(mDt, ano, mes, dia);
+  mDtTemp := (mDt - dia) + 33;
+  Decodedate(mDtTemp, ano, mes, dia);
+  Result := mDtTemp - dia;
+end;
+
+procedure TfrmRelvendasVendedor.CheckBox1Click(Sender: TObject);
+begin
+  if CheckBox1.Checked = True then
+  begin
+    DM.cdsVendedor.Close;
+    DM.cdsVendedor.Params[0].AsInteger := StrToInt(frmRetagurda.recInformacoes.lojaCredenciada);
+    DM.cdsVendedor.IndexFieldNames :='ID_VENDEDOR';
+    DM.cdsVendedor.Open;
+    DBLookupComboBox1.Enabled := True;
+    DBLookupComboBox1.SetFocus;
+  end
+  else
+  begin
+    DM.cdsVendedor.Close;
+    DBLookupComboBox1.Enabled := False;
+    DBLookupComboBox1.KeyValue := null ;
+    MaskEdit1.SetFocus;
+  end;
+end;
+
+procedure TfrmRelvendasVendedor.BB_IMPRIMIRClick(Sender: TObject);
+begin
+  if DBLookupComboBox1.Text = '' then
+  begin
+    QR_GERAL.Prepare;
+    QRL_TOTAL_PAGINAS.Caption := IntToStr(QR_GERAL.QRPrinter.PageCount);
+    QRL_LOJA.Caption := frmRetagurda.StatusBar1.Panels.Items[1].Text;
+    QRL_USUARIO.Caption := frmRetagurda.recInformacoes.login;
+    qrl_periodo.Caption := MaskEdit1.Text + ' Até '+MaskEdit2.Text;
+    QR_GERAL.Preview;
+  end
+  else
+  begin
+    QR_VENDEDOR.Prepare;
+    QRL_TOTAL_PAG_VEND.Caption := IntToStr(QR_VENDEDOR.QRPrinter.PageCount);
+    QRL_LOJA_1.Caption := frmRetagurda.StatusBar1.Panels.Items[1].Text;
+    QRL_USER.Caption := frmRetagurda.recInformacoes.login;
+    QRL_PERIODO_VENDEDOR.Caption := MaskEdit1.Text + ' Até '+MaskEdit2.Text;
+    QR_VENDEDOR.Preview;
+  end;
+end;
+
+procedure TfrmRelvendasVendedor.QRBand2BeforePrint(Sender: TQRCustomBand;
+  var PrintBand: Boolean);
+begin
+  dvlTotalVendas := dvlTotalVendas + cdsRelVendas.FIELDBYNAME('TOTAL').AsFloat;
+  QRL_TOTAL_VENDA.Caption := FormatFloat('###,###0.00',dvlTotalVendas);
+  dvlTotalComissao := dvlTotalComissao + cdsRelVendas.FIELDBYNAME('COMISSAO').AsFloat;
+  QRL_TOTAL_COMISSAO.Caption := FormatFloat('###,###0.00',dvlTotalComissao);
+  dvlgeralvendas := dvlgeralvendas + cdsRelVendas.FIELDBYNAME('TOTAL').AsFloat;
+  QRL_GERAL_VENDAS.Caption := '(R$ '+FormatFloat('###,###0.00',dvlgeralvendas)+')';
+  dvlgeralcomissao := dvlgeralcomissao + cdsRelVendas.FIELDBYNAME('COMISSAO').AsFloat;
+  QRL_GERAL_COMISSOES.Caption := '(R$ '+FormatFloat('###,###0.00',dvlgeralcomissao)+')';
+end;
+
+procedure TfrmRelvendasVendedor.QRGroup1BeforePrint(Sender: TQRCustomBand;
+  var PrintBand: Boolean);
+begin
+  dvlTotalVendas := 0;
+  dvlTotalComissao := 0;
+
+end;
+
+procedure TfrmRelvendasVendedor.QR_GERALBeforePrint(
+  Sender: TCustomQuickRep; var PrintReport: Boolean);
+begin
+  dvlTotalVendas   := 0;
+  dvlTotalComissao := 0;
+  dvlgeralvendas   := 0;
+  dvlgeralcomissao := 0;
+end;
+
+procedure TfrmRelvendasVendedor.QRBand7BeforePrint(Sender: TQRCustomBand;
+  var PrintBand: Boolean);
+begin
+  dvlTotalVendas := dvlTotalVendas + cdsRelVendas.FIELDBYNAME('TOTAL').AsFloat;
+  QRL_GERAL.Caption := FormatFloat('###,###0.00',dvlTotalVendas);
+  dvlTotalComissao := dvlTotalComissao + cdsRelVendas.FIELDBYNAME('COMISSAO').AsFloat;
+  QRL_COMISSAO.Caption := FormatFloat('###,###0.00',dvlTotalComissao);
+end;
+
+procedure TfrmRelvendasVendedor.QR_VENDEDORBeforePrint(
+  Sender: TCustomQuickRep; var PrintReport: Boolean);
+begin
+  dvlTotalVendas   := 0;
+  dvlTotalComissao := 0;
+  dvlgeralvendas   := 0;
+  dvlgeralcomissao := 0;
+end;
+
+end.

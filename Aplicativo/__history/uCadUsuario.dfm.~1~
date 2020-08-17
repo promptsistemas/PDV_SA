@@ -1,0 +1,410 @@
+object frmCadUsuario: TfrmCadUsuario
+  Left = 272
+  Top = 114
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Cadastro de Usu'#225'rios'
+  ClientHeight = 535
+  ClientWidth = 549
+  Color = 16710131
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnClose = FormClose
+  OnKeyPress = FormKeyPress
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object CoolBar1: TCoolBar
+    Left = 0
+    Top = 0
+    Width = 549
+    Height = 65
+    Bands = <
+      item
+        Control = ToolBar1
+        ImageIndex = -1
+        MinHeight = 57
+        Width = 543
+      end>
+    Color = clWhite
+    ParentColor = False
+    object ToolBar1: TToolBar
+      Left = 11
+      Top = 0
+      Width = 534
+      Height = 57
+      ButtonHeight = 52
+      ButtonWidth = 68
+      Caption = 'ToolBar1'
+      Images = DM.I_BOTOES
+      ParentShowHint = False
+      ShowCaptions = True
+      ShowHint = True
+      TabOrder = 0
+      object TB_INCLUIR: TToolButton
+        Left = 0
+        Top = 0
+        Caption = '&Incluir'
+        ImageIndex = 4
+        OnClick = TB_INCLUIRClick
+      end
+      object TB_ALTERAR: TToolButton
+        Left = 68
+        Top = 0
+        Caption = '&Alterar'
+        ImageIndex = 0
+        OnClick = TB_ALTERARClick
+      end
+      object TB_CANCELAR: TToolButton
+        Left = 136
+        Top = 0
+        Caption = '&Cancelar'
+        ImageIndex = 1
+        OnClick = TB_CANCELARClick
+      end
+      object TB_SALVAR: TToolButton
+        Left = 204
+        Top = 0
+        Caption = '&Salvar '
+        ImageIndex = 2
+        OnClick = TB_SALVARClick
+      end
+      object TB_EXCLUIR: TToolButton
+        Left = 272
+        Top = 0
+        Caption = 'E&xcluir'
+        ImageIndex = 5
+        OnClick = TB_EXCLUIRClick
+      end
+      object TB_PESQUISAR: TToolButton
+        Left = 340
+        Top = 0
+        Caption = '  &Pesquisar   '
+        ImageIndex = 6
+        OnClick = TB_PESQUISARClick
+      end
+      object TB_SAIR: TToolButton
+        Left = 408
+        Top = 0
+        Caption = 'Sai&r'
+        ImageIndex = 7
+        OnClick = TB_SAIRClick
+      end
+    end
+  end
+  object P_LOGIN: TPanel
+    Left = 5
+    Top = 65
+    Width = 676
+    Height = 267
+    BevelOuter = bvNone
+    Color = 16710131
+    Enabled = False
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 2
+      Top = 4
+      Width = 33
+      Height = 13
+      Caption = 'C'#243'digo'
+    end
+    object Label2: TLabel
+      Left = 66
+      Top = 4
+      Width = 28
+      Height = 13
+      Caption = 'Nome'
+    end
+    object Label3: TLabel
+      Left = 2
+      Top = 134
+      Width = 31
+      Height = 13
+      Caption = 'Senha'
+    end
+    object Label4: TLabel
+      Left = 114
+      Top = 134
+      Width = 78
+      Height = 13
+      Caption = 'Confirmar Senha'
+    end
+    object Label5: TLabel
+      Left = 329
+      Top = 4
+      Width = 26
+      Height = 13
+      Caption = 'Login'
+    end
+    object Label6: TLabel
+      Left = 2
+      Top = 98
+      Width = 42
+      Height = 13
+      Caption = 'C'#243'd Loja'
+    end
+    object Label7: TLabel
+      Left = 67
+      Top = 98
+      Width = 72
+      Height = 13
+      Caption = 'Loja Associado'
+    end
+    object SpeedButton1: TSpeedButton
+      Left = 376
+      Top = 104
+      Width = 23
+      Height = 22
+      Visible = False
+      OnClick = SpeedButton1Click
+    end
+    object Label8: TLabel
+      Left = 2
+      Top = 49
+      Width = 51
+      Height = 13
+      Caption = 'C'#243'd Grupo'
+    end
+    object Label9: TLabel
+      Left = 69
+      Top = 49
+      Width = 75
+      Height = 13
+      Caption = 'Nome do Grupo'
+    end
+    object SpeedButton2: TSpeedButton
+      Left = 377
+      Top = 72
+      Width = 23
+      Height = 22
+      Visible = False
+      OnClick = SpeedButton2Click
+    end
+    object DBEdit2: TDBEdit
+      Left = 2
+      Top = 18
+      Width = 65
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'ID_USUARIO'
+      DataSource = DM.dsLogin
+      ParentCtl3D = False
+      ReadOnly = True
+      TabOrder = 0
+      OnKeyPress = FormKeyPress
+    end
+    object DBEdit3: TDBEdit
+      Left = 66
+      Top = 18
+      Width = 262
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'NOME_USUARIO'
+      DataSource = DM.dsLogin
+      ParentCtl3D = False
+      TabOrder = 1
+      OnKeyPress = FormKeyPress
+    end
+    object DBE_SENHA: TDBEdit
+      Left = 2
+      Top = 148
+      Width = 105
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'SENHA'
+      DataSource = DM.dsLogin
+      ParentCtl3D = False
+      PasswordChar = '*'
+      TabOrder = 5
+      OnKeyPress = FormKeyPress
+    end
+    object ME_SENHA: TMaskEdit
+      Left = 114
+      Top = 148
+      Width = 121
+      Height = 19
+      Ctl3D = False
+      ParentCtl3D = False
+      PasswordChar = '*'
+      TabOrder = 6
+      Text = ''
+    end
+    object DBRadioGroup1: TDBRadioGroup
+      Left = 1
+      Top = 180
+      Width = 536
+      Height = 81
+      Caption = 'N'#237'vel de Acesso'
+      Color = clWhite
+      Columns = 3
+      Ctl3D = False
+      DataField = 'NIVEL_ACESSO'
+      DataSource = DM.dsLogin
+      Items.Strings = (
+        'Master'
+        'Avancado Administrativo'
+        'Lojas'
+        'Grupos'
+        'Gestores'
+        'Avancado Central Compras'
+        'Financeiro'
+        'Financeiro Restrito'
+        'Coordenacao PE')
+      ParentColor = False
+      ParentCtl3D = False
+      TabOrder = 7
+      Values.Strings = (
+        '0'
+        '1'
+        '2'
+        '3'
+        '4'
+        '5'
+        '6'
+        '7'
+        '8')
+    end
+    object DBEdit1: TDBEdit
+      Left = 329
+      Top = 18
+      Width = 210
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'LOGIN'
+      DataSource = DM.dsLogin
+      ParentCtl3D = False
+      TabOrder = 2
+      OnKeyPress = FormKeyPress
+    end
+    object DBEdit4: TDBEdit
+      Left = 2
+      Top = 112
+      Width = 64
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'ID_LOJA'
+      DataSource = DM.dsLogin
+      ParentCtl3D = False
+      TabOrder = 4
+      OnExit = DBEdit4Exit
+      OnKeyPress = DBEdit4KeyPress
+    end
+    object DBEdit5: TDBEdit
+      Left = 67
+      Top = 112
+      Width = 472
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'R_SOCIAL'
+      DataSource = DM.dsLogin
+      ParentCtl3D = False
+      TabOrder = 8
+      OnKeyPress = FormKeyPress
+    end
+    object DBEdit6: TDBEdit
+      Left = 2
+      Top = 65
+      Width = 64
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'ID_GRUPO_LOJA'
+      DataSource = DM.dsLogin
+      ParentCtl3D = False
+      TabOrder = 3
+      OnExit = DBEdit6Exit
+      OnKeyPress = DBEdit6KeyPress
+    end
+    object DBEdit7: TDBEdit
+      Left = 67
+      Top = 65
+      Width = 472
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'NOME_GRUPO'
+      DataSource = DM.dsLogin
+      ParentCtl3D = False
+      TabOrder = 9
+      OnKeyPress = FormKeyPress
+    end
+  end
+  object DBGrid1: TDBGrid
+    Left = 2
+    Top = 336
+    Width = 543
+    Height = 170
+    Ctl3D = False
+    DataSource = DM.dsLogin
+    FixedColor = clMoneyGreen
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clNavy
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+    ParentCtl3D = False
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 2
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'NOME_USUARIO'
+        Width = 143
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'LOGIN'
+        Width = 121
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ID_LOJA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'R_SOCIAL'
+        Width = 177
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ID_GRUPO_LOJA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NOME_GRUPO'
+        Visible = True
+      end>
+  end
+  object DBNavigator1: TDBNavigator
+    Left = 4
+    Top = 512
+    Width = 224
+    Height = 18
+    DataSource = DM.dsLogin
+    VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
+    TabOrder = 3
+  end
+end

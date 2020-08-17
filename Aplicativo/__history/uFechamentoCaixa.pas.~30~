@@ -1,0 +1,544 @@
+unit uFechamentoCaixa;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.FMTBcd, Data.DB, Datasnap.DBClient,
+  Datasnap.Provider, Data.SqlExpr, Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls,
+  Vcl.ComCtrls, Vcl.Buttons,Printers,WinSpool, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+
+type
+  TfrmFechamentoCaixa = class(TForm)
+    P_RESUMO: TPageControl;
+    TabSheet1: TTabSheet;
+    L_RESUMO_CAIXA: TLabel;
+    DBGrid2: TDBGrid;
+    TabSheet2: TTabSheet;
+    Label20: TLabel;
+    L_TOTAL_GERAL: TLabel;
+    DBGrid3: TDBGrid;
+    TabSheet3: TTabSheet;
+    Label41: TLabel;
+    L_TOTAL_GERAL1: TLabel;
+    DBGrid7: TDBGrid;
+    TabSheet4: TTabSheet;
+    Label36: TLabel;
+    Label35: TLabel;
+    Label34: TLabel;
+    L_TOT_TROCA: TLabel;
+    L_QT_LEV: TLabel;
+    L_QTDEV: TLabel;
+    DBGrid4: TDBGrid;
+    TabSheet5: TTabSheet;
+    DBGrid5: TDBGrid;
+    qResumoVendas: TSQLQuery;
+    qResumoVendasDT_ORCAMENTO: TDateField;
+    qResumoVendasTOTAL: TFMTBCDField;
+    qResumoVendasQUANT: TLargeintField;
+    qResumoVendasQT_PECAS: TLargeintField;
+    qResumoVendasID_USUARIO: TIntegerField;
+    qResumoVendasLOGIN: TStringField;
+    dspResumoVendas: TDataSetProvider;
+    cdsResumoVendas: TClientDataSet;
+    cdsResumoVendasDT_ORCAMENTO: TDateField;
+    cdsResumoVendasTOTAL: TFMTBCDField;
+    cdsResumoVendasQUANT: TLargeintField;
+    cdsResumoVendasQT_PECAS: TLargeintField;
+    cdsResumoVendasID_USUARIO: TIntegerField;
+    cdsResumoVendasLOGIN: TStringField;
+    dsResumoVendas: TDataSource;
+    qVendasVendedor: TSQLQuery;
+    qVendasVendedorCODIGO: TIntegerField;
+    qVendasVendedorVENDEDOR: TStringField;
+    qVendasVendedorTOTAL: TFMTBCDField;
+    dspVendasVendedor: TDataSetProvider;
+    cdsVendasVendedor: TClientDataSet;
+    cdsVendasVendedorCODIGO: TIntegerField;
+    cdsVendasVendedorVENDEDOR: TStringField;
+    cdsVendasVendedorTOTAL: TFMTBCDField;
+    dsVendasVendedor: TDataSource;
+    qEspecie: TSQLQuery;
+    qEspecieDESCRICAO_PAGAMENTO: TStringField;
+    qEspecieTOTAL: TFMTBCDField;
+    dspEspecie: TDataSetProvider;
+    cdsEspecie: TClientDataSet;
+    cdsEspecieDESCRICAO_PAGAMENTO: TStringField;
+    cdsEspecieTOTAL: TFMTBCDField;
+    dsEspecie: TDataSource;
+    qTotalPecas: TSQLQuery;
+    qTotalPecasTOTAL_PECAS: TLargeintField;
+    qTotalPecasVL_UNIT: TFMTBCDField;
+    dspTotalPecas: TDataSetProvider;
+    cdsTotalPecas: TClientDataSet;
+    cdsTotalPecasTOTAL_PECAS: TLargeintField;
+    cdsTotalPecasVL_UNIT: TFMTBCDField;
+    dsTotalPecas: TDataSource;
+    BB_SAIR: TBitBtn;
+    BB_IMPRIMIR: TBitBtn;
+    qVendasVendedorLOGIN: TStringField;
+    cdsVendasVendedorLOGIN: TStringField;
+    qTroca: TSQLQuery;
+    dspTroca: TDataSetProvider;
+    cdsTroca: TClientDataSet;
+    dsTroca: TDataSource;
+    qTotalPecasLOGIN: TStringField;
+    cdsTotalPecasLOGIN: TStringField;
+    TabSheet6: TTabSheet;
+    DBGrid1: TDBGrid;
+    qTotalGeral: TSQLQuery;
+    dspTotalGeral: TDataSetProvider;
+    cdsTotalGeral: TClientDataSet;
+    dsTotalGeral: TDataSource;
+    qTotalGeralDT_ORCAMENTO: TDateField;
+    qTotalGeralID_USUARIO: TIntegerField;
+    qTotalGeralLOGIN: TStringField;
+    qTotalGeralTOTAL: TFMTBCDField;
+    cdsTotalGeralDT_ORCAMENTO: TDateField;
+    cdsTotalGeralID_USUARIO: TIntegerField;
+    cdsTotalGeralLOGIN: TStringField;
+    cdsTotalGeralTOTAL: TFMTBCDField;
+    qEspecieLOGIN: TStringField;
+    cdsEspecieLOGIN: TStringField;
+    Label2: TLabel;
+    L_TOTAL_PECAS: TLabel;
+    Memo1: TMemo;
+    Panel1: TPanel;
+    Label17: TLabel;
+    SpeedButton3: TSpeedButton;
+    Panel2: TPanel;
+    Label1: TLabel;
+    L_TOTAL_GERAL_CAIXA: TLabel;
+    qTrocaDESCRICAO_PAGAMENTO: TStringField;
+    qTrocaSUM: TFMTBCDField;
+    cdsTrocaDESCRICAO_PAGAMENTO: TStringField;
+    cdsTrocaSUM: TFMTBCDField;
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BB_SAIRClick(Sender: TObject);
+    Procedure ImprimirMemoComCanvas(Memo: TMemo);
+    procedure BB_IMPRIMIRClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGrid5DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGrid4DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGrid7DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGrid3DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGrid2DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure SpeedButton3Click(Sender: TObject);
+  private
+    { Private declarations }
+    procedure ResumoVendas;
+    procedure ImprimirCaixa;
+  public
+    { Public declarations }
+  end;
+
+var
+  frmFechamentoCaixa: TfrmFechamentoCaixa;
+  CaminhoImpressora : string;
+
+implementation
+
+{$R *.dfm}
+
+uses U_LIB, UD_PESQUISA, uDm, uPdv, uMenuCaixa;
+
+{ TfrmFechamentoCaixa }
+
+procedure TfrmFechamentoCaixa.BB_IMPRIMIRClick(Sender: TObject);
+begin
+  ImprimirCaixa;
+end;
+
+procedure TfrmFechamentoCaixa.BB_SAIRClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmFechamentoCaixa.DBGrid1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if gdSelected in State then
+    DBGrid1.Canvas.Brush.Color := $009BFFFF;
+    DBGRid1.DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmFechamentoCaixa.DBGrid2DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if gdSelected in State then
+    DBGrid2.Canvas.Brush.Color := $009BFFFF;
+    DBGRid2.DefaultDrawDataCell(Rect, Column.Field, State);
+
+end;
+
+procedure TfrmFechamentoCaixa.DBGrid3DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if gdSelected in State then
+    DBGrid3.Canvas.Brush.Color := $009BFFFF;
+    DBGRid3.DefaultDrawDataCell(Rect, Column.Field, State);
+
+end;
+
+procedure TfrmFechamentoCaixa.DBGrid4DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if gdSelected in State then
+    DBGrid4.Canvas.Brush.Color := $009BFFFF;
+    DBGRid4.DefaultDrawDataCell(Rect, Column.Field, State);
+
+end;
+
+procedure TfrmFechamentoCaixa.DBGrid5DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if gdSelected in State then
+    DBGrid5.Canvas.Brush.Color := $009BFFFF;
+    DBGRid5.DefaultDrawDataCell(Rect, Column.Field, State);
+
+end;
+
+procedure TfrmFechamentoCaixa.DBGrid7DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if gdSelected in State then
+    DBGrid7.Canvas.Brush.Color := $009BFFFF;
+    DBGRid7.DefaultDrawDataCell(Rect, Column.Field, State);
+
+end;
+
+procedure TfrmFechamentoCaixa.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  Action := caFree;
+  frmFechamentoCaixa := nil;
+  frmMenuCaixa.Close;
+end;
+
+procedure TfrmFechamentoCaixa.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = 27 then
+  begin
+    BB_SAIRClick(Self);
+  end;
+  if Key = 13 then
+  begin
+    BB_IMPRIMIRClick(Self);
+  end;
+
+end;
+
+procedure TfrmFechamentoCaixa.FormShow(Sender: TObject);
+begin
+  ResumoVendas;
+  TabSheet1.Caption := 'Total de Caixa do Usuário : '+frmPdv.recInformacoes.login;
+  DBGrid2.SetFocus;
+end;
+
+procedure TfrmFechamentoCaixa.ImprimirCaixa;
+var
+  Arquivo : TextFile;
+  iTotalEspecie, iVezes, iCount,iCount1,iCount2,iCount3,iCount4 ,TotalGeral,QtDev,QtLeva, QtPecas : Integer;
+  Soma,TotalTroca : Double;
+begin
+  CaminhoImpressora := DM.IMPRESSORA;
+  Memo1.Clear;
+
+
+
+    if printer.printers.count=0 then
+      showmessage('nao tem impressora instalada');
+
+    iTotalEspecie := cdsEspecie.RecordCount;
+    TotalGeral    := cdsTotalGeral.RecordCount;
+    iVezes := Trunc(iTotalEspecie/10000);
+    if Round(iTotalEspecie) > 0 then
+      iVezes := iVezes +1;
+    cdsEspecie.First;
+
+    iCount := 0;
+    iCount1 := 0;
+
+    for iCount := 1 to iVezes do
+    begin
+      Memo1.Lines.Add(' ');
+      Memo1.Lines.Add('Data: '+DefineTamanhoString(FormatDateTime('dd "de" mmmm "de" yyyy',Date),20,0)+'  '+' Hora '+DefineTamanhoString(TimeToStr(Time),10,0));
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+      Memo1.Lines.Add('                     F E C H A M E N T O   D E  C A I X A      ');
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+      Memo1.Lines.Add('OPERADOR CAIXA:  '+DefineTamanhoString(frmPdv.L_USUARIO.Caption,8,0));
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+      Memo1.Lines.Add('DATA DO CAIXA :  '+DefineTamanhoString(FormatDateTime('DD/MM/YYYY',cdsResumoVendasDT_ORCAMENTO.AsDateTime),10,0));
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+      Memo1.Lines.Add('           DATA        USUÁRIO CAIXA                VALOR TOTAL                     ');
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+
+      //TOTAL GERAL
+      for iCount1:= 1 to TotalGeral do
+      begin
+        Memo1.Lines.Add(DefineTamanhoString(FormatDateTime('DD/MM/YYYY',cdsTotalGeralDT_ORCAMENTO.AsDateTime),10,0)
+                        +DefineTamanhoString('        ',15,15)
+                        +DefineTamanhoString(cdsTotalGeralLOGIN.AsString,10,26)
+                        +DefineTamanhoString('        ',28,15)
+                        +DefineTamanhoString(FormatFloat('###,###,###0.00',cdsTotalGeralTOTAL.AsFloat),10,60));
+        cdsTotalGeral.Next;
+      end;
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+      Memo1.Lines.Add('                                          TOTAL GERAL ->'+DefineTamanhoString(L_TOTAL_GERAL_CAIXA.Caption,18,0));
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+      Memo1.Lines.Add('   TOTAL ESPECIE RECEBIMENTO POR USUARIO                                            ');
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+
+      //POR ESPECIE
+       Soma := 0;
+      for iCount2:= 1 to iTotalEspecie do
+      begin
+        Memo1.Lines.Add(DefineTamanhoString(cdsEspecieLOGIN.AsString,10,0)
+                      //  +DefineTamanhoString(' ',15,05)
+                        +DefineTamanhoString(cdsEspecieDESCRICAO_PAGAMENTO.AsString,15,36)
+                     //   +DefineTamanhoString(' ',48,05)
+                        +DefineTamanhoString(FormatFloat('###,###,###0.00',cdsEspecieTOTAL.AsFloat),40,60));
+        Soma := Soma+cdsEspecieTOTAL.AsFloat;
+
+        L_TOTAL_GERAL1.Caption := FloatToStr(Soma);
+        cdsEspecie.Next;
+      end;
+      Memo1.Lines.Add('                              TOTAL GERAL ESPECIE ->'+DefineTamanhoString(FormatFloat('###,###,###0.00',Soma),10,30));
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+      Memo1.Lines.Add('                          TROCAS DE MERCADORIAS                                     ');
+      Memo1.Lines.Add('------------------------------------------------------------------------------------');
+      // Localizar Quan peccas trocadas
+        DM.cdsDinamica.Close;
+        DM.cdsDinamica.IndexFieldNames:='';
+        DM.cdsDinamica.CommandText := ' SELECT SUM(IP.quant), ' +
+                                      '  ( SELECT SUM(IP.quant) FROM tb_item_pdv IP' +
+                                      '     JOIN tb_pdv P ON (P.nr_orcamento = IP.nr_orcamento) WHERE IP.status =''D'''+
+                                      '    AND P.dt_orcamento =' +QuotedStr(FormatDateTime('MM/DD/YYYY',StrToDate(DateToStr(Date))))+'),'+
+                                      '  ( SELECT SUM(P.vl_liquido) FROM tb_pdv P'+
+                                      '      WHERE P.status =''D'' '+
+                                      ' AND P.dt_orcamento = '+QuotedStr(FormatDateTime('MM/DD/YYYY',StrToDate(DateToStr(Date))))+')'+
+                                      ' FROM tb_item_pdv IP JOIN tb_pdv P ON (P.nr_orcamento = IP.nr_orcamento) '+
+                                      ' WHERE IP.status =''L'' AND P.dt_orcamento = '+QuotedStr(FormatDateTime('MM/DD/YYYY',StrToDate(DateToStr(Date))));
+        DM.cdsDinamica.Open;
+
+        cdsTroca.Close;
+        cdsTroca.Params[0].AsDate    := StrToDate(DateToStr(Date));
+        cdsTroca.Params[1].AsInteger := StrToInt(frmpdv.L_CAIXA.Caption);
+        cdsTroca.Params[2].AsInteger    := frmPdv.recInformacoes.id_Usuario;
+        cdsTroca.Open;
+        cdsTroca.First;
+        for iCount4:= 1 to cdsTroca.RecordCount do
+        begin
+          Memo1.Lines.Add(DefineTamanhoString(cdsTrocaDESCRICAO_PAGAMENTO.AsString,35,0)
+                          +DefineTamanhoString('        ',15,15)
+                          +DefineTamanhoString(FormatFloat('###,###,###0.00',cdsTrocaSUM.AsFloat),10,60));
+          cdsTroca.Next;
+        end;
+
+        QtLeva := DM.cdsDinamica.Fields[0].AsInteger;
+        QtDev  := DM.cdsDinamica.Fields[1].AsInteger;
+        TotalTroca := DM.cdsDinamica.Fields[2].AsFloat;
+
+        DM.cdsDinamica.Close;
+        Memo1.Lines.Add('------------------------------------------------------------------------------------');
+        Memo1.Lines.Add('PEÇAS DEVOLVIDAS........................:  '+' '+IntToStr(QtDev));
+        Memo1.Lines.Add('PEÇAS TROCADAS..........................:  '+' '+IntToStr(QtLeva));
+        Memo1.Lines.Add('VALOR TOTAL DAS TROCAS EM R$............:  '+' '+FormatFloat('###,###0.00',TotalTroca));
+        Memo1.Lines.Add('------------------------------------------------------------------------------------');
+      //fim localiza peccas trocadas
+
+      //QUANTIDADE DE PEÇAS VENDIDAS
+
+        DM.cdsDinamica.Close;
+        DM.cdsDinamica.IndexFieldNames:='';
+        DM.cdsDinamica.CommandText := ' SELECT SUM(IP.QUANT),IP.VL_UNIT FROM TB_ITEM_PDV IP'+
+                                      ' JOIN TB_PDV P ON (P.NR_ORCAMENTO = IP.NR_ORCAMENTO) '+
+                                      ' JOIN TB_PRODUTO PR ON (PR.ID_PRODUTO = IP.ID_PRODUTO)'+
+                                      ' WHERE IP.ID_LOJA = '+QuotedStr(frmPdv.L_LOJA.Caption)+
+                                      ' AND   IP.STATUS = ''V'''+
+                                      ' AND P.STATUS =''F'''+
+                                      ' AND   P.DT_ORCAMENTO = '+QuotedStr(FormatDateTime('MM/DD/YYYY',StrToDate(DateToStr(Date))))+
+                                      ' GROUP BY IP.VL_UNIT';
+
+        DM.cdsDinamica.Open;
+        QtPecas := DM.cdsDinamica.RecordCount;
+
+        Memo1.Lines.Add('                        QUANTIDADE PEÇAS VENDIDAS                                   ');
+        Memo1.Lines.Add('------------------------------------------------------------------------------------');
+
+      for iCount3:= 1 to QtPecas do
+      begin
+        Memo1.Lines.Add('  '+DefineTamanhoString(DM.cdsDinamica.Fields[0].AsString,10,5)
+                        +DefineTamanhoString('        ',15,15)
+                        +DefineTamanhoString('R$ '+FormatFloat('###,###,###0.00',DM.cdsDinamica.Fields[1].AsFloat),10,60));
+        DM.cdsDinamica.Next;
+      end;
+        Memo1.Lines.Add('------------------------------------------------------------------------------------');
+        Memo1.Lines.Add('TOTAL GERAL DE PEÇAS VENDIDAS'+DefineTamanhoString(L_TOTAL_PECAS.Caption,15,15));
+      //FIM QUANTIDADE DE PEÇAS VENDIDAS
+
+        Memo1.Lines.Add('');
+        Memo1.Lines.Add('');
+        Memo1.Lines.Add('___________________________________________');
+        Memo1.Lines.Add('             ASSINATURA DE CAIXA :  ');
+
+    end;
+
+  AssignFile(Arquivo,CaminhoImpressora);
+  Rewrite(Arquivo);
+  ImprimirMemoComCanvas(Memo1);
+  CloseFile(Arquivo);
+
+end;
+
+procedure TfrmFechamentoCaixa.ImprimirMemoComCanvas(Memo: TMemo);
+var
+  I: integer;
+  F: TextFile;
+begin
+  { Usa na impressora a mesma fonte do memo }
+  Printer.Canvas.Font.Assign(Memo.Font);
+
+  AssignPrn(F);
+  Rewrite(F);
+  try
+    for I := 0 to Memo.Lines.Count -1 do
+      WriteLn(F, Memo.Lines[I]);
+  finally
+    CloseFile(F);
+  end;
+end;
+
+procedure TfrmFechamentoCaixa.ResumoVendas;
+begin
+  if DM.cdsItemPdvLocal.State in dsEditModes then
+  begin
+    ShowMessage('Encerre a Venda Para Efetuar o Resumo.');
+  end
+  else
+  begin
+    cdsResumoVendas.Close;
+    cdsResumoVendas.Params[0].AsDate := StrToDate(DateToStr(Date));
+    cdsResumoVendas.Params[1].AsInteger := frmPdv.recInformacoes.id_Usuario;
+    cdsResumoVendas.Params[2].AsDate := StrToDate(DateToStr(Date));
+    cdsResumoVendas.Params[3].AsInteger := frmPdv.recInformacoes.id_Usuario;
+    cdsResumoVendas.Params[4].AsDate := StrToDate(DateToStr(Date));
+    cdsResumoVendas.Params[5].AsInteger := frmPdv.recInformacoes.id_Usuario;
+    cdsResumoVendas.Params[6].AsDate := StrToDate(DateToStr(Date));
+    cdsResumoVendas.Params[7].AsInteger := StrToInt(frmPdv.L_CAIXA.Caption);
+    cdsResumoVendas.Params[8].AsInteger := frmPdv.recInformacoes.id_Usuario;
+    cdsResumoVendas.Open;
+
+    if cdsResumoVendas.IsEmpty then
+    begin
+      ShowMessage('Nenhum Registro Encontrado no momento.');
+    end
+    else
+    begin
+      cdsVendasVendedor.Close;
+      cdsVendasVendedor.Params[0].AsDate := StrToDate(DateToStr(Date));
+      cdsVendasVendedor.Params[1].AsInteger := frmPdv.recInformacoes.id_Usuario;
+      cdsVendasVendedor.Open;
+
+      P_RESUMO.Visible := True;
+      P_RESUMO.ActivePage := TabSheet1;
+
+      DM.cdsDinamica.Close;
+      DM.cdsDinamica.IndexFieldNames:='';
+      DM.cdsDinamica.CommandText := ' select sum(p.VL_LIQUIDO) from tb_pdv p ' +
+                                    ' JOIN TB_VENDEDOR v on (v.ID_VENDEDOR = p.ID_VENDEDOR)' +
+                                    ' and p.DT_ORCAMENTO = ' +QuotedStr(FormatDateTime('MM/DD/YYYY',StrToDate(DateToStr(Date))))+
+                                    ' and P.ID_USUARIO = '+IntToStr(frmPdv.recInformacoes.id_Usuario)+
+                                    ' AND P.STATUS = ''F''';
+      DM.cdsDinamica.Open;
+      L_TOTAL_GERAL.Caption := 'R$ '+FormatFloat('###,###0.00',DM.cdsDinamica.Fields[0].AsFloat);
+      L_RESUMO_CAIXA.Caption := 'Resumo do Caixa '+'('+frmPdv.L_CAIXA.Caption+')'+' Usuário Logado : '+frmpdv.L_USUARIO.Caption;
+
+
+      DM.cdsDinamica.Close;
+      DM.cdsDinamica.IndexFieldNames:='';
+      DM.cdsDinamica.CommandText := ' SELECT SUM(IP.quant), ' +
+                                    '  ( SELECT SUM(IP.quant) FROM tb_item_pdv IP' +
+                                    '     JOIN tb_pdv P ON (P.nr_orcamento = IP.nr_orcamento) WHERE IP.status =''D'''+
+                                    ' AND P.ID_USUARIO ='+IntToStr(frmPdv.recInformacoes.id_Usuario)+
+                                    '    AND P.dt_orcamento =' +QuotedStr(FormatDateTime('MM/DD/YYYY',StrToDate(DateToStr(Date))))+'),'+
+                                    '  ( SELECT SUM(P.vl_liquido) FROM tb_pdv P'+
+                                    '      WHERE P.status =''D'' '+
+                                    ' AND P.ID_USUARIO ='+IntToStr(frmPdv.recInformacoes.id_Usuario)+' AND P.dt_orcamento = '+QuotedStr(FormatDateTime('MM/DD/YYYY',StrToDate(DateToStr(Date))))+')'+
+                                    ' FROM tb_item_pdv IP JOIN tb_pdv P ON (P.nr_orcamento = IP.nr_orcamento) '+
+                                    ' WHERE IP.status =''L'' AND P.dt_orcamento = '+QuotedStr(FormatDateTime('MM/DD/YYYY',StrToDate(DateToStr(Date))))+
+                                    ' AND P.ID_USUARIO ='+IntToStr(frmPdv.recInformacoes.id_Usuario);
+      DM.cdsDinamica.Open;
+
+      L_QT_LEV.Caption := IntToStr(DM.cdsDinamica.Fields[0].AsInteger);
+      L_QTDEV.Caption  := IntToStr(DM.cdsDinamica.Fields[1].AsInteger);
+      L_TOT_TROCA.Caption := 'R$ '+FormatFloat('###,###0.00',DM.cdsDinamica.Fields[2].AsFloat);
+      DM.cdsDinamica.Close;
+
+
+
+      cdsEspecie.Close;
+      cdsEspecie.Params[0].AsDate    := StrToDate(DateToStr(Date));
+//      cdsEspecie.Params[1].AsInteger := frmPdv.recInformacoes.id_Usuario;
+      cdsEspecie.Open;
+
+      L_TOTAL_GERAL1.Caption := L_TOTAL_GERAL.Caption;
+
+      cdsTotalPecas.Close;
+      cdsTotalPecas.Params[0].AsInteger := StrToInt(frmpdv.L_LOJA.Caption);
+      cdsTotalPecas.Params[1].AsDate    := StrToDate(DateToStr(Date));
+      cdsTotalPecas.Params[2].AsDate    := StrToDate(DateToStr(Date));
+//      cdsTotalPecas.Params[3].AsInteger := frmPdv.recInformacoes.id_Usuario;
+      cdsTotalPecas.Open;
+
+    cdsTotalGeral.Close;
+    cdsTotalGeral.Params[0].AsDate := StrToDate(DateToStr(Date));
+    cdsTotalGeral.Params[1].AsInteger := StrToInt(frmPdv.L_CAIXA.Caption);
+    cdsTotalGeral.Open;
+
+    // TOTAL GERAL
+
+    DM.cdsDinamica.Close;
+    DM.cdsDinamica.IndexFieldNames:='';
+    DM.cdsDinamica.CommandText := ' SELECT SUM(P.vl_liquido) FROM tb_pdv P '+
+                                  ' WHERE P.DT_ORCAMENTO = '+QuotedStr(FormatDateTime('MM/DD/YYYY',StrToDate(DateToStr(Date))))+
+                                  ' AND P.caixa          = '+QuotedStr(frmPdv.L_CAIXA.Caption)+
+                                  ' AND P.status <> ''E'' AND P.status <> ''T'' AND P.status <> ''A''';
+    DM.cdsDinamica.Open;
+
+    L_TOTAL_GERAL_CAIXA.Caption := 'R$ '+FormatFloat('###,###0.00',DM.cdsDinamica.Fields[0].AsFloat);
+
+    // TOTAL GERAL PEÇAS
+
+    DM.cdsDinamica.Close;
+    DM.cdsDinamica.IndexFieldNames:='';
+    DM.cdsDinamica.CommandText := ' SELECT SUM(IP.QUANT) FROM TB_ITEM_PDV IP '+
+                                  ' JOIN TB_PDV P ON (P.NR_ORCAMENTO = IP.NR_ORCAMENTO)'+
+                                  ' WHERE P.DT_ORCAMENTO = '+QuotedStr(FormatDateTime('MM/DD/YYYY',StrToDate(DateToStr(Date))))+
+                                  ' AND P.ID_LOJA        = '+QuotedStr(frmPdv.L_LOJA.Caption)+
+                                  ' AND IP.status = ''V'' '+
+                                  ' AND P.STATUS = ''F''';
+    DM.cdsDinamica.Open;
+
+    L_TOTAL_PECAS.Caption := IntToStr(DM.cdsDinamica.Fields[0].AsInteger);
+
+
+    end;
+  end;
+end;
+
+procedure TfrmFechamentoCaixa.SpeedButton3Click(Sender: TObject);
+begin
+  Close;
+end;
+
+end.

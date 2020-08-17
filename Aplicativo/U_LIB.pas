@@ -1,0 +1,1359 @@
+unit U_LIB;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, Menus, Provider, DB, DBClient, Buttons, DBCtrls, Math,
+  ComCtrls, StdCtrls, Mask, ExtCtrls, DBGrids,QuickRpt, QRCtrls,
+  UD_PESQUISA;
+
+type
+  Valores = array of Variant;
+
+procedure Botoes(arBotoes:Valores; fForm:TForm);
+function Alterar(Tabela: TClientDataSet):Boolean;
+function Gravar(sTabela, sIndice : string; bFecha ,bRefresh: Boolean): Boolean;
+function Deletar(sTabela, sIndice : String): Boolean;
+//function Pesquisa(cdsTabela: TClientDataSet; aCampos,aTitulos: Array of String; sTabela,sChave,sCondicao,sTexto,sTitulo,sCadastro: String): Boolean;
+function Pesquisa(cdsTabela: TClientDataSet; aCampos,aTitulos: Array of String; iTamanho: Array of Integer;
+  sTabela,sChave,sCondicao,sTexto,sTitulo,sCadastro: String): Boolean;
+procedure Dialogo(sPagina,sTitulo,sFocus: String; aBotoes: Array of String);
+procedure CorMaskEdit(Edit: TMaskEdit; Situacao: String);
+function EncryptMsg (Msg1: String; EncryptNo: Integer): String;
+function DecryptMsg (Msg1: String; DecryptNo: Integer): String;
+function Zeros(Valor,Quant: Integer): String;
+function Tira_Acento(cStr: String): String;
+function XStrPos(const cFind,cStr: String; const nPos: Integer):Integer;
+function XStrReplace(const cFind,cReplace: String; cStr: String; nTimes: Integer): String;
+function DataExtenso(Data: TDate): String;
+function Ext3(sParte: String): String;
+function Extenso(dValor: Double; bMonetario: Boolean): String;
+procedure Imprimir(Nlin, Ncol:Integer; Var LinhaAtual:Integer; Var Arquivo:Text; Texto:Variant);
+procedure ImprimirSQP(Nlin, Ncol:Integer; Var LinhaAtual:Integer; Var Arquivo:Text; Texto:Variant);
+function Repete(sTexto,sChar: String; iQuant,iDirecao:Integer): String;
+procedure tbSetCapsLock(State: boolean);
+procedure RedimensionarGrid(dgGrid:TDBGrid; cdsTabela:TClientDataSet);
+function Gerapercentual(valor:real;Percent:Real):real;
+function FormatValor(Formato:string; Real_Valor:Real):real;
+function AntesDelete(sTabela, sCondicao:string):boolean;
+function DataValida(StrD: string): Boolean;
+function ChecaData(StrD: string): Boolean;
+function SomaDataValida(StrD: string; Dia: integer): String;
+function tbFimDoMes(const Data: TDateTime): boolean;
+function Datafinal(dataini:tdatetime; dias_uteis:integer):tdatetime;
+function ProcessoAdministrativo(sProcesso,sCaracter :string): integer;
+function SoInteiro(sCaracter,sValor : string): integer;
+function SoDizima(sCaracter,sValor : string): integer;
+Function EncontrarSubstituir (const Encontrar, substituir, Texto: String):string;
+Procedure SubstituirNoMemo (const Enc, subs: String; Var Texto: TQRMemo);
+function Justifica(mCad:string;mMAx:integer):string;
+function CorrigeCaracter(sTexto: String): String;
+function EncontrarNoMemo (const Encontrar: String; Var Texto: TQRMemo): integer;
+Function SegundoDiaDoMes(Data : TDateTime; lSabDom : Boolean) : TDateTime;
+Function DiaUtilAnterior(dData : TDateTime) : TDateTime;
+function Troca(Palavra : String; Velho, Novo : String) : String;
+function tbReplStr(const S: string; const Len: integer): string;
+function DefineTamanhoString(sTexto :string; iTamanho, iSentido: Integer): String;
+function ModificaCaracter(TEXTO: string): string;
+procedure cabecalho;
+procedure rodape;
+implementation
+
+uses uDm, uDialogo, uPdv;
+
+
+var
+  iCont, iCont2: Integer;
+const
+  eKeyViolation = 9729;
+  eRequiredField = 9732;
+  eFieldLocked = 10241;
+  eMasterHasDetail = 9734;
+  eForeignKey = 9733;
+
+  {Constantes para utilizacao da funcao Extenso}
+  Centenas: array[1..9] of string[12]=('CEM','DUZENTOS','TREZENTOS','QUATROCENTOS',
+                                       'QUINHENTOS','SEISCENTOS','SETECENTOS',
+                                       'OITOCENTOS','NOVECENTOS');
+  Dezenas : array[2..9] of string[10]=('VINTE','TRINTA','QUARENTA','CINQUENTA',
+                                       'SESSENTA','SETENTA','OITENTA','NOVENTA');
+  Dez     : array[0..9] of string[10]=('DEZ','ONZE','DOZE','TREZE','QUATORZE',
+                                       'QUINZE','DEZESSEIS','DEZESSETE',
+                                       'DEZOITO','DEZENOVE');
+  Unidades: array[1..9] of string[10]=('UM','DOIS','TRES','QUATRO','CINCO',
+                                       'SEIS','SETE','OITO','NOVE');
+  MoedaSingular = 'REAL';
+  MoedaPlural   = 'REAIS';
+  CentSingular  = 'CENTAVO';
+  CentPlural    = 'CENTAVOS';
+  Zero          = 'ZERO';
+
+
+
+procedure Botoes(arBotoes:Valores; fForm:TForm);
+var
+  iCont: Integer;
+begin
+  for iCont := 0 to Length(arBotoes)-1 do
+  begin
+    fForm.FindChildControl(arBotoes[iCont]).Enabled :=
+      not fForm.FindChildControl(arBotoes[iCont]).Enabled;
+  end;
+end;
+
+//altera os dados do registro corrente
+function Alterar(Tabela: TClientDataSet):Boolean;
+begin
+  Alterar := True;
+  with Tabela do
+  begin
+    if RecordCount = 0 then
+    begin
+      Application.MessageBox('Operação Impossível. Tabela vazia.', 'Atenção', MB_ICONWarning);
+      Alterar := False;
+    end
+    else
+    begin
+      try
+        Edit;
+      except
+        Application.MessageBox('Este registro já está sendo acessando por outro usuário.',
+          'Atenção', MB_ICONWarning);
+        Alterar := False;
+      end;
+    end;
+  end;
+end;
+
+function ModificaCaracter(TEXTO: string): string;
+var
+  i,tamanho: integer;
+  Texto_modificado: string;
+  Caracter: char;
+begin
+  Texto := AnsiUpperCase(Texto);
+  Tamanho := Length(Texto);
+  for i :=1 to Tamanho do
+    begin
+      Caracter := Texto[i];
+      case Caracter of
+        'À','Á','Ã','Â','Ä': Texto_Modificado := Texto_Modificado + 'A';
+        'È','É','Ê','Ë': Texto_Modificado := Texto_Modificado + 'E';
+        'Ì','Í','Î','Ï': Texto_Modificado := Texto_Modificado + 'I';
+        'Ò','Ó','Õ','Ô','Ö': Texto_Modificado := Texto_Modificado + 'O';
+        'Ù','Ú','Û','Ü': Texto_Modificado := Texto_Modificado + 'U';
+        'Ç': Texto_Modificado := Texto_Modificado + 'C';
+        'Ñ': Texto_Modificado := Texto_Modificado + 'N';
+        'Ÿ': Texto_Modificado := Texto_Modificado + 'Y';
+        'ª': Texto_Modificado := Texto_Modificado + 'a';
+        'º': Texto_Modificado := Texto_Modificado + 'o';
+      else
+        Texto_Modificado := Texto_Modificado + Caracter;
+      end;
+    end;
+  result := Texto_Modificado;
+end;
+//gravar registro (novo/alteracao) corrente
+function Gravar(sTabela, sIndice : string; bFecha ,bRefresh: Boolean): Boolean;
+var
+  iCodigo : Integer;
+begin
+  Result := false;
+  with DM do
+  begin
+    if sIndice <> '' then
+      iCodigo := (FindComponent('CDS_'+sTabela) AS TClientDataSet).FieldByName(sIndice).AsInteger;
+//    (FindComponent('CDS_'+sTabela) AS TClientDataSet).ApplyUpdates(0);
+    if (FindComponent('CDS_'+sTabela) AS TClientDataSet).ApplyUpdates(0) > 0 then
+      Application.MessageBox('Não consegui gravar os dados. Anote a mensagem de erro e acione o suporte.', 'Atenção', MB_ICONWarning)
+    else
+    begin
+      //CHAMA FUNÇÃO QUE COMMITA OS DADOS NO IBTRANSACTION
+/////      DM.SC_DADOS.AppServer.CommitInf(sTabela);
+      //
+      (FindComponent('CDS_'+sTabela) AS TClientDataSet).UpdateCursorPos;
+      (FindComponent('CDS_'+sTabela) AS TClientDataSet).Resync([]);
+      if bFecha then
+      begin
+        (FindComponent('CDS_'+sTabela) AS TClientDataSet).Close;
+        (FindComponent('CDS_'+sTabela) AS TClientDataSet).open;
+      end;
+      if bRefresh then
+        (FindComponent('CDS_'+sTabela) AS TClientDataSet).Refresh;
+      Result := true;
+    end;
+    if sIndice <> '' then
+      (FindComponent('CDS_'+sTabela) AS TClientDataSet).Locate(sIndice,iCodigo,[])
+  end;
+end;
+
+//apagar registro selecionado da tabela indicada
+function Deletar(sTabela, sIndice : String): Boolean;
+begin      
+  Deletar := False;
+  with DM do
+  begin
+    if (FindComponent('CDS_'+sTabela) AS TClientDataSet).RecordCount = 0 then
+      Application.MessageBox('Operação Impossível. Tabela vazia.', 'Atenção', MB_ICONWarning)
+    else
+    begin
+      if Application.MessageBox('Confirma exclusão deste registro?', 'Confirmação', MB_ICONQuestion+MB_YESNO) = IDYES then
+      begin
+        if (FindComponent('CDS_'+sTabela) AS TClientDataSet).FieldByName(sIndice).AsInteger = 0 then
+          Application.MessageBox('Operação Impossível. Este registro não pode ser excluido.', 'Atenção', MB_ICONWarning)
+        else
+        begin
+          try
+            (FindComponent('CDS_'+sTabela) AS TClientDataSet).Delete;
+            if (FindComponent('CDS_'+sTabela) AS TClientDataSet).ApplyUpdates(0) = 0 then
+/////              DM.SC_DADOS.AppServer.CommitInf(sTabela)
+            else
+              Application.MessageBox('Operação Impossível. Existem outros registros vinculados a este.', 'Atenção', MB_ICONWarning)
+          except
+            {on E:EDBEngineError do
+            begin
+              if (E as EDBEngineError).Errors[0].ErrorCode = eFieldLocked then
+                 Application.MessageBox('Este registro está sendo acessado por outro usuário. Exclusão impossível.',
+                   'Atenção', MB_ICONWarning)
+              else if (E as EDBEngineError).Errors[0].ErrorCode = eMasterHasDetail then
+                 Application.MessageBox('Este registro possui dados relacionados a ele. Exclusão impossível.',
+                   'Atenção', MB_ICONWarning);
+              raise;
+            end;
+            on EDataBaseError do
+            begin
+              Application.MessageBox('Não foi possível apagar este registro.', 'Atenção', MB_ICONWarning);
+              raise;
+            end;}
+          end;
+        end;
+      end;
+    end;
+  end;
+end;
+
+//pesquisa registros em uma tabela
+function Pesquisa(cdsTabela: TClientDataSet; aCampos,aTitulos: Array of String; iTamanho: Array of Integer;
+  sTabela,sChave,sCondicao,sTexto,sTitulo,sCadastro: String): Boolean;
+var
+  iCont, iCont2, iMax, iWidth: Integer;
+  sSQL: String;
+begin
+  //cdsTabela.Close;
+  //cdsTabela.Open;
+  frmPdv.sNovo := sCadastro;
+  //checa se é uma pesquisa dinamica
+  if cdsTabela.ProviderName = 'DSPDINAMICA' then
+  begin
+    cdsTabela.Close;
+    cdsTabela.IndexFieldNames := '';
+    cdsTabela.CommandText := '';
+    iCont2 := 0;
+    for iCont := 0 to Length(aCampos)-1 do
+    begin
+      if iCont <> 0 then
+        sSQL := sSQL+', ';
+      sSQL := sSQL+aCampos[iCont];
+    end;
+    if sCondicao <> '' then
+      sCondicao := ' WHERE '+sCondicao;
+    if sTexto <> '' then
+      cdsTabela.CommandText := 'SELECT '+sSQL+' FROM '+sTabela+sTexto
+    else
+      cdsTabela.CommandText := 'SELECT '+sSQL+' FROM '+sTabela+sCondicao;
+    frmPdv.Memo1.Text := cdsTabela.CommandText;
+    cdsTabela.Open;
+    for iCont := 0 to cdsTabela.Fields.Count-1 do
+    begin
+      cdsTabela.Fields[iCont].DisplayLabel := aTitulos[iCont];
+      //checa se o campo em questao é do tipo datetime/float para formata-los
+      if cdsTabela.Fields[iCont].DataType = ftDateTime then
+        TDateTimeField(cdsTabela.Fields[iCont]).DisplayFormat := 'dd/mm/yyyy'
+      else if cdsTabela.Fields[iCont].DataType = ftFloat then
+        TNumericField(cdsTabela.Fields[iCont]).DisplayFormat := '##,###,##0.00';
+    end;
+  end;
+
+  if not (cdsTabela.State in [dsEdit, dsInsert]) then
+  begin
+    //Cria uma nova instancia do formulario de pesquisa
+    Application.CreateForm(TFD_PESQUISA, FD_PESQUISA);
+
+    with FD_PESQUISA, DM do
+    begin
+      Caption := 'Pesquisa: '+sTitulo;
+      //LP_PESQUISA.Caption := 'Pesquisa: '+sTitulo;
+      DS_PESQUISA.DataSet := cdsTabela;
+      //Alimenta o grid com os dados passados na chamada
+      iWidth := 496;
+      SB_STATUS.Panels.Clear;
+      DG_PESQUISA.Columns.Clear;
+
+      if cdsTabela.ProviderName = 'DSPDINAMICA' then
+      begin
+        for iCont := StrToInt(sChave) to cdsTabela.Fields.Count-1 do
+        begin
+          DG_PESQUISA.Columns.Add;
+          DG_PESQUISA.Columns.Items[iCont-StrToInt(sChave)].FieldName := cdsTabela.Fields[iCont].FieldName; //Campos[iCont];
+          DG_PESQUISA.Columns.Items[iCont-StrToInt(sChave)].Title.Font.Style := [];
+          if iTamanho[iCont] = 0 then
+            iMax := Max(cdsTabela.Fields[iCont].Size, Length(cdsTabela.Fields[iCont].DisplayLabel))
+          else
+            iMax := iTamanho[iCont];
+
+          if (cdsTabela.Fields.Count-1) = 0 then
+            DG_PESQUISA.Columns.Items[iCont-StrToInt(sChave)].Width := iWidth
+          else if iWidth >= (iMax*8) then
+          begin
+            if iCont = (cdsTabela.Fields.Count-1) then
+              DG_PESQUISA.Columns.Items[iCont-StrToInt(sChave)].Width := iWidth
+            else
+            begin
+              DG_PESQUISA.Columns.Items[iCont-StrToInt(sChave)].Width := (iMax*8);
+              iWidth := iWidth - (iMax*8);
+            end;
+          end
+          else
+          begin
+            DG_PESQUISA.Columns.Items[iCont-StrToInt(sChave)].Width := iWidth;
+            Break;
+          end;
+          SB_STATUS.Panels.Add;
+          SB_STATUS.Panels[iCont-StrToInt(sChave)].Text := ' <Ctrl+F'+IntToStr(iCont)+'> '+cdsTabela.Fields[iCont].DisplayLabel;
+          SB_STATUS.Panels[iCont-StrToInt(sChave)].Width := Length(SB_STATUS.Panels[iCont-StrToInt(sChave)].Text)*7;
+          sCampo := cdsTabela.Fields[StrToInt(sChave)].FieldName;
+        end;
+      end
+      else
+      begin
+        for iCont := 0 to Length(aCampos)-1 do
+        begin
+          DG_PESQUISA.Columns.Add;
+          DG_PESQUISA.Columns.Items[iCont].FieldName := aCampos[iCont];
+          DG_PESQUISA.Columns.Items[iCont].Title.Font.Style := [];
+          if iTamanho[iCont] = 0 then
+            iMax := Max(cdsTabela.FieldByName(aCampos[iCont]).Size, Length(cdsTabela.FieldByName(aCampos[iCont]).DisplayLabel))
+          else
+            iMax := iTamanho[iCont];
+          if Length(aCampos) = 1 then
+            DG_PESQUISA.Columns.Items[iCont].Width := iWidth
+          else if iWidth >= (iMax*8) then
+          begin
+            if iCont = Length(aCampos)-1 then
+              DG_PESQUISA.Columns.Items[iCont].Width := iWidth
+            else
+            begin
+              DG_PESQUISA.Columns.Items[iCont].Width := (iMax*8);
+              iWidth := iWidth - (iMax*8);
+            end;
+          end
+          else
+          begin
+            DG_PESQUISA.Columns.Items[iCont].Width := iWidth;
+            Break;
+          end;
+          SB_STATUS.Panels.Add;
+          SB_STATUS.Panels[iCont].Text := ' <Ctrl+F'+IntToStr(iCont+1)+'> '+cdsTabela.FieldByName(aCampos[iCont]).DisplayLabel;
+          SB_STATUS.Panels[iCont].Width := Length(SB_STATUS.Panels[iCont].Text)*7;
+          sCampo := aCampos[0];
+        end;
+      end;
+
+      //checa limite do grid
+      iWidth := 0;
+      for iCont := 0 to DG_PESQUISA.Columns.Count-1 do
+        iWidth := iWidth + DG_PESQUISA.Columns.Items[iCont].Width;
+      iWidth := iWidth-(DG_PESQUISA.Columns.Count-1);
+      if (iWidth) > 496 then
+      begin
+        DG_PESQUISA.Columns.Items[DG_PESQUISA.Columns.Count-1].Width :=
+          DG_PESQUISA.Columns.Items[DG_PESQUISA.Columns.Count-1].Width - (496-iWidth);
+      end
+      else if (iWidth) < 496 then
+      begin
+        DG_PESQUISA.Columns.Items[DG_PESQUISA.Columns.Count-1].Width :=
+          DG_PESQUISA.Columns.Items[DG_PESQUISA.Columns.Count-1].Width + (iWidth-496);
+      end;
+
+      DG_PESQUISA.Columns.Items[0].Title.Font.Style := [fsBold];
+      cdsTabela.IndexFieldNames := sCampo;
+      sTexto := sTexto;
+      ShowModal;
+      Pesquisa := frmPdv.bPesquisa;
+    end;
+  end;
+end;
+
+procedure Dialogo(sPagina,sTitulo,sFocus: String; aBotoes: Array of String);
+begin
+ //posiciona na página do notbook
+  frmDialago.NB_DIALOGO.ActivePage := 'P_'+sPagina;
+  //dimensiona tamanho da janela
+  frmDialago.Height := (frmDialago.FindComponent('B_'+sPagina) as TBevel).Height+36+33;//36 É O TOPO DO FORM E 33 É O BEVEL BOTOM
+  frmDialago.Width := (frmDialago.FindComponent('B_'+sPagina) as TBevel).Width+2;
+  //define o título
+  frmDialago.Caption := ' '+sTitulo;
+  //define o componente q receberá o focus
+  frmDialago.sCampoFocus := sFocus;
+  //posiciona os botões na barra da janela
+  iCont2 := ((Length(aBotoes))*100)+16;
+  for iCont := 0 to Length(aBotoes)-1 do
+  begin
+    (frmDialago.FindComponent(aBotoes[iCont]) as TBitBtn).Top := frmDialago.Height-38-32;//altura dos botoes
+    (frmDialago.FindComponent(aBotoes[iCont]) as TBitBtn).Left := frmDialago.Width-iCont2;
+    iCont2 := iCont2 - 104;
+  end;
+//  FD_DIALOGO.Top := (600-FD_DIALOGO.Height) div 2;
+//  FD_DIALOGO.Left := (800-FD_DIALOGO.Width) div 2;
+  if not frmDialago.Showing then
+    frmDialago.ShowModal;
+
+end;
+
+{//pesquisa registros em uma tabela
+function Pesquisa(cdsTabela: TClientDataSet; sCampos,sTitulos,sTabela,sChave,sCondicao,sTexto,sTitulo: String): Boolean;
+var
+  iCont, iCont2, iMax, iWidth: Integer;
+  Campos, Titulos: TStringList;
+  sSQL: String;
+begin
+  Campos := TStringList.Create;
+  Titulos := TStringList.Create;
+  Campos.CommaText := sCampos;
+  Titulos.CommaText := sTitulos;
+  if cdsTabela.ProviderName = 'DSP_DINAMICA' then
+  begin
+    //cdsTabela.FieldList.Clear;
+    cdsTabela.Close;
+    cdsTabela.CommandText := '';
+    iCont2 := 0;
+    for iCont := 0 to Campos.Count-1 do
+    begin
+      if iCont2 <> 0 then
+        sSQL := sSQL+', ';
+      sSQL := sSQL+Campos[iCont];
+      Inc(iCont2);
+    end;
+    if sChave <> '' then
+      sChave := ', '+sChave;
+    if sCondicao <> '' then
+      sCondicao := ' WHERE '+sCondicao;
+    cdsTabela.CommandText := 'SELECT '+sSQL+sChave+' FROM '+sTabela+sCondicao;
+    cdsTabela.Open;
+  end;
+  if not (cdsTabela.State in [dsEdit, dsInsert]) then
+  begin
+    //Cria uma nova instancia do formulario de pesquisa
+    Application.CreateForm(TFD_PESQUISA, FD_PESQUISA);
+
+    with FD_PESQUISA, DM_DADOS_CLIENTE do
+    begin
+      //limpa colunas da grid, disvincula datasource e se pesquisa dinamica abre a tabela
+      //DS_PESQUISA.DataSet := nil;
+      //DG_PESQUISA.Columns.Clear;
+      //if cdsTabela.ProviderName = 'DSP_DINAMICA' then
+      //  cdsTabela.Open;
+
+      Caption := 'Pesquisa de '+sTitulo;
+      LP_PESQUISA.Caption := 'Pesquisa de '+sTitulo;
+      sNovoCadastro := Copy(cdsTabela.Name, 5,20);
+      DS_PESQUISA.DataSet := cdsTabela;
+      //Alimenta o grid com os dados passados na chamada
+      iWidth := 496;
+      SB_STATUS.Panels.Clear;
+      //DG_PESQUISA.Columns.Clear;
+      for iCont := 0 to Campos.Count-1 do
+      begin
+        DG_PESQUISA.Columns.Add;
+        DG_PESQUISA.Columns.Items[iCont].FieldName := Campos[iCont];
+        if cdsTabela.ProviderName = 'DSP_DINAMICA' then
+          DG_PESQUISA.Columns.Items[iCont].Title.Caption := Titulos[iCont];
+        DG_PESQUISA.Columns.Items[iCont].Title.Font.Style := [];
+        iMax := Max(cdsTabela.FieldByName(Campos[iCont]).Size, Length(cdsTabela.FieldByName(Campos[iCont]).DisplayLabel));
+        if Campos.Count = 1 then
+          DG_PESQUISA.Columns.Items[iCont].Width := iWidth
+        else if iWidth >= (iMax*8) then
+        begin
+          if iCont = Campos.Count-1 then
+            DG_PESQUISA.Columns.Items[iCont].Width := iWidth
+          else
+          begin
+            DG_PESQUISA.Columns.Items[iCont].Width := (iMax*8);
+            iWidth := iWidth - (iMax*8);
+          end;
+        end
+        else
+        begin
+          DG_PESQUISA.Columns.Delete(iCont);
+          DG_PESQUISA.Columns.Items[iCont-StrToInt(sChave)].Width := DG_PESQUISA.Columns.Items[iCont-StrToInt(sChave)].Width + iWidth;
+          Break;
+        end;
+        SB_STATUS.Panels.Add;
+        SB_STATUS.Panels[iCont].Text := ' <Ctrl+F'+IntToStr(iCont+1)+'> '+cdsTabela.FieldByName(Campos[iCont]).DisplayLabel;
+        SB_STATUS.Panels[iCont].Width := Length(SB_STATUS.Panels[iCont].Text)*7;
+      end;
+      DG_PESQUISA.Columns.Items[0].Title.Font.Style := [fsBold];
+      sCampo := Campos[0];
+      cdsTabela.IndexFieldNames := sCampo;
+      sTexto := sTexto;
+      Campos.Destroy;
+      Titulos.Destroy;
+      ShowModal;
+      Pesquisa := F_MENU_CLIENTE.bPesquisa;
+    end;
+  end;
+end;}
+
+//mudar cor do DBEdit
+procedure CorDBEdit(Edit: TDBEdit; Situacao: String; Status: TStatusBar; Panel: Integer);
+begin
+  if Situacao = '0' then
+  begin
+    Edit.Font.Style := [fsBold];
+    Edit.Color := $00FFFFE8;
+    if Status <> nil then
+      Status.Panels[Panel].Text := ' '+Copy(Edit.Hint, Pos('|', Edit.Hint)+1, 100);
+  end
+  else if Situacao = '2' then
+  begin
+    Edit.Font.Style := [fsBold];
+    Edit.Color := $00BEBEBE;
+    if Status <> nil then
+      Status.Panels[Panel].Text := ' '+Copy(Edit.Hint, Pos('|', Edit.Hint)+1, 100);
+  end
+  else
+  begin
+    Edit.Font.Style := [];
+    Edit.Color := clWindow;
+    if Status <> nil then
+      Status.Panels[Panel].Text := '';
+    //'Clique no botão ou pressione a tecla <Barra de espaço>...|Clique no botão ou pressione a tecla <Barra de espaço>...';
+  end;
+end;
+
+//mudar cor do Edit
+procedure CorEdit(Edit: TEdit; Situacao: String);
+begin
+  if Situacao = '0' then
+  begin
+    Edit.Font.Style := [fsBold];
+    Edit.Color := $00FFFFE8;
+  end
+  else if Situacao = '2' then
+  begin
+    Edit.Font.Style := [fsBold];
+    Edit.Color := $00BEBEBE;
+  end
+  else
+  begin
+    Edit.Font.Style := [];
+    Edit.Color := clWindow; //$00BEBEBE;
+  end;
+end;
+
+//mudar cor do MaskEdit
+procedure CorMaskEdit(Edit: TMaskEdit; Situacao: String);
+begin
+  if Situacao = '0' then
+  begin
+    Edit.Font.Style := [fsBold];
+    Edit.Color := $00FFFFE8;
+  end
+  else
+  begin
+    Edit.Font.Style := [];
+    Edit.Color := clWindow; //$00BEBEBE;
+  end;
+end;
+
+//criptografar textos
+function EncryptMsg (Msg1: string; EncryptNo: integer): string;
+var
+  ResultStr: string;
+  Temp: char;
+  I, EncryptIndex: integer;
+begin
+  ResultStr := '';
+  Temp := ' ';
+  //Encrypt message routine
+  for I := 1 to length(Msg1) do
+  begin
+    for EncryptIndex := 1 to EncryptNo do
+    begin
+      Temp := Succ (Msg1[I]);
+      Msg1[I] := Temp;
+    end;
+    ResultStr := ResultStr + Temp;
+  end;
+  EncryptMsg := ResultStr;
+end;
+
+//descriptografar textos
+function DecryptMsg (Msg1: string; DecryptNo: integer): string;
+var
+  ResultStr: string;
+  Temp: char;
+  I, DecryptIndex: integer;
+begin
+  ResultStr := '';
+  Temp := ' ';
+  //Decrypt message routine
+  for I := 1 to length(Msg1) do
+  begin
+    for DecryptIndex := 1 to DecryptNo do
+    begin
+      Temp := Pred (Msg1[I]);
+      Msg1[I] := Temp;
+    end;
+    ResultStr := ResultStr + Temp;
+  end;
+  DecryptMsg := ResultStr;
+end;
+
+//preencher com zeros a esquerda de um numero
+function Zeros(Valor,Quant: Integer): String;
+var
+  liCont, liQuant: LongInt;
+begin
+  liQuant := 1;
+  for liCont := 1 to Quant do
+    liQuant := liQuant * 10;
+  Zeros := Copy(IntToStr(Valor + liQuant), 2, Quant);
+end;
+
+// Converte caracteres acentuados para caracteres sem acento
+function Tira_Acento(cStr :string) : string;
+const
+  aChr : array[0..21] of array[0..1] of char = (
+    ('ã','a'),('à','a'),('á','a'),('é','e'),('ê','e'),
+    ('í','i'),('ó','o'),('ú','u'),('ü','u'),('ç','c'),
+    ('Ã','A'),('À','A'),('Á','A'),('É','E'),('Ê','E'),
+    ('Í','I'),('Ó','O'),('Ú','U'),('Ü','U'),('Ç','C'),
+    ('º','.'),('ª','a'));
+var
+  nLoop : integer;
+begin
+  for nLoop := 0 to 21 do //Length(pcChr) do
+    cStr := XStrReplace(aChr[nLoop,0], aChr[nLoop,1], cStr, 0);
+  Result := cStr;
+  //StrAnsiToAlpha
+end;
+
+//Retorna se cFind esta contido em cStr, iniciando pesquisa em nPos
+function XStrPos(const cFind, cStr: String; const nPos: Integer): Integer;
+begin
+  Result := Pos(cFind, Copy(cStr, nPos, (Length(cStr) - nPos) + 1));
+  if (Result > 0) and (nPos > 1) then
+    Inc(Result, nPos - 1);
+  //XStrPos
+end;
+
+//Retorna cStr após substituir cFind por cReplace
+function XStrReplace(const cFind, cReplace : string; cStr : string; nTimes :
+integer) : string;
+var
+  lFindInReplace: boolean;
+  nAdd, nCount, nLen, nPos : word;
+begin
+  if Length(cFind) = 0 then
+    Exit;
+  lFindInReplace := Pos(cFind, cReplace) > 0;
+  nAdd := Length(cReplace);
+  nLen := Length(cFind);
+  nCount := 0;
+  nPos := Pos(cFind, cStr);
+  while nPos > 0 do
+  begin
+    System.Delete(cStr, nPos, nLen);
+    System.Insert(cReplace, cStr, nPos);
+    nCount := Succ(nCount);
+    if (nTimes > 0) and (nCount >= nTimes) then
+      Break;
+    if lFindInReplace then
+    begin
+      Inc(nPos, nAdd);
+      nPos := XStrPos(cFind, cStr, nPos);
+    end
+    else
+      nPos := Pos(cFind, cStr);
+  end;
+  Result := cStr;
+  //XStrReplace
+end;
+
+function DataExtenso(Data: TDate): String;
+var
+  sDia, sMes, sAno: String;
+begin
+  sDia := Copy(DateToStr(Data), 1, 2);
+  sMes := Copy(DateToStr(Data), 4, 2);
+  sAno := Copy(DateToStr(Data), 7, 4);
+  Case StrToInt(sMes) of
+    1: sMes := ' de janeiro de ';
+    2: sMes := ' de fevereiro de ';
+    3: sMes := ' de março de ';
+    4: sMes := ' de abril de ';
+    5: sMes := ' de maio de ';
+    6: sMes := ' de junho de ';
+    7: sMes := ' de julho de ';
+    8: sMes := ' de agosto de ';
+    9: sMes := ' de setembro de ';
+    10: sMes := ' de outubro de ';
+    11: sMes := ' de novembro de ';
+    12: sMes := ' de dezembro de ';
+  end;
+  DataExtenso := sDia + sMes + sAno;
+end;
+
+{função valores monetários por extenso}
+function Ext3(sParte:string):String;
+var
+  sBase: string;
+  iDigito: integer;
+begin
+ sBase := '';
+ iDigito := StrToInt(sParte[1]);
+ if iDigito=0 then
+  sBase := ''
+ else
+  sBase := Centenas[iDigito];
+ if (iDigito = 1) and (sParte > '100') then
+  sBase := 'CENTO';
+ iDigito := StrToInt(sParte[2]);
+ if iDigito = 1 then
+  begin
+   iDigito := StrToInt(sParte[3]);
+   if sBase <> '' then
+    sBase := sBase + ' E ';
+   sBase := sBase + Dez[iDigito];
+  end
+ else
+  begin
+   if (sBase <> '') and (iDigito > 0) then
+    sBase := sBase + ' E ';
+   if iDigito > 1 then
+    sBase := sBase + Dezenas[iDigito];
+   iDigito := StrToInt(sParte[3]);
+   if iDigito > 0 then
+    begin
+     if sBase <> '' then sBase := sBase + ' E ';
+     sBase := sBase + Unidades[iDigito];
+    end;
+  end;
+ Result := sBase;
+end;
+
+function Extenso(dValor: Double; bMonetario: Boolean):String;
+var
+  sComotexto: string;
+  sParte: string;
+begin
+  Result := '';
+  sComotexto := FloatToStrF(Abs(dValor),ffFixed,18,2);
+  {Acrescenta zeros a esquerda ate 12 digitos}
+  while length(sComotexto) < 15 do
+    Insert('0',sComotexto,1);
+  {Retira caracteres a esquerda para o máximo de 12 digitos}
+  while length(sComotexto) > 15 do
+    delete(sComotexto,1,1);
+
+  {Calcula os bilhões}
+  sParte := Ext3(Copy(sComotexto,1,3));
+  if StrToInt(Copy(sComotexto,1,3)) = 1 then
+    sParte := sParte + ' BILHÃO'
+  else if sParte <> '' then
+    sParte := sParte + ' BILHÕES';
+  Result := sParte;
+
+  {Calcula os milhões}
+  sParte := Ext3(Copy(sComotexto,4,3));
+  if sParte <> '' then
+  begin
+    if Result <> '' then
+      Result := Result + ', ';
+    if StrToInt(Copy(sComotexto,4,3)) = 1 then
+      sParte := sParte + ' MILHÃO'
+    else
+      sParte := sParte + ' MILHÕES';
+    Result := Result + sParte;
+  end;
+
+  {Calcula os nilhares}
+  sParte := Ext3(Copy(sComotexto,7,3));
+  if sParte <> '' then
+  begin
+    if Result <> '' then
+      Result := Result + ', ';
+    sParte := sParte + ' MIL';
+    Result := Result + sParte;
+  end;
+
+  {Calcula as unidades}
+  sParte := Ext3(Copy(sComotexto,10,3));
+  if sParte <> '' then
+  begin
+    if Result <> '' then
+      if Frac(dValor) = 0 then
+        Result := Result + ' E '
+      else
+        Result := Result + ', ';
+    Result := Result + sParte;
+  end;
+
+  {Acrescenta o texto da moeda}
+  if bMonetario then
+  begin
+    if Int(dValor) = 1 then
+      sParte := ' ' + MoedaSingular
+    else
+      sParte := ' ' + MoedaPlural;
+    if Copy(sComotexto,7,6) = '000000' then
+      sParte := 'DE ' + MoedaPlural;
+    Result := Result + sParte;
+  end;
+
+  {Se o dValor for zero, limpa o resultado}
+  if int(dValor) = 0 then
+    Result := '';
+
+  {Calcula os centavos}
+  if bMonetario then
+  begin
+    sParte := Ext3('0'+Copy(sComotexto,14,2));
+    if sParte <> '' then
+    begin
+      if Result <> '' then
+        Result := Result + ' E ';
+      if sParte = Unidades[1] then
+        sParte := sParte + ' '+CentSingular
+      else
+        sParte := sParte + ' '+CentPlural;
+      Result := Result + sParte;
+    end;
+  end;
+
+  {Se o dValor for zero, assume a constante ZERO}
+  if dValor = 0 then
+    Result := Zero;
+end;
+
+procedure Imprimir(Nlin, Ncol:Integer; Var LinhaAtual:Integer; Var Arquivo:Text; Texto:Variant);
+  {Função para impressão de linhas em um relatorio}
+var
+  X: Integer;
+begin
+  Write(Arquivo,#13);
+  If Nlin <> LinhaAtual then
+  begin
+    for X := LinhaAtual to (Nlin-1) do
+    begin
+      WriteLn(Arquivo,'');
+      LinhaAtual := LinhaAtual+1;
+    end;
+  end;
+  If Ncol > 0 then
+  begin
+    For X := 0 to Ncol do
+    begin
+      Write(Arquivo,' ');
+    end;
+  end;
+  If LinhaAtual >= 63 then { 63 É O NÚMERO DA ÚLTIMA LINHA ANTES DO RODAPÉ}
+  begin
+    For X := 63 to 67 do { 67 É A QUANTIDADE DE LINHAS POR PÁGINA }
+    begin
+      Writeln(Arquivo,'');
+      LinhaAtual := 1;
+    end;
+  end;
+  Write(Arquivo,Texto);
+end;
+
+procedure ImprimirSQP(Nlin, Ncol:Integer; Var LinhaAtual:Integer; Var Arquivo:Text; Texto:Variant);
+  {Função para impressão de linhas em um relatorio sem quebra de paginas}
+var
+  X: Integer;
+begin
+  Write(Arquivo,#13);
+  If Nlin <> LinhaAtual then
+  begin
+    for X := LinhaAtual to (Nlin-1) do
+    begin
+      WriteLn(Arquivo,'');
+      LinhaAtual := LinhaAtual+1;
+    end;
+  end;
+  If Ncol > 0 then
+  begin
+    For X := 0 to Ncol do
+    begin
+      Write(Arquivo,' ');
+    end;
+  end;
+  {If LinhaAtual >= 63 then //63 É O NÚMERO DA ÚLTIMA LINHA ANTES DO RODAPÉ
+  begin
+    For X := 63 to 67 do //67 É A QUANTIDADE DE LINHAS POR PÁGINA
+    begin
+      Writeln(Arquivo,'');
+      LinhaAtual := 1;
+    end;
+  end;}
+  Write(Arquivo,Texto);
+end;
+
+function Repete(sTexto,sChar: String; iQuant,iDirecao:Integer): String;
+var
+  iCont: Integer;
+begin
+  result := sTexto;
+  for iCont := 0 to iQuant-Length(sTexto) do
+  begin
+    if iDirecao = 0 then
+      result := result + sChar
+    else
+      result := sChar + result;
+  end;
+end;
+
+{function Versao: String;
+var
+   Dummy: THandle;
+   BufferSize, Len: Integer;
+   Buffer: PChar;
+   LoCharSet, HiCharSet: Word;
+   Translate, Return: Pointer;
+   StrFileInfo, Flags: string;
+begin
+   BufferSize := GetFileVersionInfoSize(PChar(Application.ExeName), Dummy);
+   if BufferSize <> 0 then begin
+      GetMem(Buffer, Succ(BufferSize));
+      try
+         if GetFileVersionInfo(PChar(Application.ExeName), 0, BufferSize, Buffer) then
+            if VerQueryValue(Buffer, '\VarFileInfo\Translation', Translate, UINT(Len)) then begin
+               LoCharSet := LoWord(Longint(Translate^));
+               HiCharSet := HiWord(Longint(Translate^));
+               StrFileInfo := Format('\StringFileInfo\0%x0%x\%s', [LoCharSet, HiCharSet, 'FileVersion']);
+               if VerQueryValue(Buffer, PChar(StrFileInfo), Return, UINT(Len)) then Result:= strpas(PChar(Return));
+            end;
+      except
+         Result := 'Vazio';
+      end;
+   end;
+end;}
+
+//Esta função liga/desliga Caps Lock, conforme o parãmetro State
+procedure tbSetCapsLock(State: boolean);
+begin
+  if (State and ((GetKeyState(VK_CAPITAL) and 1) = 0)) or
+     ((not State) and ((GetKeyState(VK_CAPITAL) and 1) = 1)) then
+  begin
+    keybd_event(VK_CAPITAL, $45, KEYEVENTF_EXTENDEDKEY or 0, 0);
+    keybd_event(VK_CAPITAL, $45, KEYEVENTF_EXTENDEDKEY or KEYEVENTF_KEYUP, 0);
+  end;
+end;
+
+procedure RedimensionarGrid(dgGrid:TDBGrid; cdsTabela:TClientDataSet);
+var
+  iCont,iQuant,iWidth: Integer;
+begin
+  iWidth := 0;
+  iQuant := dgGrid.Columns.Count-1;
+  for iCont := 1 to iQuant do
+    iWidth := iWidth + dgGrid.Columns[iCont].Width;
+  iWidth := iWidth + iQuant;
+  if cdsTabela.RecordCount > 1 then
+  begin
+    dgGrid.Columns[0].Width := (dgGrid.Width-iWidth)-17;
+  end
+  else
+  begin
+    dgGrid.Columns[0].Width := dgGrid.Width-iWidth;
+  end;
+end;
+
+function Gerapercentual(valor:real;Percent:Real):real;
+// Retorna a porcentagem de um valor
+var
+  sValor : string;
+begin
+  percent := percent / 100;
+  try
+    valor := valor + (valor * Percent);
+  finally
+    result := FormatValor('###########0.00', valor);
+  end;
+end;
+
+function FormatValor(Formato:string; Real_Valor : Real):real;
+var
+  sReal_Valor : string;
+begin
+  sReal_Valor := FormatFloat(Formato, Real_Valor);
+  result := StrToFloat(sReal_Valor);
+end;
+
+function AntesDelete(sTabela, sCondicao:string):boolean;
+begin
+{  with DM do
+  begin
+    CDS_TABELA.CommandText := 'DELETE FROM '+sTabela;
+    if sCondicao <> '' then
+    begin
+      CDS_TABELA.CommandText := CDS_TABELA.CommandText +' WHERE '+sCondicao;
+    end;
+    CDS_TABELA.Execute;
+  end;}
+end;
+
+function DataValida(StrD: string): Boolean;
+{Testa se uma data é valida}
+begin
+  Result := true;
+  try
+    StrToDate(StrD);
+  except
+    on EConvertError do Result:=False;
+  end;
+end;
+
+function ChecaData(StrD: string): Boolean;
+{Testa se uma data é valida}
+begin
+{  Result := true;
+  DM.CDS_DINAMICA.Close;
+  DM.CDS_DINAMICA.CommandText := 'SELECT * FROM FERIADO';
+  DM_DADOS_CLIENTE.CDS_DINAMICA.Open;
+  //checa se a data é um dia útil
+  if DayOfWeek(StrToDate(StrD)) in [1,7] then
+  begin
+    Result := false;
+  end
+  //checa se a data é um feriado
+  else if DM_DADOS_CLIENTE.CDS_DINAMICA.Locate('DS_DATA',Copy(StrD,1,5),[]) then
+  begin
+    Result := false;
+  end;
+  //checa se a data é válida
+  if not DataValida(StrD) then
+  begin
+    Result := false;
+  end;}
+end;
+
+function SomaDataValida(StrD: string; Dia: integer): String;
+label Retornar;
+var
+  dDataAtual, dDataAntiga: TDateTime;
+  nova_data : integer;
+  fim_data : string;
+  iAno, iMes, iDia, iDia2, iMes2 :word;
+  iCont :integer;
+begin
+  dDataAntiga := StrTodate(StrD);
+  if tbFimDoMes(dDataAntiga) then
+  begin
+    DecodeDate(dDataAntiga, iAno, iMes, iDia);
+    iDia := Dia;
+    if iMes = 12 then
+    begin
+      iMes := 1;
+      iAno := iAno + 1;
+    end
+    else
+      iMes := iMes + 1;
+    TryEncodeDate(iAno, iMes, iDia, dDataAtual);
+  end
+  else
+  begin
+    DecodeDate(dDataAntiga, iAno, iMes, iDia);
+    for iCont := 1 to Dia do
+    begin
+      TryEncodeDate(iAno,iMes, (iDia+1), dDataAtual);
+      if tbFimDoMes(dDataAtual) then
+      begin
+        iDia := 1;
+        if iMes = 12 then
+        begin
+          iMes := 1;
+          iAno := iAno + 1;
+        end
+        else
+          iMes := iMes + 1;
+      end
+      else
+        iDia := iDia + 1;
+    end;
+  end;
+  while not ChecaData(DateToStr(dDataAtual)) do
+  begin
+    dDataAntiga := dDataAtual;
+    if tbFimDoMes(dDataAntiga) then
+    begin
+      DecodeDate(dDataAntiga, iAno, iMes, iDia);
+      iDia := Dia;
+      TryEncodeDate(iAno,(iMes+1), iDia, dDataAtual);
+    end
+    else
+    begin
+      DecodeDate(dDataAntiga, iAno, iMes, iDia);
+      TryEncodeDate(iAno,iMes, (iDia+1), dDataAtual);
+    end;
+  end;
+  Result := FormatDateTime('dd/mm/yyyy',dDataAtual);
+  //Result := FormatDateTime('dd/mm/yyyy',StrTodate(IntToStr(nova_data)+'/'+fim_data));
+end;
+
+// Esta função retorna true se a data passada como parâmetro é fim de mês.
+//Retorna false caso contrário.
+function tbFimDoMes(const Data: TDateTime): boolean;
+var
+  Ano, Mes, Dia, dia2: Word;
+  data2:tdatetime;
+begin
+  DecodeDate(Data, Ano, Mes, Dia);
+  Dia2 := dia + 1;
+  if TryEncodeDate(Ano,Mes,Dia2,Data2) then
+    result := false
+  else
+    result := true;
+end;
+
+// Retorna uma data acresçida de mais um certo número de dias
+// uteis descontando os fins de semana
+function Datafinal(dataini:tdatetime; dias_uteis:integer):tdatetime;
+var dw:integer;
+begin
+  dw := DayOfWeek(dataini)-1;
+  result := dataini+dias_uteis+((dias_uteis-1+dw) div 5)*2;
+end;
+
+function ProcessoAdministrativo(sProcesso,sCaracter :string): Integer;
+begin
+  result := pos(sCaracter,sProcesso);
+end;
+
+function SoInteiro(sCaracter,sValor : string): integer;
+var
+  sNovoValor : string;
+  iFinal : integer;
+begin
+  if sValor <> '' then
+  begin
+    //pos(sCaracter,sValor);
+    iFinal := pos(sCaracter,sValor) - 1;
+    sNovoValor := Copy(sValor,1,iFinal);
+    Result := StrToInt(sNovoValor);
+  end
+  else
+    Result := 0;
+end;
+
+function SoDizima(sCaracter,sValor : string): integer;
+var
+  sNovoValor : string;
+  iInicio : integer;
+begin
+  if sValor <> '' then
+  begin
+    iInicio := pos(sCaracter,sValor) + 1;
+    sNovoValor := Copy(sValor,iInicio,10);
+    Result := StrToInt(sNovoValor);
+  end
+  else
+    Result := 0;
+end;
+
+Function EncontrarSubstituir (const Encontrar, substituir, Texto: String):string;
+Var
+  Posicao: Integer;
+  Linha: string;
+Begin
+  Linha := Texto;
+  Repeat
+    Posicao:=Pos(Encontrar,Linha);
+    If Posicao > 0 then
+    Begin
+      Delete(Linha,Posicao,Length(Encontrar));
+      Insert(Substituir,Linha,Posicao);
+      Result := Linha;
+    end;
+  until Posicao = 0;
+  Result := Linha;
+end;
+
+Procedure SubstituirNoMemo (const Enc, subs: String; Var Texto: TQRMemo);
+Var
+  i, Posicao: Integer;
+  Linha: string;
+Begin
+  For i:= 0 to Texto.Lines.count - 1 do
+  begin
+    Linha := Texto. Lines[i];
+    Repeat
+      Posicao:=Pos(Enc,Linha);
+      If Posicao > 0 then
+      Begin
+        Delete(Linha,Posicao,Length(Enc));
+        Insert(Subs,Linha,Posicao);
+        Texto.Lines[i]:=Linha;
+      end;
+    until Posicao = 0;
+  end;
+end;
+
+function Justifica(mCad:string;mMAx:integer):string;
+var
+  mPos,mPont,mTam,mNr,mCont:integer;
+  mStr:string;
+begin
+  mTam:=Length(mCad);
+  if mTam>=mMax then
+    Result:=copy(mCad,1,mMax)
+  else
+    mStr:='';
+  mCont:=0;
+  mPont:=1;
+  mNr:=mMax-mTam;
+  while mCont<mNr do
+  begin
+    mPos:=pos(mStr,copy(mCad,mPont,100));
+    if mPos=0 then
+    begin
+      mStr:=mStr+' ';
+      mPont:=1;
+      continue;
+    end
+    else
+    begin
+      mCont:=mCont+1;
+      Insert(' ',mCad,mPos+mPont);
+      mPont:=mPont+mPos+length(mStr);
+    end;
+    Result:=mCad;
+  end;
+end;
+
+function CorrigeCaracter(sTexto: String): String;
+const
+  aCar: array[0..13] of array[0..1] of char = (
+    ('¢','Ó'),('‡','Ç'),('¡','Í'),('€','Ç'),('“','Ô'),('„','Ã'),('™','Õ'),
+    ('ˆ','Ê'),('Ž','Ã'),('”','Õ'),('»',' '),('«',' '),('¯','-'),('®',' '));
+var
+  iLoop, iCont, iPos: Integer;
+begin
+  for iLoop := 0 to 5 do
+  begin
+    for iCont := 0 to 13 do
+    begin
+      iPos := Pos(aCar[iCont,0], sTexto);
+      if iPos > 0 then
+      begin
+        Delete(sTexto, iPos, 1);
+        Insert(aCar[iCont,1], sTexto, iPos);
+      end;
+    end;
+  end;
+  Result := sTexto;
+end;
+
+
+Function EncontrarNoMemo (const Encontrar: String; Var Texto: TQRMemo): integer;
+Var
+  i, Posicao: Integer;
+  Linha: string;
+Begin
+  For i:= 0 to Texto.Lines.count - 1 do
+  begin
+    Linha := Texto. Lines[i];
+    Repeat
+      Posicao:=Pos(Encontrar,Linha);
+      If Posicao > 0 then
+      Begin
+        Delete(Linha,Posicao,Length(Encontrar));
+        Insert('',Linha,Posicao);
+        Texto.Lines[i]:=Linha;
+        Result := Posicao;
+      end;
+    until Posicao = 0;
+  end;
+end;
+          
+Function SegundoDiaDoMes(Data : TDateTime; lSabDom : Boolean) : TDateTime;
+var
+  Ano, Mes, Dia : word;
+  DiaDaSemana : Integer;
+begin
+  DecodeDate (Data, Ano, Mes, Dia);
+  Dia := 2;
+  if lSabDom Then
+  begin
+    DiaDaSemana := DayOfWeek (Data);
+    if DiaDaSemana = 1 Then
+      Dia := 2
+    else
+    if DiaDaSemana = 7 Then
+      Dia := 3;
+  end;
+  Result := EncodeDate (Ano, Mes, Dia);
+end;
+
+Function DiaUtilAnterior (dData : TDateTime) : TDateTime;
+begin
+  if DayOfWeek(dData) = 7 then
+    dData := dData - 1
+  else
+  if DayOfWeek(dData) = 1 then
+    dData := dData - 2;
+    DiaUtilAnterior := dData;
+end;
+
+function Troca(Palavra : String; Velho, Novo : String) : String;
+var
+  i : Integer;
+begin
+  Result := '';
+  for i := 1 to Length(Palavra) do
+    if Palavra[i] = Velho then
+      Result := Result + Novo
+    else
+      Result := Result + Palavra[i];
+end;
+
+function tbReplStr(const S: string; const Len: integer): string;
+begin
+  Result := '';
+  while Length(Result) < Len do
+  Result := Result + S;
+  Result := Copy(Result, 1, Len);
+end;
+
+//preencher com espaços em branco o lado direito de uma string
+function DefineTamanhoString(sTexto :string; iTamanho, iSentido: Integer): String;
+var
+  iCount, iDif: Integer;
+  sVazio : string;
+begin
+  iDif := iTamanho - Length(sTexto);
+  if idif < 0 then
+    Result := Copy(sTexto, 1, iTamanho)
+  else
+  begin
+//    for iCount := 1 to iDif do
+//      sTexto := sTexto + ' ';
+    if iSentido = 0 then
+      sTexto := sTexto + StringOfChar(' ', iDif)
+    else
+      sTexto := StringOfChar(' ', iDif) + sTexto;
+    Result := sTexto ;
+  end;
+end;
+
+procedure cabecalho;
+begin
+end;
+procedure rodape;
+begin
+
+end;
+end.

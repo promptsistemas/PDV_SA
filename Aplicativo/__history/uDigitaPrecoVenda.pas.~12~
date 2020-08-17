@@ -1,0 +1,149 @@
+unit uDigitaPrecoVenda;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
+  Vcl.DBCtrls, Vcl.ExtCtrls;
+
+type
+  TfrmDigitaPrecoVenda = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    L_VALOR_UNIT: TLabel;
+    DBText1: TDBText;
+    DBText2: TDBText;
+    Label7: TLabel;
+    DBText4: TDBText;
+    DBEdit_DESC_V: TDBEdit;
+    Label5: TLabel;
+    BB_CONFIRMA: TBitBtn;
+    BB_CANCELAR: TBitBtn;
+    Label3: TLabel;
+    DBEdit_DESC_P: TDBEdit;
+    procedure FormShow(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure DBEdit_DESC_VExit(Sender: TObject);
+    procedure BB_CONFIRMAClick(Sender: TObject);
+    procedure BB_CANCELARClick(Sender: TObject);
+    procedure DBEdit_DESC_PExit(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmDigitaPrecoVenda: TfrmDigitaPrecoVenda;
+  ValorUnit   : Double;
+  desconto    : Double;
+  tp_desconto : String;
+
+implementation
+
+{$R *.dfm}
+
+uses U_LIB, uDm, uPdv;
+
+procedure TfrmDigitaPrecoVenda.BB_CANCELARClick(Sender: TObject);
+begin
+  DM.cdsItemPdvLocalVL_UNIT.AsFloat := ValorUnit;
+  Close;
+end;
+
+procedure TfrmDigitaPrecoVenda.BB_CONFIRMAClick(Sender: TObject);
+begin
+  if Application.MessageBox('Confirma Preço de Venda?','Atenção',MB_YESNO+MB_ICONQUESTION)= idyes  then
+  begin
+//    DM.cdsItemPdvLocal.ApplyUpdates(0);
+    ValorUnit:=0;
+    Close;
+  end
+  else
+  begin
+    ShowMessage('Preço de Venda Não Confirmado.');
+    frmPdv.DBEdit2.SetFocus;
+    Close;
+  end;
+end;
+
+procedure TfrmDigitaPrecoVenda.DBEdit_DESC_PExit(Sender: TObject);
+begin
+  if tp_desconto = 'V' then
+  begin
+    DM.cdsItemPdvLocalVL_TOTAL.AsFloat :=  (ValorUnit*DM.cdsItemPdvLocalQUANT.AsFloat)-(DM.cdsItemPdvLocalDESC_ITEM.AsFloat*DM.cdsItemPdvLocalQUANT.AsFloat);
+  //  DM.cdsItemPdvLocalDESC_ITEM.AsFloat := (ValorUnit*DM.cdsItemPdvLocalPERC_DES.AsFloat)/100;
+    DM.cdsItemPdvLocalPERC_DES.AsFloat := (ValorUnit-DM.cdsItemPdvLocalVL_UNIT.AsFloat)/(ValorUnit)*100;
+  end
+  else
+  begin
+    DM.cdsItemPdvLocalDESC_ITEM.AsFloat := (ValorUnit*DM.cdsItemPdvLocalPERC_DES.AsFloat)/100;
+  //  DM.cdsItemPdvLocalVL_UNIT.AsFloat := (ValorUnit-DM.cdsItemPdvLocalDESC_ITEM.AsFloat)
+    DM.cdsItemPdvLocalVL_TOTAL.AsFloat :=  (ValorUnit*DM.cdsItemPdvLocalQUANT.AsFloat)-(DM.cdsItemPdvLocalDESC_ITEM.AsFloat*DM.cdsItemPdvLocalQUANT.AsFloat);
+  //  DM.cdsItemPdvLocalDESC_ITEM.AsFloat := (ValorUnit-DM.cdsItemPdvLocalVL_UNIT.AsFloat);
+  //  DM.cdsItemPdvLocalPERC_DES.AsFloat := (ValorUnit-DM.cdsItemPdvLocalVL_UNIT.AsFloat)/(ValorUnit)*100;
+  end;
+
+end;
+
+procedure TfrmDigitaPrecoVenda.DBEdit_DESC_VExit(Sender: TObject);
+begin
+  if tp_desconto = 'V' then
+  begin
+    DM.cdsItemPdvLocalVL_TOTAL.AsFloat :=  (ValorUnit*DM.cdsItemPdvLocalQUANT.AsFloat)-(DM.cdsItemPdvLocalDESC_ITEM.AsFloat*DM.cdsItemPdvLocalQUANT.AsFloat);
+  //  DM.cdsItemPdvLocalDESC_ITEM.AsFloat := (ValorUnit*DM.cdsItemPdvLocalPERC_DES.AsFloat)/100;
+    DM.cdsItemPdvLocalPERC_DES.AsFloat := (ValorUnit-DM.cdsItemPdvLocalVL_UNIT.AsFloat)/(ValorUnit)*100;
+  end
+  else
+  begin
+    DM.cdsItemPdvLocalDESC_ITEM.AsFloat := (ValorUnit*DM.cdsItemPdvLocalPERC_DES.AsFloat)/100;
+  //  DM.cdsItemPdvLocalVL_UNIT.AsFloat := (ValorUnit-DM.cdsItemPdvLocalDESC_ITEM.AsFloat)
+    DM.cdsItemPdvLocalVL_TOTAL.AsFloat :=  (ValorUnit*DM.cdsItemPdvLocalQUANT.AsFloat)-(DM.cdsItemPdvLocalDESC_ITEM.AsFloat*DM.cdsItemPdvLocalQUANT.AsFloat);
+  //  DM.cdsItemPdvLocalDESC_ITEM.AsFloat := (ValorUnit-DM.cdsItemPdvLocalVL_UNIT.AsFloat);
+  //  DM.cdsItemPdvLocalPERC_DES.AsFloat := (ValorUnit-DM.cdsItemPdvLocalVL_UNIT.AsFloat)/(ValorUnit)*100;
+  end;
+end;
+
+procedure TfrmDigitaPrecoVenda.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end;
+
+end;
+
+procedure TfrmDigitaPrecoVenda.FormShow(Sender: TObject);
+begin
+  desconto    := StrToFloat(DM.DESCONTO);
+  tp_desconto := DM.TPDESCONTO;
+
+  if tp_desconto = 'V' then
+  begin
+    Label5.Caption := 'Informe o Valor Desconto';
+    DBEdit_DESC_V.Visible := True;
+    DBEdit_DESC_P.Visible := False;
+    DBEdit_DESC_V.SetFocus;
+    DBEdit_DESC_V.Text :='0,00';
+    ValorUnit := DM.cdsItemPdvLocalVL_UNIT.AsFloat;
+    L_VALOR_UNIT.Caption := 'R$ '+FormatFloat('###,###0.00',ValorUnit);
+
+  end
+  else
+  begin
+    Label5.Caption := 'Informe o % Desconto';
+    DBEdit_DESC_V.Visible := False;
+    DBEdit_DESC_P.Visible := True;
+    DBEdit_DESC_P.SetFocus;
+    DBEdit_DESC_P.Text :='0,00';
+    ValorUnit := DM.cdsItemPdvLocalVL_UNIT.AsFloat;
+    L_VALOR_UNIT.Caption := 'R$ '+FormatFloat('###,###0.00',ValorUnit);
+  end;
+
+end;
+
+end.

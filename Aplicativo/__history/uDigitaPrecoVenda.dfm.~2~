@@ -1,0 +1,210 @@
+object frmDigitaPrecoVenda: TfrmDigitaPrecoVenda
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Digita Pre'#231'o de Venda'
+  ClientHeight = 273
+  ClientWidth = 276
+  Color = 9816831
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 276
+    Height = 273
+    Align = alClient
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    TabOrder = 0
+    ExplicitWidth = 368
+    ExplicitHeight = 245
+    object Label1: TLabel
+      Left = 9
+      Top = 48
+      Width = 144
+      Height = 20
+      Caption = 'Valor de Venda Unit'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clGreen
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 7
+      Top = 75
+      Width = 146
+      Height = 20
+      Caption = 'Valor Desconto Item'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clRed
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object Label3: TLabel
+      Left = 70
+      Top = 101
+      Width = 83
+      Height = 20
+      Caption = '% Desconto'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlue
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object Label4: TLabel
+      Left = 200
+      Top = 48
+      Width = 54
+      Height = 20
+      Caption = 'R$ 0,00'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clGreen
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object DBText1: TDBText
+      Left = 189
+      Top = 75
+      Width = 65
+      Height = 17
+      DataSource = DM.dsItemPdvLocal
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clRed
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object DBText2: TDBText
+      Left = 189
+      Top = 101
+      Width = 65
+      Height = 17
+      DataSource = DM.dsItemPdvLocal
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlue
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object Label7: TLabel
+      Left = 18
+      Top = 126
+      Width = 135
+      Height = 20
+      Caption = 'Valor de Venda Liq'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clNavy
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object DBText4: TDBText
+      Left = 189
+      Top = 126
+      Width = 65
+      Height = 17
+      DataSource = DM.dsItemPdvLocal
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clNavy
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object Label5: TLabel
+      Left = 38
+      Top = 157
+      Width = 198
+      Height = 20
+      Caption = 'Informe o Valor de Venda'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlue
+      Font.Height = -15
+      Font.Name = 'Segoe UI Semibold'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object Panel2: TPanel
+      Left = 0
+      Top = 0
+      Width = 272
+      Height = 32
+      Align = alTop
+      Caption = 'Digite o Pre'#231'o de Venda'
+      Color = clBlue
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWhite
+      Font.Height = -19
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold, fsItalic]
+      ParentBackground = False
+      ParentFont = False
+      TabOrder = 0
+      ExplicitLeft = -2
+      ExplicitTop = -2
+      ExplicitWidth = 335
+    end
+    object DBEdit1: TDBEdit
+      Left = 38
+      Top = 178
+      Width = 198
+      Height = 29
+      DataSource = DM.dsItemPdvLocal
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlue
+      Font.Height = -16
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+      TabOrder = 1
+    end
+    object BitBtn1: TBitBtn
+      Left = 38
+      Top = 216
+      Width = 89
+      Height = 49
+      Caption = '&Confirmar'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlue
+      Font.Height = -12
+      Font.Name = 'Segoe UI Semibold'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+      TabOrder = 2
+    end
+    object BitBtn2: TBitBtn
+      Left = 147
+      Top = 216
+      Width = 89
+      Height = 49
+      Caption = 'Cancela&r'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clRed
+      Font.Height = -12
+      Font.Name = 'Segoe UI Semibold'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 3
+    end
+  end
+end

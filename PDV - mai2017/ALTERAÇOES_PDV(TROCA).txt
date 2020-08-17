@@ -1,0 +1,517 @@
+06/04/2016
+
+
+*****************************************
+ A L T E R A R   P R O C E D U R E ISERT_SAIDA_ESTOQUE
+
+create procedure INSERT_SAIDA_ESTOQUE (
+    PE_ID_LOJA integer,
+    PE_DT_INI date,
+    PE_DT_FIN date,
+    PE_NR_DOC varchar(20))
+as
+declare variable V_DAY integer;
+declare variable V_DIA varchar(10);
+declare variable V_ID_MOV_ESTOQUE integer;
+declare variable V_DT_MOV date;
+declare variable V_ENTRADA numeric(15,2);
+declare variable V_SAIDA_DIV numeric(15,2);
+declare variable V_QT_VENDIDA numeric(15,2);
+declare variable V_ESTOQUE_DIARIO numeric(15,2);
+declare variable V_ESTOQUE_ANTERIOR numeric(15,2);
+declare variable V_ENTRADA_MERCADORIA numeric(15,2);
+declare variable V_NR_DOC varchar(20);
+declare variable V_TP_MOV varchar(7);
+declare variable V_NEW_SAIDA numeric(15,2);
+declare variable V_DT_EXISTE date;
+declare variable V_TOTAL numeric(15,2);
+begin
+  FOR
+    SELECT
+      P.DT_ORCAMENTO,
+      SUM(IP.VL_TOTAL),
+      SUM(IP.QUANT)
+    FROM
+      TB_ITEM_PDV IP
+    JOIN TB_PDV P ON (P.NR_ORCAMENTO = IP.NR_ORCAMENTO)
+    WHERE
+      IP.ID_LOJA = :PE_ID_LOJA AND P.ID_LOJA = :PE_ID_LOJA
+    AND
+      P.STATUS = 'F' --VERICAR SE ESTA PARA O PDV OU PRO SFC
+    AND
+      IP.STATUS = 'V'
+    AND
+      P.DT_ORCAMENTO BETWEEN :PE_DT_INI AND :PE_DT_FIN
+    GROUP BY
+      P.DT_ORCAMENTO
+    INTO
+      :V_DT_MOV,
+      :V_TOTAL,
+      :V_NEW_SAIDA
+    DO
+    BEGIN
+      --pega o dia da semana
+      SELECT EXTRACT(WEEKDAY FROM :V_DT_MOV) FROM RDB$DATABASE INTO V_DAY;
+      IF (V_DAY=0) THEN
+          V_DIA = 'Domingo';
+      ELSE IF (V_DAY=1) THEN
+          V_DIA = 'Segunda';
+      ELSE IF (V_DAY=2) THEN
+          V_DIA = 'Terca';
+      ELSE IF (V_DAY=3) THEN
+          V_DIA = 'Quarta';
+      ELSE IF (V_DAY=4) THEN
+          V_DIA = 'Quinta';
+      ELSE IF (V_DAY=5) THEN
+          V_DIA = 'Sexta';
+      ELSE IF (V_DAY=6) THEN
+          V_DIA = 'Sabado';
+      --Verifica se ja existe Registro na Tabela com a Data Selecionada.
+      SELECT
+        ME.DT_MOV,
+        ME.id_mov_estoque
+      FROM
+        TB_MOV_ESTOQUE ME
+      WHERE
+        ME.DT_MOV = :V_DT_MOV
+      AND
+        ME.ENTRADA_MERCADORIA = 0
+      AND
+        ME.id_loja  = :pe_id_loja
+      AND
+        ME.nr_doc   = :pe_nr_doc
+      AND
+        ME.tp_mov   = 'Saida'
+      GROUP BY
+        ME.DT_MOV,
+        ME.id_mov_estoque
+
+      INTO
+        :V_DT_EXISTE,
+        :v_id_mov_estoque;
+
+      if (V_DT_EXISTE IS NULL) then
+      BEGIN
+        SELECT
+          MAX(ME.ID_MOV_ESTOQUE)
+        FROM
+          TB_MOV_ESTOQUE ME
+        INTO
+         :V_ID_MOV_ESTOQUE;
+          if (V_ID_MOV_ESTOQUE IS NULL) then
+            V_ID_MOV_ESTOQUE = 0;
+
+          V_ID_MOV_ESTOQUE = :V_ID_MOV_ESTOQUE +1;
+
+          V_ENTRADA = :V_TOTAL; /*:V_NEW_SAIDA *10;*/
+          V_QT_VENDIDA = :V_NEW_SAIDA;
+          V_ENTRADA_MERCADORIA = 0;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = :pe_nr_doc;--'Vendas_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = 'Saida';
+
+        --INSERI OS REGISTROS
+          INSERT INTO TB_MOV_ESTOQUE
+          ( ID_MOV_ESTOQUE,
+            ID_LOJA,
+            DT_MOV,
+            DIA,
+            ENTRADA,
+            SAIDA_DIV,
+            QT_VENDIDA,
+            ESTOQUE_DIARIO,
+            ESTOQUE_ANTERIOR,
+            ENTRADA_MERCADORIA,
+            NR_DOC,
+            TP_MOV
+          )
+          VALUES
+          (
+           :V_ID_MOV_ESTOQUE,
+           :PE_ID_LOJA,
+           :V_DT_MOV,
+           :V_DIA,
+           :V_ENTRADA,
+           :V_SAIDA_DIV,
+           :V_QT_VENDIDA,
+           :V_ESTOQUE_DIARIO,
+           :V_ESTOQUE_ANTERIOR,
+           :V_ENTRADA_MERCADORIA,
+           :V_NR_DOC,
+           :V_TP_MOV
+          );
+        V_DT_EXISTE = NULL;
+      END
+      if (V_DT_EXISTE IS NOT NULL) then
+      BEGIN
+        --Atualize Registro Existente.
+          V_ENTRADA = :V_TOTAL;/*:V_NEW_SAIDA *10;*/
+          V_QT_VENDIDA = :V_NEW_SAIDA;
+          V_ENTRADA_MERCADORIA = 0;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = :pe_nr_doc;--'Vendas_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = 'Saida';
+        UPDATE TB_MOV_ESTOQUE
+        SET QT_VENDIDA = :V_NEW_SAIDA,
+               ENTRADA = :V_TOTAL,/*:V_NEW_SAIDA *10,*/
+               NR_DOC  = :V_NR_DOC,
+               TP_MOV  = :V_TP_MOV
+        WHERE ID_LOJA  = :PE_ID_LOJA
+        AND   DT_MOV   = :V_DT_MOV
+        AND   ENTRADA_MERCADORIA = 0
+        AND   ID_MOV_ESTOQUE = :v_id_mov_estoque;
+
+      END
+      EXECUTE PROCEDURE ATU_MOV_ESTOQUE(:PE_ID_LOJA,:PE_DT_INI,:PE_DT_FIN);
+      V_DT_EXISTE = NULL;
+    END
+end
+
+*****************************************
+create procedure INSERT_SAIDA_TROCA (
+    PE_ID_LOJA integer,
+    PE_DT_INI date,
+    PE_DT_FIN date,
+    PE_NR_DOC varchar(20)) 
+as
+declare variable V_DAY integer;
+declare variable V_DIA varchar(10);
+declare variable V_ID_MOV_ESTOQUE integer;
+declare variable V_DT_MOV date;
+declare variable V_ENTRADA numeric(15,2);
+declare variable V_SAIDA_DIV numeric(15,2);
+declare variable V_QT_VENDIDA numeric(15,2);
+declare variable V_ESTOQUE_DIARIO numeric(15,2);
+declare variable V_ESTOQUE_ANTERIOR numeric(15,2);
+declare variable V_ENTRADA_MERCADORIA numeric(15,2);
+declare variable V_NR_DOC varchar(20);
+declare variable V_TP_MOV varchar(7);
+declare variable V_NEW_SAIDA numeric(15,2);
+declare variable V_DT_EXISTE date;
+declare variable V_TOTAL numeric(15,2);
+begin
+  FOR
+    SELECT
+     P.dt_orcamento,
+     SUM(IP.quant),
+     (
+       SELECT
+        SUM(PP.vl_liquido)
+       FROM tb_pdv PP
+       WHERE PP.DT_ORCAMENTO BETWEEN :PE_DT_INI AND :PE_DT_FIN
+       AND PP.status ='D'
+       AND PP.id_loja = :pe_id_loja
+     )
+    FROM tb_item_pdv IP
+    JOIN tb_pdv P ON (P.nr_orcamento = IP.nr_orcamento)
+    WHERE
+      P.DT_ORCAMENTO BETWEEN :PE_DT_INI AND :PE_DT_FIN
+    AND
+      IP.status ='L'
+    AND
+      P.id_loja = :pe_id_loja
+    GROUP BY
+      P.DT_ORCAMENTO
+    INTO
+      :V_DT_MOV,
+      :V_NEW_SAIDA,
+      :V_TOTAL
+    DO
+    BEGIN
+      --pega o dia da semana
+      SELECT EXTRACT(WEEKDAY FROM :V_DT_MOV) FROM RDB$DATABASE INTO V_DAY;
+      IF (V_DAY=0) THEN
+          V_DIA = 'Domingo';
+      ELSE IF (V_DAY=1) THEN
+          V_DIA = 'Segunda';
+      ELSE IF (V_DAY=2) THEN
+          V_DIA = 'Terca';
+      ELSE IF (V_DAY=3) THEN
+          V_DIA = 'Quarta';
+      ELSE IF (V_DAY=4) THEN
+          V_DIA = 'Quinta';
+      ELSE IF (V_DAY=5) THEN
+          V_DIA = 'Sexta';
+      ELSE IF (V_DAY=6) THEN
+          V_DIA = 'Sabado';
+      --Verifica se ja existe Registro na Tabela com a Data Selecionada.
+      SELECT
+        ME.DT_MOV,
+        ME.id_mov_estoque
+      FROM
+        TB_MOV_ESTOQUE ME
+      WHERE
+        ME.DT_MOV = :V_DT_MOV
+      AND
+        ME.ENTRADA_MERCADORIA = 0
+      AND
+        ME.id_loja  = :pe_id_loja
+      AND
+        ME.nr_doc   = :pe_nr_doc
+      AND
+        ME.tp_mov   = 'Saida'
+      GROUP BY
+        ME.DT_MOV,
+        ME.id_mov_estoque
+      INTO
+        :V_DT_EXISTE,
+        :v_id_mov_estoque;
+
+      if (V_DT_EXISTE IS NULL) then
+      BEGIN
+        SELECT
+          MAX(ME.ID_MOV_ESTOQUE)
+        FROM
+          TB_MOV_ESTOQUE ME
+        INTO
+         :V_ID_MOV_ESTOQUE;
+          if (V_ID_MOV_ESTOQUE IS NULL) then
+            V_ID_MOV_ESTOQUE = 0;
+
+          V_ID_MOV_ESTOQUE = :V_ID_MOV_ESTOQUE +1;
+
+          V_ENTRADA = :V_TOTAL; /*:V_NEW_SAIDA *10;*/
+          V_QT_VENDIDA = :V_NEW_SAIDA;
+          V_ENTRADA_MERCADORIA = 0;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = 'S_Troca_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = 'Saida';
+
+        --INSERI OS REGISTROS
+          INSERT INTO TB_MOV_ESTOQUE
+          ( ID_MOV_ESTOQUE,
+            ID_LOJA,
+            DT_MOV,
+            DIA,
+            ENTRADA,
+            SAIDA_DIV,
+            QT_VENDIDA,
+            ESTOQUE_DIARIO,
+            ESTOQUE_ANTERIOR,
+            ENTRADA_MERCADORIA,
+            NR_DOC,
+            TP_MOV
+          )
+          VALUES
+          (
+           :V_ID_MOV_ESTOQUE,
+           :PE_ID_LOJA,
+           :V_DT_MOV,
+           :V_DIA,
+           :V_ENTRADA,
+           :V_SAIDA_DIV,
+           :V_QT_VENDIDA,
+           :V_ESTOQUE_DIARIO,
+           :V_ESTOQUE_ANTERIOR,
+           :V_ENTRADA_MERCADORIA,
+           :V_NR_DOC,
+           :V_TP_MOV
+          );
+        V_DT_EXISTE = NULL;
+      END
+      if (V_DT_EXISTE IS NOT NULL) then
+      BEGIN
+        --Atualize Registro Existente.
+          V_ENTRADA = :V_TOTAL;/*:V_NEW_SAIDA *10;*/
+          V_QT_VENDIDA = :V_NEW_SAIDA;
+          V_ENTRADA_MERCADORIA = 0;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = 'S_Troca_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = 'Saida';
+        UPDATE TB_MOV_ESTOQUE
+        SET QT_VENDIDA = :V_NEW_SAIDA,
+               ENTRADA = :V_TOTAL,/*:V_NEW_SAIDA *10,*/
+               NR_DOC  = :V_NR_DOC,
+               TP_MOV  = :V_TP_MOV
+        WHERE ID_LOJA  = :PE_ID_LOJA
+        AND   DT_MOV   = :V_DT_MOV
+        AND   ENTRADA_MERCADORIA = 0
+        AND    ID_MOV_ESTOQUE = :v_id_mov_estoque;
+
+      END
+      EXECUTE PROCEDURE ATU_MOV_ESTOQUE(:PE_ID_LOJA,:PE_DT_INI,:PE_DT_FIN);
+      V_DT_EXISTE = NULL;
+    END
+end
+**************************
+create procedure INSERT_ENTRADA_TROCA (
+    PE_ID_LOJA integer,
+    PE_DT_INI date,
+    PE_DT_FIN date,
+    PE_NR_DOC varchar(20)) 
+as
+declare variable V_DAY integer;
+declare variable V_DIA varchar(10);
+declare variable V_ID_MOV_ESTOQUE integer;
+declare variable V_DT_MOV date;
+declare variable V_ENTRADA numeric(15,2);
+declare variable V_SAIDA_DIV numeric(15,2);
+declare variable V_QT_VENDIDA numeric(15,2);
+declare variable V_ESTOQUE_DIARIO numeric(15,2);
+declare variable V_ESTOQUE_ANTERIOR numeric(15,2);
+declare variable V_ENTRADA_MERCADORIA numeric(15,2);
+declare variable V_NR_DOC varchar(20);
+declare variable V_TP_MOV varchar(7);
+declare variable V_NEW_SAIDA numeric(15,2);
+declare variable V_DT_EXISTE date;
+begin
+  FOR
+    SELECT
+     P.dt_orcamento,
+     SUM(IP.quant)
+    FROM tb_item_pdv IP
+    JOIN tb_pdv P ON (P.nr_orcamento = IP.nr_orcamento)
+    WHERE
+      P.DT_ORCAMENTO BETWEEN :PE_DT_INI AND :PE_DT_FIN
+    AND
+      IP.status ='D'
+    AND
+      P.id_loja = :pe_id_loja
+    GROUP BY
+      P.dt_orcamento
+    INTO
+      :V_DT_MOV,
+      :V_NEW_SAIDA
+    DO
+    BEGIN
+      --pega o dia da semana
+      SELECT EXTRACT(WEEKDAY FROM :V_DT_MOV) FROM RDB$DATABASE INTO V_DAY;
+      IF (V_DAY=0) THEN
+          V_DIA = 'Domingo';
+      ELSE IF (V_DAY=1) THEN
+          V_DIA = 'Segunda';
+      ELSE IF (V_DAY=2) THEN
+          V_DIA = 'Terca';
+      ELSE IF (V_DAY=3) THEN
+          V_DIA = 'Quarta';
+      ELSE IF (V_DAY=4) THEN
+          V_DIA = 'Quinta';
+      ELSE IF (V_DAY=5) THEN
+          V_DIA = 'Sexta';
+      ELSE IF (V_DAY=6) THEN
+          V_DIA = 'Sabado';
+      --Verifica se ja existe Registro na Tabela com a Data Selecionada.
+      SELECT
+        ME.DT_MOV,
+        ME.id_mov_estoque
+      FROM
+        TB_MOV_ESTOQUE ME
+      WHERE
+        ME.DT_MOV = :V_DT_MOV
+      AND
+        ME.id_loja  = :pe_id_loja
+      AND
+        ME.nr_doc   = :pe_nr_doc
+      AND
+        ME.tp_mov   = 'Entrada'
+      GROUP BY
+        ME.DT_MOV,
+        ME.id_mov_estoque
+      INTO
+        :V_DT_EXISTE,
+        :v_id_mov_estoque;
+
+      if (V_DT_EXISTE IS NULL) then
+      BEGIN
+        SELECT
+          MAX(ME.ID_MOV_ESTOQUE)
+        FROM
+          TB_MOV_ESTOQUE ME
+        INTO
+         :V_ID_MOV_ESTOQUE;
+          if (V_ID_MOV_ESTOQUE IS NULL) then
+            V_ID_MOV_ESTOQUE = 0;
+
+          V_ID_MOV_ESTOQUE = :V_ID_MOV_ESTOQUE +1;
+
+          V_ENTRADA = 0;/*:V_TOTAL; :V_NEW_SAIDA *10;*/
+          V_QT_VENDIDA = 0;
+          V_ENTRADA_MERCADORIA = :V_NEW_SAIDA;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = 'E_Troca_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = 'Entrada';
+
+        --INSERI OS REGISTROS
+          INSERT INTO TB_MOV_ESTOQUE
+          ( ID_MOV_ESTOQUE,
+            ID_LOJA,
+            DT_MOV,
+            DIA,
+            ENTRADA,
+            SAIDA_DIV,
+            QT_VENDIDA,
+            ESTOQUE_DIARIO,
+            ESTOQUE_ANTERIOR,
+            ENTRADA_MERCADORIA,
+            NR_DOC,
+            TP_MOV
+          )
+          VALUES
+          (
+           :V_ID_MOV_ESTOQUE,
+           :PE_ID_LOJA,
+           :V_DT_MOV,
+           :V_DIA,
+           :V_ENTRADA,
+           :V_SAIDA_DIV,
+           :V_QT_VENDIDA,
+           :V_ESTOQUE_DIARIO,
+           :V_ESTOQUE_ANTERIOR,
+           :V_ENTRADA_MERCADORIA,
+           :V_NR_DOC,
+           :V_TP_MOV
+          );
+        V_DT_EXISTE = NULL;
+      END
+      if (V_DT_EXISTE IS NOT NULL) then
+      BEGIN
+        --Atualize Registro Existente.
+          V_ENTRADA = 0; /*:V_TOTAL;:V_NEW_SAIDA *10;*/
+          V_QT_VENDIDA = 0;
+          V_ENTRADA_MERCADORIA = :V_NEW_SAIDA;
+          V_ESTOQUE_ANTERIOR = 0;
+          V_ESTOQUE_DIARIO = 0;
+          V_SAIDA_DIV = 0;
+          V_NR_DOC = 'E_Troca_'||'L_'||:PE_ID_LOJA;
+          V_TP_MOV = 'Entrada';
+        UPDATE TB_MOV_ESTOQUE
+        SET QT_VENDIDA = 0,
+               ENTRADA = 0,
+               NR_DOC  = :V_NR_DOC,
+               TP_MOV  = :V_TP_MOV,
+    ENTRADA_MERCADORIA = :V_NEW_SAIDA
+        WHERE ID_LOJA  = :PE_ID_LOJA
+        AND   DT_MOV   = :V_DT_MOV
+        AND    ID_MOV_ESTOQUE = :v_id_mov_estoque;
+
+      END
+      EXECUTE PROCEDURE ATU_MOV_ESTOQUE(:PE_ID_LOJA,:PE_DT_INI,:PE_DT_FIN);
+      V_DT_EXISTE = NULL;
+    END
+end
+
+**************************
+
+
+CREATE TABLE TB_PAGAMENTO_PDV (
+    ID_PAGAMENTO_PDV   INTEGER NOT NULL,
+    ID_PDV             INTEGER,
+    ID_TIPO_PAGAMENTO  INTEGER,
+    ID_LOJA            INTEGER,
+    VL_PAGAMENTO       NUMERIC(15,2)
+);
+
+ALTER TABLE TB_PAGAMENTO_PDV ADD CONSTRAINT PK_TB_PAGAMENTO_PDV PRIMARY KEY (ID_PAGAMENTO_PDV);
+ALTER TABLE TB_PAGAMENTO_PDV ADD CONSTRAINT FK_TB_PAGAMENTO_PDV_1 FOREIGN KEY (ID_PDV) REFERENCES TB_PDV (ID_PDV);
+ALTER TABLE TB_PAGAMENTO_PDV ADD CONSTRAINT FK_TB_PAGAMENTO_PDV_2 FOREIGN KEY (ID_TIPO_PAGAMENTO) REFERENCES TB_TIPO_PAGAMENTO (ID_TIPO_PAGAMENTO);
+ALTER TABLE TB_PAGAMENTO_PDV ADD CONSTRAINT FK_TB_PAGAMENTO_PDV_3 FOREIGN KEY (ID_LOJA) REFERENCES TB_LOJAS (ID_LOJA);

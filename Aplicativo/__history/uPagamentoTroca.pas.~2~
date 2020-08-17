@@ -1,0 +1,62 @@
+unit uPagamentoTroca;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.FMTBcd, Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.DBCtrls, Data.DB, Datasnap.DBClient, Datasnap.Provider,
+  Data.SqlExpr, Vcl.Mask, Vcl.Grids, Vcl.DBGrids;
+
+type
+  TfrmPagamentoTroca = class(TForm)
+    Panel1: TPanel;
+    DBGrid1: TDBGrid;
+    GroupBox1: TGroupBox;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    DBEdit3: TDBEdit;
+    DBEdit4: TDBEdit;
+    DBEdit5: TDBEdit;
+    qTipoPagamento: TSQLQuery;
+    qTipoPagamentoID_TIPO_PAGAMENTO: TIntegerField;
+    qTipoPagamentoDESCRICAO_PAGAMENTO: TStringField;
+    dspTipoPagamento: TDataSetProvider;
+    cdsTipoPagamento: TClientDataSet;
+    cdsTipoPagamentoID_TIPO_PAGAMENTO: TIntegerField;
+    cdsTipoPagamentoDESCRICAO_PAGAMENTO: TStringField;
+    dsTipoPagamento: TDataSource;
+    GB_ESPECIE: TGroupBox;
+    DBText1: TDBText;
+    Label7: TLabel;
+    DBEdit6: TDBEdit;
+    Edit6: TEdit;
+    DBGrid2: TDBGrid;
+    Panel2: TPanel;
+    Label11: TLabel;
+    L_VALOR_PAGO: TLabel;
+    Panel3: TPanel;
+    Label12: TLabel;
+    L_VALOR_DIFERENCA: TLabel;
+    BB_CANCELAR: TBitBtn;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmPagamentoTroca: TfrmPagamentoTroca;
+
+implementation
+
+{$R *.dfm}
+
+uses UtrocaMercadoria, U_LIB, UD_PESQUISA, uDm;
+
+end.

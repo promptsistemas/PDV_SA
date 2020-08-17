@@ -1,0 +1,338 @@
+unit uCadUsuario;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Mask, DBCtrls, DB, DBClient, Buttons, ComCtrls,
+  ToolWin, ExtCtrls, Grids, DBGrids, Vcl.Imaging.jpeg;
+
+type
+  TfrmCadUsuario = class(TForm)
+    CoolBar1: TCoolBar;
+    ToolBar1: TToolBar;
+    TB_INCLUIR: TToolButton;
+    TB_ALTERAR: TToolButton;
+    TB_CANCELAR: TToolButton;
+    TB_SALVAR: TToolButton;
+    TB_EXCLUIR: TToolButton;
+    TB_PESQUISAR: TToolButton;
+    P_LOGIN: TPanel;
+    TB_SAIR: TToolButton;
+    DBGrid1: TDBGrid;
+    DBNavigator1: TDBNavigator;
+    Label1: TLabel;
+    DBEdit2: TDBEdit;
+    Label2: TLabel;
+    DBEdit3: TDBEdit;
+    DBE_SENHA: TDBEdit;
+    Label3: TLabel;
+    ME_SENHA: TMaskEdit;
+    Label4: TLabel;
+    DBRadioGroup1: TDBRadioGroup;
+    DBEdit1: TDBEdit;
+    Label5: TLabel;
+    DBEdit4: TDBEdit;
+    DBEdit5: TDBEdit;
+    Label6: TLabel;
+    Label7: TLabel;
+    SpeedButton1: TSpeedButton;
+    Label8: TLabel;
+    Label9: TLabel;
+    DBEdit6: TDBEdit;
+    DBEdit7: TDBEdit;
+    SpeedButton2: TSpeedButton;
+    Image1: TImage;
+    procedure FormShow(Sender: TObject);
+    procedure TB_INCLUIRClick(Sender: TObject);
+    procedure TB_SALVARClick(Sender: TObject);
+    procedure TB_EXCLUIRClick(Sender: TObject);
+    procedure TB_CANCELARClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure TB_SAIRClick(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure TB_ALTERARClick(Sender: TObject);
+    procedure TB_PESQUISARClick(Sender: TObject);
+    procedure DBEdit4Exit(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure DBEdit4KeyPress(Sender: TObject; var Key: Char);
+    procedure DBEdit6Exit(Sender: TObject);
+    procedure SpeedButton2Click(Sender: TObject);
+    procedure DBEdit6KeyPress(Sender: TObject; var Key: Char);
+  private
+    { Private declarations }
+    Procedure GerenciaBotoes;
+    Procedure VerificaGrupoLoja;
+  public
+    { Public declarations }
+  end;
+
+var
+  frmCadUsuario: TfrmCadUsuario;
+
+implementation
+
+uses uDm, U_LIB, UD_PESQUISA,uPdv;
+
+{$R *.dfm}
+
+procedure TfrmCadUsuario.FormShow(Sender: TObject);
+begin
+
+  ME_SENHA.Clear;
+  DM.cdsLogin.Close;
+  DM.cdsLogin.Open;
+  GerenciaBotoes;
+end;
+
+procedure TfrmCadUsuario.GerenciaBotoes;
+begin
+  TB_INCLUIR.Enabled  := not (DM.cdsLogin.State in dsEditModes);
+  TB_SALVAR.Enabled   := NOT TB_INCLUIR.Enabled;
+  TB_EXCLUIR.Enabled  := TB_INCLUIR.Enabled and not (DM.cdsLogin.IsEmpty);
+  TB_CANCELAR.Enabled := TB_SALVAR.Enabled;
+  TB_ALTERAR.Enabled  := TB_EXCLUIR.Enabled;
+  TB_SAIR.Enabled     := TB_INCLUIR.Enabled;
+  TB_PESQUISAR.Enabled:= TB_INCLUIR.Enabled;
+  P_LOGIN.Enabled     := not TB_INCLUIR.Enabled;
+end;
+
+procedure TfrmCadUsuario.TB_INCLUIRClick(Sender: TObject);
+begin
+  ME_SENHA.Clear;
+  DM.CDSLOGIN.Insert;
+  DM.CDSDINAMICA.Close;
+  DM.cdsDinamica.IndexFieldNames:='';
+  DM.CDSDINAMICA.CommandText :='SELECT MAX(ID_USUARIO) FROM TB_USUARIOS';
+  DM.CDSDINAMICA.Open;
+  DM.cdsLoginID_USUARIO.AsInteger := DM.CDSDINAMICA.Fields[0].AsInteger +1;
+  DM.CDSLOGIN.Open;
+  DM.cdsLoginNIVEL_ACESSO.Value :=0;
+  GerenciaBotoes;
+  DBEdit3.SetFocus;
+end;
+
+procedure TfrmCadUsuario.TB_SALVARClick(Sender: TObject);
+begin
+  with DM do
+  begin
+    if cdsLoginLOGIN.Value <> '' then
+    begin
+      if ME_SENHA.Text = DBE_SENHA.Text then
+      begin
+        cdsLoginSENHA.Value :=
+          EncryptMsg(cdsLoginSENHA.Value,10);
+        cdsLogin.ApplyUpdates(0);
+        ME_SENHA.Clear;
+      end
+      else
+        ShowMessage('Senha não confere.');
+        ME_SENHA.SetFocus;
+    end
+    else
+      cdsLogin.CancelUpdates;
+  end;
+  GerenciaBotoes;
+
+end;
+
+procedure TfrmCadUsuario.TB_EXCLUIRClick(Sender: TObject);
+begin
+  if Application.MessageBox('Deseja Excluir Este Banco ?','Confirmação',MB_ICONQUESTION+MB_YESNO ) = idyes then
+  begin
+    DM.cdsLogin.Delete;
+    DM.cdsLogin.ApplyUpdates(0);
+    GerenciaBotoes;
+  end
+  else
+  begin
+    ShowMessage('Usuário Não Excluído');
+  end;
+    GerenciaBotoes;
+end;
+
+procedure TfrmCadUsuario.TB_CANCELARClick(Sender: TObject);
+begin
+  DM.cdsLogin.Cancel;
+  ME_SENHA.Clear;
+  GerenciaBotoes;
+end;
+
+procedure TfrmCadUsuario.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  Action      := caFree;
+  frmCadUsuario := nil;
+end;
+
+procedure TfrmCadUsuario.TB_SAIRClick(Sender: TObject);
+begin
+  DM.cdsLogin.Close;
+  Close;
+end;
+
+procedure TfrmCadUsuario.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end;
+end;
+
+procedure TfrmCadUsuario.TB_ALTERARClick(Sender: TObject);
+begin
+  ME_SENHA.Clear;
+  DM.cdsLogin.Edit;
+  GerenciaBotoes;
+  DBEdit3.SetFocus;
+end;
+
+procedure TfrmCadUsuario.TB_PESQUISARClick(Sender: TObject);
+begin
+  Pesquisa(DM.cdsLogin,['LOGIN','NOME_USUARIO'],['Login','Nome do Usuário'],
+    [8,25],'','','','','Usuário','Usuário');
+end;
+
+procedure TfrmCadUsuario.DBEdit4Exit(Sender: TObject);
+begin
+  if DBEdit4.Text = '' then
+  begin
+    DBE_SENHA.SetFocus;
+  end
+  else
+  begin
+    DM.cdsLoja.Close;
+    DM.cdsLoja.Open;
+    if DM.cdsLoja.Locate('ID_LOJA',DM.cdsLoginID_LOJA.AsInteger,[]) then
+    begin
+      DM.cdsLoginID_LOJA.AsInteger    := DM.cdsLojaID_LOJA.AsInteger;
+      DM.cdsLoginR_SOCIAL.AsString    := DM.cdsLojaR_SOCIAL.AsString;
+      VerificaGrupoLoja;
+//      DBE_SENHA.SetFocus;
+    end
+    else
+    begin
+        ShowMessage('          A T E N Ç Ã O  !!!!!!!!!   '+#13+
+                    '                                     '+#13+
+                    '   Loja não Encontrada               '+#13+
+                    '                                     ');
+        DM.cdsLoginID_LOJA.Clear;
+    end;
+  end;
+end;
+
+procedure TfrmCadUsuario.SpeedButton1Click(Sender: TObject);
+begin
+  DM.cdsLoja.Close;
+  DM.cdsLoja.Open;
+  if Pesquisa(DM.cdsLoja,['R_SOCIAL','ID_LOJA'],
+                                 ['',''],[35,10],'','0','','Loja','Loja','Loja') then
+  begin
+    DM.cdsLoginID_LOJA.AsInteger    := DM.cdsLojaID_LOJA.AsInteger;
+    DM.cdsLoginR_SOCIAL.AsString    := DM.cdsLojaR_SOCIAL.AsString;
+    VerificaGrupoLoja;
+   // DBE_SENHA.SetFocus;
+  end;
+end;
+
+procedure TfrmCadUsuario.DBEdit4KeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end
+  else if Key = #32 then
+  begin
+    Key := #0;
+    SpeedButton1Click(self);
+  end;
+end;
+
+procedure TfrmCadUsuario.DBEdit6Exit(Sender: TObject);
+begin
+//  if DBEdit6.Text = '' then
+//  begin
+//    DBE_SENHA.SetFocus;
+//  end
+//  else
+//  begin
+//    DM.cdsGrupoLoja.Close;
+//    DM.cdsGrupoLoja.Open;
+//    if DM.cdsGrupoLoja.Locate('ID_GRUPO_LOJA',DM.cdsLoginID_GRUPO_LOJA.AsInteger,[]) then
+//    begin
+//      DM.cdsLoginID_GRUPO_LOJA.AsInteger  := DM.cdsGrupoLojaID_GRUPO_LOJA.AsInteger;
+//      DM.cdsLoginNOME_GRUPO.AsString    := DM.cdsGrupoLojaNOME_GRUPO.AsString;
+//      DBEdit4.SetFocus;
+//    end
+//    else
+//    begin
+//        ShowMessage('          A T E N Ç Ã O  !!!!!!!!!   '+#13+
+//                    '                                     '+#13+
+//                    '   Grupo não Encontrado               '+#13+
+//                    '                                     ');
+//        DM.cdsLoginID_GRUPO_LOJA.Clear;
+//    end;
+//  end;
+
+end;
+
+procedure TfrmCadUsuario.SpeedButton2Click(Sender: TObject);
+begin
+//  DM.cdsGrupoLoja.Close;
+//  DM.cdsGrupoLoja.Open;
+//  if Pesquisa(DM.cdsGrupoLoja,['NOME_GRUPO','ID_GRUPO_LOJA'],
+//                                 ['',''],[35,10],'','0','','Loja','Loja','Loja') then
+//  begin
+//    DM.cdsLoginID_GRUPO_LOJA.AsInteger  := DM.cdsGrupoLojaID_GRUPO_LOJA.AsInteger;
+//    DM.cdsLoginNOME_USUARIO.AsString    := DM.cdsGrupoLojaNOME_GRUPO.AsString;
+//    DBEdit4.SetFocus;
+//  end;
+end;
+
+procedure TfrmCadUsuario.DBEdit6KeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end
+  else if Key = #32 then
+  begin
+    Key := #0;
+    SpeedButton2Click(self);
+  end;
+end;
+
+procedure TfrmCadUsuario.VerificaGrupoLoja;
+begin
+  if DBEdit6.Text <> '' then
+  begin
+    if DBEdit4.Text <> ''then
+    begin
+        DM.cdsDinamica.Close;
+        DM.cdsDinamica.IndexFieldNames:='';
+        DM.cdsDinamica.CommandText:=' SELECT L.ID_LOJA FROM TB_LOJAS L '+
+                                    ' WHERE L.ID_GRUPO_LOJA ='+DBEdit6.Text+
+                                    ' AND L.ID_LOJA = '+DBEdit4.Text;
+        DM.cdsDinamica.Open;
+
+        if DM.cdsDinamica.IsEmpty then
+        begin
+          Application.MessageBox('Loja Não Faz Parte do Grupo Informado. Favor Verificar.','Atenção!!!!',MB_OK+MB_ICONWARNING);
+          DBEdit4.SetFocus;
+        end
+        else
+        begin
+         DBE_SENHA.SetFocus;
+        end;
+    end;
+  end
+  else
+  begin
+    DBE_SENHA.SetFocus;
+  end;
+end;
+
+end.

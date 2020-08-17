@@ -1,0 +1,68 @@
+ALTER TABLE TB_PRODUTO
+ADD BALANCA VARCHAR(1)
+
+****************************************************************************
+
+
+CREATE TABLE TB_REG_OPEN_CLOSE_CAIXA (
+    ID_REG           INTEGER NOT NULL,
+    ID_USUARIO       INTEGER,
+    CAIXA            INTEGER,
+    DT_ABERTURA      DATE,
+    HORA_ABERTURA    TIME,
+    DT_FECHAMENTO    DATE,
+    HORA_FECHAMENTO  TIME,
+    STATUS           VARCHAR(1)
+);
+
+
+ALTER TABLE TB_REG_OPEN_CLOSE_CAIXA ADD CONSTRAINT PK_TB_REG_OPEN_CLOSE_CAIXA PRIMARY KEY (ID_REG);
+ALTER TABLE TB_REG_OPEN_CLOSE_CAIXA ADD CONSTRAINT FK_TB_REG_OPEN_CLOSE_CAIXA_1 FOREIGN KEY (ID_USUARIO) REFERENCES TB_USUARIO (ID_USUARIO);
+
+*****************************************************************************
+CREATE OR ALTER TRIGGER TRI_GEN_ID_REG_CAIXA FOR TB_REG_OPEN_CLOSE_CAIXA
+ACTIVE BEFORE INSERT POSITION 0
+AS
+begin
+  if (NEW.id_reg IS NULL) then
+  BEGIN
+    NEW.id_reg = NEXT VALUE FOR GEN_ID_OPE_CAIXA;
+  END
+end
+***************************************************************************
+CREATE TABLE TB_SUPRIMENTO (
+    ID_SUPRIMENTO  INTEGER NOT NULL,
+    ID_USUARIO     INTEGER,
+    CAIXA          INTEGER,
+    DT_SUPRIMENTO  DATE,
+    HR_SUPRIMENTO  TIME,
+    VALOR          NUMERIC(15,2)
+);
+
+ALTER TABLE TB_SUPRIMENTO ADD CONSTRAINT PK_TB_SUPRIMENTO PRIMARY KEY (ID_SUPRIMENTO);
+
+ALTER TABLE TB_SUPRIMENTO ADD CONSTRAINT FK_TB_SUPRIMENTO_1 FOREIGN KEY (ID_USUARIO) REFERENCES TB_USUARIO (ID_USUARIO);
+
+**************************************************************************
+CREATE TABLE TB_SANGRIA (
+    ID_SANGRIA         INTEGER NOT NULL,
+    ID_USUARIO         INTEGER,
+    ID_TIPO_PAGAMENTO  INTEGER,
+    CAIXA              INTEGER,
+    DT_SANGRIA         DATE,
+    HR_SANGRIA         TIME,
+    DESCRICAO          VARCHAR(100),
+    VALOR              NUMERIC(15,2)
+);
+
+ALTER TABLE TB_SANGRIA ADD CONSTRAINT PK_TB_SANGRIA PRIMARY KEY (ID_SANGRIA);
+ALTER TABLE TB_SANGRIA ADD CONSTRAINT FK_TB_SANGRIA_1 FOREIGN KEY (ID_USUARIO) REFERENCES TB_USUARIO (ID_USUARIO);
+ALTER TABLE TB_SANGRIA ADD CONSTRAINT FK_TB_SANGRIA_2 FOREIGN KEY (ID_TIPO_PAGAMENTO) REFERENCES TB_TIPO_PAGAMENTO (ID_TIPO_PAGAMENTO);
+
+
+**************************************************************************
+**************************************************************************
+**************************************************************************
+**************************************************************************
+
+

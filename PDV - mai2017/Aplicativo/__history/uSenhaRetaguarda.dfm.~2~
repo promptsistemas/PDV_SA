@@ -1,0 +1,115 @@
+object frmSenhaRetaguarda: TfrmSenhaRetaguarda
+  Left = 350
+  Top = 225
+  BorderIcons = [biSystemMenu]
+  Caption = 'Login do sistema'
+  ClientHeight = 163
+  ClientWidth = 295
+  Color = clWhite
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnClose = FormClose
+  OnKeyPress = FormKeyPress
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel3: TPanel
+    Left = 0
+    Top = 0
+    Width = 297
+    Height = 161
+    BevelInner = bvLowered
+    BevelOuter = bvNone
+    BevelWidth = 2
+    Color = clWhite
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 128
+      Top = 13
+      Width = 44
+      Height = 13
+      Caption = 'Usu'#225'rio'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 128
+      Top = 53
+      Width = 37
+      Height = 13
+      Caption = 'Senha'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Image2: TImage
+      Left = 5
+      Top = 8
+      Width = 114
+      Height = 101
+      Center = True
+      Proportional = True
+      Stretch = True
+      Transparent = True
+    end
+    object ValorNome: TEdit
+      Left = 128
+      Top = 29
+      Width = 160
+      Height = 21
+      CharCase = ecUpperCase
+      Color = clSilver
+      TabOrder = 0
+      OnKeyPress = FormKeyPress
+    end
+    object ValorSenha: TEdit
+      Left = 128
+      Top = 69
+      Width = 160
+      Height = 21
+      Color = clSilver
+      PasswordChar = '*'
+      TabOrder = 1
+      OnKeyPress = FormKeyPress
+    end
+    object BtnOK1: TButton
+      Left = 322
+      Top = 269
+      Width = 97
+      Height = 27
+      Caption = '&Entrar'
+      TabOrder = 2
+      Visible = False
+    end
+    object BtnCancelar1: TButton
+      Left = 211
+      Top = 261
+      Width = 97
+      Height = 27
+      Caption = '&Cancelar'
+      TabOrder = 3
+      Visible = False
+    end
+    object BtnAlterarSenha1: TButton
+      Left = 81
+      Top = 253
+      Width = 74
+      Height = 27
+      Caption = 'Alt.Senha'
+      TabOrder = 4
+      Visible = False
+    end
+  end
+end

@@ -1,0 +1,354 @@
+object frmAtuPlanoPagmto: TfrmAtuPlanoPagmto
+  Left = 0
+  Top = 0
+  BorderIcons = []
+  BorderStyle = bsNone
+  ClientHeight = 354
+  ClientWidth = 612
+  Color = 15066597
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnClose = FormClose
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel6: TPanel
+    Left = 0
+    Top = 0
+    Width = 612
+    Height = 25
+    Align = alTop
+    Caption = 'Atualiza'#231#227'o de Planos de Pagamentos'
+    Color = clHighlight
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWhite
+    Font.Height = -19
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold, fsItalic]
+    ParentBackground = False
+    ParentFont = False
+    TabOrder = 0
+    ExplicitWidth = 737
+    object SpeedButton3: TSpeedButton
+      Left = 588
+      Top = 1
+      Width = 23
+      Height = 23
+      Align = alRight
+      Flat = True
+      Glyph.Data = {
+        F6000000424DF600000000000000760000002800000010000000100000000100
+        0400000000008000000000000000000000001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FFFFFFFFFFFF
+        FFFF9999FFFFFFF9999FF9999FFFFF9999FFFF9999FFF9999FFFFF99999F9999
+        9FFFFFF999999999FFFFFFFF9999999FFFFFFFFFF99999FFFFFFFFFFF99999FF
+        FFFFFFFF9999999FFFFFFFF999999999FFFFFFF9999F9999FFFFFF9999FFF999
+        9FFFF9999FFFFF9999FF9999FFFFFFF9999FFFFFFFFFFFFFFFFF}
+      OnClick = SpeedButton3Click
+      ExplicitLeft = 772
+      ExplicitTop = 0
+    end
+  end
+  object DBGrid1: TDBGrid
+    Left = 0
+    Top = 24
+    Width = 609
+    Height = 89
+    DataSource = dsPagamentoServidor
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'ID_FORMA_PAGAMENTO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DESCRICAO_PAGAMENTO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'QT_PARCELAS'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'QT_DIAS_ENTRE_PARCELAS'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'QT_DIAS_PRIMEIRA_PARCELA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ADMINISTRADORA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'TX_ADM'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ID_TIPO_RECEBIMENTO'
+        Visible = True
+      end>
+  end
+  object DBGrid2: TDBGrid
+    Left = 1
+    Top = 119
+    Width = 609
+    Height = 139
+    DataSource = dsPagamentoLocal
+    TabOrder = 2
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'ID_FORMA_PAGAMENTO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DESCRICAO_PAGAMENTO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'QT_PARCELAS'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'QT_DIAS_ENTRE_PARCELAS'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'QT_DIAS_PRIMEIRA_PARCELA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ADMINISTRADORA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'TX_ADM'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ID_TIPO_PAGAMENTO'
+        Visible = True
+      end>
+  end
+  object qPagamentoServidor: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'SELECT'
+      ' FP.ID_FORMA_PAGAMENTO,'
+      ' FP.DESCRICAO_PAGAMENTO,'
+      ' FP.QT_PARCELAS,'
+      ' FP.QT_DIAS_ENTRE_PARCELAS,'
+      ' FP.QT_DIAS_PRIMEIRA_PARCELA,'
+      ' FP.ADMINISTRADORA,'
+      ' FP.TX_ADM,'
+      ' FP.ID_TIPO_RECEBIMENTO'
+      'FROM TB_FORMA_PAGAMENTO FP')
+    SQLConnection = DM.ConexaoServidor
+    Left = 164
+    Top = 43
+    object qPagamentoServidorID_FORMA_PAGAMENTO: TIntegerField
+      FieldName = 'ID_FORMA_PAGAMENTO'
+      Required = True
+    end
+    object qPagamentoServidorDESCRICAO_PAGAMENTO: TStringField
+      FieldName = 'DESCRICAO_PAGAMENTO'
+      Size = 40
+    end
+    object qPagamentoServidorQT_PARCELAS: TIntegerField
+      FieldName = 'QT_PARCELAS'
+    end
+    object qPagamentoServidorQT_DIAS_ENTRE_PARCELAS: TIntegerField
+      FieldName = 'QT_DIAS_ENTRE_PARCELAS'
+    end
+    object qPagamentoServidorQT_DIAS_PRIMEIRA_PARCELA: TIntegerField
+      FieldName = 'QT_DIAS_PRIMEIRA_PARCELA'
+    end
+    object qPagamentoServidorADMINISTRADORA: TStringField
+      FieldName = 'ADMINISTRADORA'
+      Size = 30
+    end
+    object qPagamentoServidorTX_ADM: TFMTBCDField
+      FieldName = 'TX_ADM'
+      Precision = 18
+      Size = 2
+    end
+    object qPagamentoServidorID_TIPO_RECEBIMENTO: TIntegerField
+      FieldName = 'ID_TIPO_RECEBIMENTO'
+    end
+  end
+  object dspPagamentoServidor: TDataSetProvider
+    DataSet = qPagamentoServidor
+    Options = [poIncFieldProps, poAllowMultiRecordUpdates, poAutoRefresh, poAllowCommandText]
+    Left = 196
+    Top = 43
+  end
+  object cdsPagamentoServidor: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'dspPagamentoServidor'
+    Left = 228
+    Top = 43
+    object cdsPagamentoServidorID_FORMA_PAGAMENTO: TIntegerField
+      FieldName = 'ID_FORMA_PAGAMENTO'
+      Required = True
+    end
+    object cdsPagamentoServidorDESCRICAO_PAGAMENTO: TStringField
+      FieldName = 'DESCRICAO_PAGAMENTO'
+      Size = 40
+    end
+    object cdsPagamentoServidorQT_PARCELAS: TIntegerField
+      FieldName = 'QT_PARCELAS'
+    end
+    object cdsPagamentoServidorQT_DIAS_ENTRE_PARCELAS: TIntegerField
+      FieldName = 'QT_DIAS_ENTRE_PARCELAS'
+    end
+    object cdsPagamentoServidorQT_DIAS_PRIMEIRA_PARCELA: TIntegerField
+      FieldName = 'QT_DIAS_PRIMEIRA_PARCELA'
+    end
+    object cdsPagamentoServidorADMINISTRADORA: TStringField
+      FieldName = 'ADMINISTRADORA'
+      Size = 30
+    end
+    object cdsPagamentoServidorTX_ADM: TFMTBCDField
+      FieldName = 'TX_ADM'
+      Precision = 18
+      Size = 2
+    end
+    object cdsPagamentoServidorID_TIPO_RECEBIMENTO: TIntegerField
+      FieldName = 'ID_TIPO_RECEBIMENTO'
+    end
+  end
+  object dsPagamentoServidor: TDataSource
+    DataSet = cdsPagamentoServidor
+    Left = 260
+    Top = 43
+  end
+  object cdsPagamentoLocal: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'dspPagamentoLocal'
+    Left = 228
+    Top = 91
+    object cdsPagamentoLocalID_FORMA_PAGAMENTO: TIntegerField
+      FieldName = 'ID_FORMA_PAGAMENTO'
+      Required = True
+    end
+    object cdsPagamentoLocalDESCRICAO_PAGAMENTO: TStringField
+      FieldName = 'DESCRICAO_PAGAMENTO'
+      Size = 40
+    end
+    object cdsPagamentoLocalQT_PARCELAS: TIntegerField
+      FieldName = 'QT_PARCELAS'
+    end
+    object cdsPagamentoLocalQT_DIAS_ENTRE_PARCELAS: TIntegerField
+      FieldName = 'QT_DIAS_ENTRE_PARCELAS'
+    end
+    object cdsPagamentoLocalQT_DIAS_PRIMEIRA_PARCELA: TIntegerField
+      FieldName = 'QT_DIAS_PRIMEIRA_PARCELA'
+    end
+    object cdsPagamentoLocalADMINISTRADORA: TStringField
+      FieldName = 'ADMINISTRADORA'
+      Size = 30
+    end
+    object cdsPagamentoLocalTX_ADM: TFMTBCDField
+      FieldName = 'TX_ADM'
+      Precision = 18
+      Size = 2
+    end
+    object cdsPagamentoLocalID_TIPO_PAGAMENTO: TIntegerField
+      FieldName = 'ID_TIPO_PAGAMENTO'
+    end
+  end
+  object dsPagamentoLocal: TDataSource
+    DataSet = cdsPagamentoLocal
+    Left = 260
+    Top = 91
+  end
+  object dspPagamentoLocal: TDataSetProvider
+    DataSet = qPagamentoLocal
+    Options = [poIncFieldProps, poAllowMultiRecordUpdates, poAutoRefresh, poAllowCommandText]
+    Left = 196
+    Top = 91
+  end
+  object qPagamentoLocal: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'SELECT'
+      ' FP.ID_FORMA_PAGAMENTO,'
+      ' FP.DESCRICAO_PAGAMENTO,'
+      ' FP.QT_PARCELAS,'
+      ' FP.QT_DIAS_ENTRE_PARCELAS,'
+      ' FP.QT_DIAS_PRIMEIRA_PARCELA,'
+      ' FP.ADMINISTRADORA,'
+      ' FP.TX_ADM,'
+      ' FP.ID_TIPO_PAGAMENTO'
+      'FROM TB_FORMA_PAGAMENTO FP')
+    SQLConnection = DM.ConexaoLocal
+    Left = 164
+    Top = 91
+    object qPagamentoLocalID_FORMA_PAGAMENTO: TIntegerField
+      FieldName = 'ID_FORMA_PAGAMENTO'
+      Required = True
+    end
+    object qPagamentoLocalDESCRICAO_PAGAMENTO: TStringField
+      FieldName = 'DESCRICAO_PAGAMENTO'
+      Size = 40
+    end
+    object qPagamentoLocalQT_PARCELAS: TIntegerField
+      FieldName = 'QT_PARCELAS'
+    end
+    object qPagamentoLocalQT_DIAS_ENTRE_PARCELAS: TIntegerField
+      FieldName = 'QT_DIAS_ENTRE_PARCELAS'
+    end
+    object qPagamentoLocalQT_DIAS_PRIMEIRA_PARCELA: TIntegerField
+      FieldName = 'QT_DIAS_PRIMEIRA_PARCELA'
+    end
+    object qPagamentoLocalADMINISTRADORA: TStringField
+      FieldName = 'ADMINISTRADORA'
+      Size = 30
+    end
+    object qPagamentoLocalTX_ADM: TFMTBCDField
+      FieldName = 'TX_ADM'
+      Precision = 18
+      Size = 2
+    end
+    object qPagamentoLocalID_TIPO_PAGAMENTO: TIntegerField
+      FieldName = 'ID_TIPO_PAGAMENTO'
+    end
+  end
+end

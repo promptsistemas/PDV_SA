@@ -1,0 +1,23 @@
+VERIFICAR B.DADOS CONRROPIDOS
+
+
+0- cmd path=%path%arquivos...
+1- gfix -v -full C:\FixDados\DINCASH.fdb -USER SYSDBA -pass masterkey
+2- gfix -mend C:\FixDados\DINCASH.fdb -USER SYSDBA -pass masterkey
+3- gfix -v -full C:\FixDados\DINCASH.fdb -USER SYSDBA -pass masterkey
+
+4- GBAK -backup -V -ignore -garbage -limbo C:\FixDados\DINCASH.fdb C:\FixDados\DINCASH.fbk -USER SYSDBA -pass masterkey
+
+5- GBAK  -c -v -z C:\FixDados\DINCASH.fbk C:\FixDados\DINCASH.fdb -USER SYSDBA -pass masterkey 
+
+================================================
+CALCULO DE DIAS, HORAS, MINUTOS
+SELECT
+  pt.dt_efetiva,
+  pt.dt_term_tingi,
+  PT.tempo_tingi,
+  TRUNC(DATEDIFF(MINUTE, tb_prog_tingi.dt_efetiva, tb_prog_tingi.dt_term_tingi)/1440) AS "DIA(S)",
+  TRUNC(MOD(DATEDIFF(MINUTE, tb_prog_tingi.dt_efetiva, tb_prog_tingi.dt_term_tingi), 1440) /60) "HORA(S)",
+  MOD(DATEDIFF(MINUTE, tb_prog_tingi.dt_efetiva, tb_prog_tingi.dt_term_tingi), 60) "MINUTO(S)"
+FROM
+  tb_prog_tingi PT

@@ -1,0 +1,645 @@
+object frmVendedor: TfrmVendedor
+  Left = 139
+  Top = 30
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsNone
+  Caption = 'Cadastro de Vendedores '
+  ClientHeight = 539
+  ClientWidth = 693
+  Color = 15066597
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  Scaled = False
+  OnClose = FormClose
+  OnKeyPress = FormKeyPress
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object DBGrid1: TDBGrid
+    Left = 5
+    Top = 185
+    Width = 682
+    Height = 282
+    Ctl3D = False
+    DataSource = DM.dsVendedor
+    FixedColor = clMoneyGreen
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlue
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    Options = [dgTitles, dgColumnResize, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+    ParentColor = True
+    ParentCtl3D = False
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+    OnCellClick = DBGrid1CellClick
+    OnDrawColumnCell = DBGrid1DrawColumnCell
+    OnDblClick = DBGrid1DblClick
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'ID_VENDEDOR'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NOME'
+        Width = 164
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ID_LOJA'
+        Width = 54
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'FANTASIA'
+        Width = 187
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DT_ADMISSAO'
+        Width = 96
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'VL_COMISSAO'
+        Width = 63
+        Visible = True
+      end
+      item
+        Expanded = False
+        Visible = True
+      end>
+  end
+  object DBNavigator1: TDBNavigator
+    Left = 5
+    Top = 469
+    Width = 124
+    Height = 18
+    DataSource = DM.dsVendedor
+    VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
+    TabOrder = 1
+    OnClick = DBNavigator1Click
+    OnDblClick = DBNavigator1DblClick
+  end
+  object P_BANCO: TPanel
+    Left = 5
+    Top = 94
+    Width = 682
+    Height = 91
+    BevelOuter = bvNone
+    Color = clCream
+    Enabled = False
+    ParentBackground = False
+    TabOrder = 2
+    object Label1: TLabel
+      Left = 74
+      Top = 3
+      Width = 42
+      Height = 13
+      Caption = 'C'#243'd.Loja'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 147
+      Top = 3
+      Width = 66
+      Height = 13
+      Caption = 'Nome da Loja'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label3: TLabel
+      Left = 0
+      Top = 3
+      Width = 68
+      Height = 13
+      Caption = 'C'#243'd.Vendedor'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label6: TLabel
+      Left = 270
+      Top = 38
+      Width = 71
+      Height = 13
+      Caption = 'Data Admiss'#227'o'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label7: TLabel
+      Left = 0
+      Top = 38
+      Width = 92
+      Height = 13
+      Caption = 'Nome do Vendedor'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object SB_LOJA: TSpeedButton
+      Left = 200
+      Top = 40
+      Width = 23
+      Height = 15
+      Visible = False
+    end
+    object Label4: TLabel
+      Left = 347
+      Top = 38
+      Width = 56
+      Height = 13
+      Caption = '% Comiss'#227'o'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object DBEdit1: TDBEdit
+      Left = 0
+      Top = 16
+      Width = 73
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'ID_VENDEDOR'
+      DataSource = DM.dsVendedor
+      ParentCtl3D = False
+      ReadOnly = True
+      TabOrder = 0
+      OnKeyPress = FormKeyPress
+    end
+    object DBEdit2: TDBEdit
+      Left = 74
+      Top = 16
+      Width = 71
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'ID_LOJA'
+      DataSource = DM.dsVendedor
+      ParentCtl3D = False
+      TabOrder = 1
+      OnKeyPress = DBEdit2KeyPress
+    end
+    object DBEdit3: TDBEdit
+      Left = 147
+      Top = 16
+      Width = 398
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'FANTASIA'
+      DataSource = DM.dsVendedor
+      ParentCtl3D = False
+      ReadOnly = True
+      TabOrder = 2
+      OnKeyPress = FormKeyPress
+    end
+    object DBEdit6: TDBEdit
+      Left = 270
+      Top = 52
+      Width = 75
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'DT_ADMISSAO'
+      DataSource = DM.dsVendedor
+      ParentCtl3D = False
+      TabOrder = 4
+      OnKeyPress = FormKeyPress
+    end
+    object DBEdit7: TDBEdit
+      Left = 0
+      Top = 52
+      Width = 268
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'NOME'
+      DataSource = DM.dsVendedor
+      ParentCtl3D = False
+      TabOrder = 3
+      OnKeyPress = FormKeyPress
+    end
+    object RG_ATIVO: TRadioGroup
+      Left = 419
+      Top = 37
+      Width = 126
+      Height = 42
+      Caption = ' Vendedor Ativo?'
+      Columns = 2
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ItemIndex = 0
+      Items.Strings = (
+        'SIM'
+        'NAO')
+      ParentFont = False
+      TabOrder = 6
+    end
+    object DBEdit4: TDBEdit
+      Left = 347
+      Top = 52
+      Width = 70
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      DataField = 'VL_COMISSAO'
+      DataSource = DM.dsVendedor
+      ParentCtl3D = False
+      TabOrder = 5
+      OnExit = DBEdit4Exit
+      OnKeyPress = FormKeyPress
+    end
+  end
+  object BB_ATUALIZAR: TBitBtn
+    Left = 5
+    Top = 496
+    Width = 124
+    Height = 38
+    Caption = '&Atualizar Cadastro'
+    Glyph.Data = {
+      F6060000424DF606000000000000360000002800000018000000180000000100
+      180000000000C0060000120B0000120B00000000000000000000FF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0132020132020135020140030140
+      03013502013302013202FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF012F01013302014403026A06
+      037F09038709038709038109027007014B04013502013202FF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF02460401430302
+      7507039A0B03A70C03A40C03A10C03A10C03A40C03A70C039E0C027E08024E04
+      013502FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF034F
+      07025606039D0D03A60C03A10C039E0C039E0C039E0C039E0C039E0C039E0C03
+      9F0C03A60C03A10C026606013602FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+      FF00FF04540B055F0C07A91805A512049E0D039E0C039E0B019C0975D07BEEFA
+      EF46BF50039E0C039E0C039E0C03A10C03A70C026C07013602FF00FFFF00FFFF
+      00FFFF00FFFF00FF023D04055F0E0CAD2709A61D07A11706A012039E0D039E0C
+      84D78CFFFFFFFFFFFFF3FBF43BBB45039E0C039E0C039E0C039F0C03A70C026A
+      06013502FF00FFFF00FFFF00FFFF00FF0341060FA62C0FB02D0BA52309A61D07
+      A317049F0F8ED995FFFFFFFFFFFFFFFFFFFFFFFFEDFAEE32B73C039E0C039E0C
+      039E0C03A00C03A40C014904FF00FFFF00FFFF00FF034D050A761C14B83C10AA
+      300DA9280AA41F09A31696DC9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE5
+      F7E629B434039E0C039E0C039E0C03A70C037B09013502FF00FFFF00FF034E06
+      15A63C18B14113AC370EA72A0AA41A9CDEA1FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFDDF4E021AF2C039E0C039E0C039F0C03A00C014403FF
+      00FF0255040767131CB85017B04616AD3E0CA7299ADEA1FFFFFFFFFFFFFEFFFE
+      A5E2ABEFFAEFFFFFFFDDF4E0BCEAC0FFFFFFFFFFFFD1F0D51CAC26039E0C039E
+      0C03A70C025E050138020256040D802321BA561BB24C14AF411CB141EEFAEFFF
+      FFFFFFFFFF84D89123B131F4FBF4FFFFFFCCEFCF1EAD29CEEFD1FFFFFFFFFFFF
+      AFE5B4039E0C039E0B03A70C027507013802035D0613902F2ABF601EB55022B6
+      5320B551EFFBF3FFFFFFA3E2B71EB44936BD5DF7FCFAFFFFFFD5F2D8039E0C28
+      B233EDF8EDFFFFFFDAF3DD039E0C039E0B03A70C037F090136020366071D9A39
+      43C57326B65721B55321B55382D9A188DAA529B85922B5533FC16CF7FCFAFFFF
+      FFD7F2DA08A111039E0C38BA438EDA952DB537039E0C039E0C03A40C03810901
+      4604046D081D9A395CD08939BF6821B55321B55321B55321B55321B55321B553
+      40C16DF8FCFAFFFFFFD7F3DD0BA51B06A11406A115049F10049F0F06A113049F
+      0F03A70D037F090138020375091A96306DD5975ACE8620B45121B55321B55321
+      B55321B55322B55340C16CF7FCFAFFFFFFD8F3E015AD350FA92E0EA92D0DA729
+      0DA7290DA72906A11403A70D027007013802FF00FF0E8B1C6CD49588DCA63BC4
+      6D16AF4A22B55421B55321B55321B55340C16EF7FCFAFFFFFFD9F3E116AD360F
+      AA300FAA2F0FAA2F0DA92C0AA52105A01203A70C015905FF00FFFF00FF0F921C
+      49C16CA7E6C076D59829B85915B0481FB55121B55321B55340C16DF8FCFAFFFF
+      FFDAF4E316AD380FAA300EA92B0CA7260BA52108A31906A415049E0F014003FF
+      00FFFF00FFFF00FF1BA0319AE3BAB1E9C65DCB8623B55414AF461FB45121B553
+      40C16EF8FCFAFFFFFFDDF4E61AB03F13AB3610A92F0FA92B0CA7240AA41F09B0
+      1C04750DFF00FFFF00FFFF00FFFF00FF28A13249C16CB5EACEB1E9C659CB8229
+      B85916AF491FB45133BC63DDF4E6FEFFFEBAEBCB15AD4013AC3E13AB3611AA31
+      0FA92B0CAD270AA51F024405FF00FFFF00FFFF00FFFF00FFFF00FF149C246BD1
+      8BC5EFD5BDEDD073D4983EC06C1FB4511CB24E28B85A21B5531AB14C1BB24C19
+      B04518B14116AC3A12AD340FB02D055F0FFF00FFFF00FFFF00FFFF00FFFF00FF
+      FF00FFFF00FF1597246CD495C5EFD5D0F2DDA4E3BC6FD39350C67939BF6830BC
+      6235BC6437BF6737BF672EBA5A20B74C16B23D076713FF00FFFF00FFFF00FFFF
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FF1C9E284FC4739AE3BABDEDD0C5EFD5
+      B2E9C99DE1B78CDCAA81D9A473D49858CC843BC46D1FAF49076914FF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF1C9E2819
+      A33150C67981D9A495E2B595E2B58ADEAC76D89D5ACE8635BC64169132055F0C
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FF1C9E2819A02F26A94326A94328A94623A14014912B06
+      700FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+    TabOrder = 3
+    OnClick = BB_ATUALIZARClick
+  end
+  object Panel2: TPanel
+    Left = 131
+    Top = 470
+    Width = 556
+    Height = 65
+    Color = clSkyBlue
+    ParentBackground = False
+    TabOrder = 4
+    Visible = False
+    object Gauge1: TGauge
+      Left = 1
+      Top = 34
+      Width = 551
+      Height = 24
+      Progress = 0
+    end
+    object Label5: TLabel
+      Left = 5
+      Top = 15
+      Width = 214
+      Height = 17
+      Caption = 'Aguarde......   Atualizando Registros'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clYellow
+      Font.Height = -13
+      Font.Name = 'Segoe UI Semibold'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+  end
+  object DBGrid2: TDBGrid
+    Left = 13
+    Top = 296
+    Width = 665
+    Height = 145
+    DataSource = dsVendedorServer
+    Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    TabOrder = 5
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+    Visible = False
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'ID_VENDEDOR'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ID_LOJA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ID_GRUPO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NOME'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DT_ADMISSAO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ATIVO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'VL_COMISSAO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'FANTASIA'
+        Visible = True
+      end>
+  end
+  object Panel6: TPanel
+    Left = 0
+    Top = 0
+    Width = 693
+    Height = 25
+    Align = alTop
+    Caption = 'Cadastro de Vendedores'
+    Color = clHighlight
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWhite
+    Font.Height = -19
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold, fsItalic]
+    ParentBackground = False
+    ParentFont = False
+    TabOrder = 6
+    object SpeedButton3: TSpeedButton
+      Left = 669
+      Top = 1
+      Width = 23
+      Height = 23
+      Align = alRight
+      Flat = True
+      Glyph.Data = {
+        F6000000424DF600000000000000760000002800000010000000100000000100
+        0400000000008000000000000000000000001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FFFFFFFFFFFF
+        FFFF9999FFFFFFF9999FF9999FFFFF9999FFFF9999FFF9999FFFFF99999F9999
+        9FFFFFF999999999FFFFFFFF9999999FFFFFFFFFF99999FFFFFFFFFFF99999FF
+        FFFFFFFF9999999FFFFFFFF999999999FFFFFFF9999F9999FFFFFF9999FFF999
+        9FFFF9999FFFFF9999FF9999FFFFFFF9999FFFFFFFFFFFFFFFFF}
+      OnClick = SpeedButton3Click
+      ExplicitLeft = 772
+      ExplicitTop = 0
+    end
+  end
+  object ToolBar1: TToolBar
+    Left = 5
+    Top = 32
+    Width = 682
+    Height = 55
+    Align = alNone
+    ButtonHeight = 52
+    ButtonWidth = 68
+    Caption = 'ToolBar1'
+    HotTrackColor = clBlue
+    Images = DM.I_BOTOES
+    ShowCaptions = True
+    TabOrder = 7
+    object TB_PESQUISAR: TToolButton
+      Left = 0
+      Top = 0
+      Caption = '  &Pesquisar   '
+      ImageIndex = 6
+      OnClick = TB_PESQUISARClick
+    end
+    object TB_SAIR: TToolButton
+      Left = 68
+      Top = 0
+      Caption = 'Sai&r'
+      ImageIndex = 7
+      OnClick = TB_SAIRClick
+    end
+  end
+  object qVendedorServer: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftInteger
+        Name = 'ID_LOJA'
+        ParamType = ptInput
+      end>
+    SQL.Strings = (
+      'SELECT'
+      ' V.ID_VENDEDOR,'
+      ' V.ID_LOJA,'
+      ' V.ID_GRUPO,'
+      ' V.NOME,'
+      ' V.dt_admissao,'
+      ' V.ativo,'
+      ' V.vl_comissao,'
+      ' L.fantasia'
+      'FROM TB_VENDEDOR V'
+      'JOIN tb_lojas L ON (L.id_loja = V.id_loja)'
+      'WHERE V.ID_LOJA = :ID_LOJA'
+      '')
+    SQLConnection = DM.ConexaoServidor
+    Left = 144
+    Top = 256
+    object qVendedorServerID_VENDEDOR: TIntegerField
+      FieldName = 'ID_VENDEDOR'
+      Required = True
+    end
+    object qVendedorServerID_LOJA: TIntegerField
+      FieldName = 'ID_LOJA'
+    end
+    object qVendedorServerID_GRUPO: TIntegerField
+      FieldName = 'ID_GRUPO'
+    end
+    object qVendedorServerNOME: TStringField
+      FieldName = 'NOME'
+      Size = 30
+    end
+    object qVendedorServerDT_ADMISSAO: TDateField
+      FieldName = 'DT_ADMISSAO'
+    end
+    object qVendedorServerATIVO: TStringField
+      FieldName = 'ATIVO'
+      Size = 1
+    end
+    object qVendedorServerVL_COMISSAO: TFMTBCDField
+      FieldName = 'VL_COMISSAO'
+      Precision = 18
+      Size = 2
+    end
+    object qVendedorServerFANTASIA: TStringField
+      FieldName = 'FANTASIA'
+      Size = 40
+    end
+  end
+  object dspVendedorServer: TDataSetProvider
+    DataSet = qVendedorServer
+    Options = [poIncFieldProps, poAllowMultiRecordUpdates, poAutoRefresh, poAllowCommandText]
+    Left = 176
+    Top = 256
+  end
+  object cdsVendedorServer: TClientDataSet
+    Aggregates = <>
+    Params = <
+      item
+        DataType = ftInteger
+        Name = 'ID_LOJA'
+        ParamType = ptInput
+      end>
+    ProviderName = 'dspVendedorServer'
+    Left = 208
+    Top = 256
+    object cdsVendedorServerID_VENDEDOR: TIntegerField
+      FieldName = 'ID_VENDEDOR'
+      Required = True
+    end
+    object cdsVendedorServerID_LOJA: TIntegerField
+      FieldName = 'ID_LOJA'
+    end
+    object cdsVendedorServerID_GRUPO: TIntegerField
+      FieldName = 'ID_GRUPO'
+    end
+    object cdsVendedorServerNOME: TStringField
+      FieldName = 'NOME'
+      Size = 30
+    end
+    object cdsVendedorServerDT_ADMISSAO: TDateField
+      FieldName = 'DT_ADMISSAO'
+    end
+    object cdsVendedorServerATIVO: TStringField
+      FieldName = 'ATIVO'
+      Size = 1
+    end
+    object cdsVendedorServerVL_COMISSAO: TFMTBCDField
+      FieldName = 'VL_COMISSAO'
+      Precision = 18
+      Size = 2
+    end
+    object cdsVendedorServerFANTASIA: TStringField
+      FieldName = 'FANTASIA'
+      Size = 40
+    end
+  end
+  object dsVendedorServer: TDataSource
+    DataSet = cdsVendedorServer
+    Left = 240
+    Top = 256
+  end
+  object spDelVendedor: TSQLStoredProc
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DM.ConexaoLocal
+    StoredProcName = 'DEL_VENDEDOR'
+    Left = 448
+    Top = 264
+  end
+  object dspDelVendedor: TDataSetProvider
+    DataSet = spDelVendedor
+    Options = [poIncFieldProps, poAllowMultiRecordUpdates, poAutoRefresh]
+    Left = 480
+    Top = 264
+  end
+  object cdsDelVendedor: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'dspDelVendedor'
+    Left = 512
+    Top = 264
+  end
+end

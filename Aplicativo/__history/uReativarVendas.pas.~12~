@@ -1,0 +1,247 @@
+unit uReativarVendas;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.FMTBcd, Vcl.StdCtrls, Vcl.Buttons,
+  Vcl.DBCtrls, Data.SqlExpr, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids, Data.DB,
+  Datasnap.DBClient, Datasnap.Provider, Vcl.Imaging.jpeg, Vcl.ComCtrls;
+
+type
+  TfrmReativarVendas = class(TForm)
+    spCancelaPagamento: TSQLStoredProc;
+    dspCancelaPagamento: TDataSetProvider;
+    cdsCancelaPagamento: TClientDataSet;
+    qReativarVenda: TSQLDataSet;
+    qReativarVendaID_PDV: TIntegerField;
+    qReativarVendaNR_ORCAMENTO: TIntegerField;
+    qReativarVendaID_LOJA: TIntegerField;
+    qReativarVendaID_GRUPO: TIntegerField;
+    qReativarVendaDT_ORCAMENTO: TDateField;
+    qReativarVendaVL_ORCAMENTO: TFMTBCDField;
+    qReativarVendaVL_DESCONTO: TFMTBCDField;
+    qReativarVendaVL_LIQUIDO: TFMTBCDField;
+    qReativarVendaSTATUS: TStringField;
+    qReativarVendaTRANSF: TStringField;
+    qReativarVendaNOME_CLIENTE: TStringField;
+    qReativarVendaCPF_CLIENTE: TStringField;
+    qReativarVendaID_VENDEDOR: TIntegerField;
+    qReativarVendaCAIXA: TIntegerField;
+    qReativarVendaID_USUARIO: TIntegerField;
+    qReativarVendaNOME: TStringField;
+    qReativarVendaLOGIN: TStringField;
+    dspReativarVenda: TDataSetProvider;
+    cdsReativarVenda: TClientDataSet;
+    dsReativarVenda: TDataSource;
+    Image1: TImage;
+    qReativarVendaHR_ORCAMENTO: TTimeField;
+    qReativarVendaCUPOM: TStringField;
+    cdsReativarVendaID_PDV: TIntegerField;
+    cdsReativarVendaNR_ORCAMENTO: TIntegerField;
+    cdsReativarVendaID_LOJA: TIntegerField;
+    cdsReativarVendaID_GRUPO: TIntegerField;
+    cdsReativarVendaDT_ORCAMENTO: TDateField;
+    cdsReativarVendaVL_ORCAMENTO: TFMTBCDField;
+    cdsReativarVendaVL_DESCONTO: TFMTBCDField;
+    cdsReativarVendaVL_LIQUIDO: TFMTBCDField;
+    cdsReativarVendaSTATUS: TStringField;
+    cdsReativarVendaTRANSF: TStringField;
+    cdsReativarVendaNOME_CLIENTE: TStringField;
+    cdsReativarVendaCPF_CLIENTE: TStringField;
+    cdsReativarVendaID_VENDEDOR: TIntegerField;
+    cdsReativarVendaCAIXA: TIntegerField;
+    cdsReativarVendaID_USUARIO: TIntegerField;
+    cdsReativarVendaNOME: TStringField;
+    cdsReativarVendaLOGIN: TStringField;
+    cdsReativarVendaHR_ORCAMENTO: TTimeField;
+    cdsReativarVendaCUPOM: TStringField;
+    PageControl1: TPageControl;
+    TS_VENDAS_FINALIZADAS: TTabSheet;
+    DBGrid1: TDBGrid;
+    TS_CANCELADAS: TTabSheet;
+    DBNavigator1: TDBNavigator;
+    BB_REATIVAR: TBitBtn;
+    BB_CANCELAR: TBitBtn;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    DBGrid2: TDBGrid;
+    qItemReativaVenda: TSQLDataSet;
+    dspItemReativaVenda: TDataSetProvider;
+    cdsItemReativaVenda: TClientDataSet;
+    dsItemReativaVenda: TDataSource;
+    qItemReativaVendaID_ITEM_PDV: TIntegerField;
+    qItemReativaVendaNR_ORCAMENTO: TIntegerField;
+    qItemReativaVendaID_PRODUTO: TIntegerField;
+    qItemReativaVendaQUANT: TIntegerField;
+    qItemReativaVendaVL_UNIT: TFMTBCDField;
+    qItemReativaVendaVL_TOTAL: TFMTBCDField;
+    qItemReativaVendaDESC_ITEM: TFMTBCDField;
+    qItemReativaVendaPERC_DES: TFMTBCDField;
+    qItemReativaVendaTRANSF: TStringField;
+    qItemReativaVendaID_LOJA: TIntegerField;
+    qItemReativaVendaSTATUS: TStringField;
+    qItemReativaVendaDT_ORCAMENTO: TDateField;
+    qItemReativaVendaCOD_BARRA: TStringField;
+    qItemReativaVendaDESCRICAO: TStringField;
+    qItemReativaVendaUNIDADE: TStringField;
+    cdsItemReativaVendaID_ITEM_PDV: TIntegerField;
+    cdsItemReativaVendaNR_ORCAMENTO: TIntegerField;
+    cdsItemReativaVendaID_PRODUTO: TIntegerField;
+    cdsItemReativaVendaQUANT: TIntegerField;
+    cdsItemReativaVendaVL_UNIT: TFMTBCDField;
+    cdsItemReativaVendaVL_TOTAL: TFMTBCDField;
+    cdsItemReativaVendaDESC_ITEM: TFMTBCDField;
+    cdsItemReativaVendaPERC_DES: TFMTBCDField;
+    cdsItemReativaVendaTRANSF: TStringField;
+    cdsItemReativaVendaID_LOJA: TIntegerField;
+    cdsItemReativaVendaSTATUS: TStringField;
+    cdsItemReativaVendaDT_ORCAMENTO: TDateField;
+    cdsItemReativaVendaCOD_BARRA: TStringField;
+    cdsItemReativaVendaDESCRICAO: TStringField;
+    cdsItemReativaVendaUNIDADE: TStringField;
+    GroupBox1: TGroupBox;
+    DateTimePicker1: TDateTimePicker;
+    Label1: TLabel;
+    procedure BB_REATIVARClick(Sender: TObject);
+    procedure BB_CANCELARClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormShow(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DateTimePicker1Change(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmReativarVendas: TfrmReativarVendas;
+
+implementation
+
+{$R *.dfm}
+
+uses U_LIB, UD_PESQUISA, uDm, uPdv;
+
+procedure TfrmReativarVendas.BB_REATIVARClick(Sender: TObject);
+begin
+  if DateTimePicker1.Date < Date then
+  begin
+    ShowMessage('Não é Permitido Reativar Venda Com a Data Anterior a Data Atual.');
+    Exit;
+  end;
+
+  if Application.MessageBox('Deseja Realmente Reativar Esta Venda ?','Confirmação!!!!!',MB_OK+MB_YESNO) = idyes then
+  begin
+    cdsReativarVenda.Edit;
+    cdsReativarVendaSTATUS.Value := 'A';
+    cdsReativarVenda.ApplyUpdates(0);
+
+    DM.cdsPdvLocal.Close;
+    DM.cdsPdvLocal.Params[0].AsInteger := StrToInt(frmPdv.L_CAIXA.Caption);
+    DM.cdsPdvLocal.Open;
+
+    DM.cdsItemPdvLocal.Close;
+    DM.cdsItemPdvLocal.Params[0].AsInteger := DM.cdsPdvLocalID_PDV.AsInteger;
+    DM.cdsItemPdvLocal.Open;
+
+    cdsCancelaPagamento.Params[0].AsInteger := cdsReativarVendaID_PDV.AsInteger;
+    cdsCancelaPagamento.Execute;
+
+    if DM.cdsItemPdvLocal.RecordCount > 0 then
+    begin
+      frmPdv.L_SITUACAO_VENDA.Caption := 'ESPERANDO PAGAMENTO';
+      frmPdv.L_TOTAL_VENDA.Caption := 'R$ '+FormatFloat('###,###0.00',DM.cdsPdvLocalVL_LIQUIDO.AsFloat);
+    end
+    else
+      frmPdv.L_SITUACAO_VENDA.Caption := 'Caixa Livre';
+
+    ShowMessage('Venda Reativada Com Sucesso!!!');
+    Close;
+  end
+  else
+  begin
+    ShowMessage('Reativação Cancelada');
+    DBGrid1.SetFocus;
+  end;
+end;
+
+procedure TfrmReativarVendas.DateTimePicker1Change(Sender: TObject);
+begin
+  cdsReativarVenda.Close;
+  cdsReativarVenda.Params[0].AsInteger := StrToInt(frmPdv.L_CAIXA.Caption);
+  cdsReativarVenda.Params[1].AsDate    := DateTimePicker1.Date;
+  cdsReativarVenda.Open;
+
+  cdsItemReativaVenda.Close;
+  cdsItemReativaVenda.Params[0].AsInteger := cdsReativarVendaNR_ORCAMENTO.AsInteger;
+  cdsItemReativaVenda.Params[1].AsInteger := cdsReativarVendaID_LOJA.AsInteger;
+  cdsItemReativaVenda.Open;
+
+  PageControl1.ActivePage := TS_VENDAS_FINALIZADAS;
+
+  DBGrid1.SetFocus;
+end;
+
+procedure TfrmReativarVendas.DBGrid1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If cdsReativarVendaCUPOM.AsString = 'S'  then // condição
+   DBGrid1.Canvas.Font.Color:= clGreen // coloque aqui a cor desejada
+  ELSE
+   DBGrid1.Canvas.Font.Color:= clBlue; // coloque aqui a cor desejada
+   DBGrid1.DefaultDrawDataCell(Rect, DBGrid1.columns[datacol].field, State);
+   DBGrid1.Canvas.Font.Style :=(Sender as TDBGrid).Canvas.Font.Style + [FSBOLD]; //Deixa em negrito
+
+  if gdSelected in State then
+    DBGrid1.Canvas.Brush.Color := $009BFFFF;
+    DBGRid1.DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmReativarVendas.BB_CANCELARClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmReativarVendas.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  Action := caFree;
+  frmReativarVendas := nil;
+end;
+
+procedure TfrmReativarVendas.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = 27 then
+  begin
+    BB_CANCELARClick(Self);
+  end;
+  if Key = 13 then
+  begin
+    BB_REATIVARClick(Self);
+  end;
+
+end;
+
+procedure TfrmReativarVendas.FormShow(Sender: TObject);
+begin
+  cdsReativarVenda.Close;
+  cdsReativarVenda.Params[0].AsInteger := StrToInt(frmPdv.L_CAIXA.Caption);
+  cdsReativarVenda.Params[1].AsDate    := DateTimePicker1.Date;
+  cdsReativarVenda.Open;
+
+  cdsItemReativaVenda.Close;
+  cdsItemReativaVenda.Params[0].AsInteger := cdsReativarVendaNR_ORCAMENTO.AsInteger;
+  cdsItemReativaVenda.Params[1].AsInteger := cdsReativarVendaID_LOJA.AsInteger;
+  cdsItemReativaVenda.Open;
+
+  PageControl1.ActivePage := TS_VENDAS_FINALIZADAS;
+
+  DBGrid1.SetFocus;
+end;
+
+end.

@@ -1,0 +1,138 @@
+unit uReimpressaoOrcamento;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.FMTBcd, Data.DB, Datasnap.DBClient,
+  Datasnap.Provider, Data.SqlExpr, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids,
+  Vcl.StdCtrls, Vcl.Buttons;
+
+type
+  TfrmReimpressaoOrcamento = class(TForm)
+    qOrcamento: TSQLDataSet;
+    dspOrcamento: TDataSetProvider;
+    cdsOrcamento: TClientDataSet;
+    dsOrcamento: TDataSource;
+    qOrcamentoID_PDV: TIntegerField;
+    qOrcamentoNR_ORCAMENTO: TIntegerField;
+    qOrcamentoID_LOJA: TIntegerField;
+    qOrcamentoID_GRUPO: TIntegerField;
+    qOrcamentoDT_ORCAMENTO: TDateField;
+    qOrcamentoVL_ORCAMENTO: TFMTBCDField;
+    qOrcamentoVL_DESCONTO: TFMTBCDField;
+    qOrcamentoVL_LIQUIDO: TFMTBCDField;
+    qOrcamentoSTATUS: TStringField;
+    qOrcamentoTRANSF: TStringField;
+    qOrcamentoNOME_CLIENTE: TStringField;
+    qOrcamentoCPF_CLIENTE: TStringField;
+    qOrcamentoID_VENDEDOR: TIntegerField;
+    qOrcamentoCAIXA: TIntegerField;
+    qOrcamentoID_USUARIO: TIntegerField;
+    qOrcamentoNOME: TStringField;
+    qOrcamentoLOGIN: TStringField;
+    cdsOrcamentoID_PDV: TIntegerField;
+    cdsOrcamentoNR_ORCAMENTO: TIntegerField;
+    cdsOrcamentoID_LOJA: TIntegerField;
+    cdsOrcamentoID_GRUPO: TIntegerField;
+    cdsOrcamentoDT_ORCAMENTO: TDateField;
+    cdsOrcamentoVL_ORCAMENTO: TFMTBCDField;
+    cdsOrcamentoVL_DESCONTO: TFMTBCDField;
+    cdsOrcamentoVL_LIQUIDO: TFMTBCDField;
+    cdsOrcamentoSTATUS: TStringField;
+    cdsOrcamentoTRANSF: TStringField;
+    cdsOrcamentoNOME_CLIENTE: TStringField;
+    cdsOrcamentoCPF_CLIENTE: TStringField;
+    cdsOrcamentoID_VENDEDOR: TIntegerField;
+    cdsOrcamentoCAIXA: TIntegerField;
+    cdsOrcamentoID_USUARIO: TIntegerField;
+    cdsOrcamentoNOME: TStringField;
+    cdsOrcamentoLOGIN: TStringField;
+    DBGrid1: TDBGrid;
+    Panel1: TPanel;
+    qReimpressao: TSQLQuery;
+    qReimpressaoID_ITEM_PDV: TIntegerField;
+    qReimpressaoNR_ORCAMENTO: TIntegerField;
+    qReimpressaoID_PRODUTO: TIntegerField;
+    qReimpressaoQUANT: TIntegerField;
+    qReimpressaoVL_UNIT: TFMTBCDField;
+    qReimpressaoVL_TOTAL: TFMTBCDField;
+    qReimpressaoDESC_ITEM: TFMTBCDField;
+    qReimpressaoPERC_DES: TFMTBCDField;
+    qReimpressaoTRANSF: TStringField;
+    qReimpressaoID_LOJA: TIntegerField;
+    qReimpressaoSTATUS: TStringField;
+    qReimpressaoCOD_BARRA: TStringField;
+    qReimpressaoDESCRICAO: TStringField;
+    qReimpressaoUNIDADE: TStringField;
+    qReimpressaoDT_ORCAMENTO: TDateField;
+    dspReimpressao: TDataSetProvider;
+    cdsReimpressao: TClientDataSet;
+    cdsReimpressaoID_ITEM_PDV: TIntegerField;
+    cdsReimpressaoNR_ORCAMENTO: TIntegerField;
+    cdsReimpressaoID_PRODUTO: TIntegerField;
+    cdsReimpressaoQUANT: TIntegerField;
+    cdsReimpressaoVL_UNIT: TFMTBCDField;
+    cdsReimpressaoVL_TOTAL: TFMTBCDField;
+    cdsReimpressaoDESC_ITEM: TFMTBCDField;
+    cdsReimpressaoPERC_DES: TFMTBCDField;
+    cdsReimpressaoTRANSF: TStringField;
+    cdsReimpressaoID_LOJA: TIntegerField;
+    cdsReimpressaoSTATUS: TStringField;
+    cdsReimpressaoCOD_BARRA: TStringField;
+    cdsReimpressaoDESCRICAO: TStringField;
+    cdsReimpressaoUNIDADE: TStringField;
+    cdsReimpressaoDT_ORCAMENTO: TDateField;
+    dsReimpressao: TDataSource;
+    DBGrid2: TDBGrid;
+    BB_IMPRIMIR: TBitBtn;
+    BB_SAIR: TBitBtn;
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BB_SAIRClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmReimpressaoOrcamento: TfrmReimpressaoOrcamento;
+
+implementation
+
+{$R *.dfm}
+
+uses U_LIB, UD_PESQUISA, uDm, uPdv;
+
+procedure TfrmReimpressaoOrcamento.BB_SAIRClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmReimpressaoOrcamento.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  cdsOrcamento.Close;
+  cdsReimpressao.Close;
+  Action :=caFree;
+  frmReimpressaoOrcamento := nil;
+end;
+
+procedure TfrmReimpressaoOrcamento.FormShow(Sender: TObject);
+Var
+ Caixa : string;
+begin
+  caixa :=frmPdv.L_CAIXA.Caption;
+
+  cdsOrcamento.Close;
+  cdsOrcamento.Params[0].AsInteger := StrToInt(Caixa);
+  cdsOrcamento.Open;
+
+  cdsReimpressao.Close;
+  cdsReimpressao.Params[0].AsInteger := cdsOrcamentoNR_ORCAMENTO.AsInteger;
+  cdsReimpressao.Params[1].AsInteger := cdsOrcamentoID_LOJA.AsInteger;
+  cdsReimpressao.Open;
+end;
+
+end.

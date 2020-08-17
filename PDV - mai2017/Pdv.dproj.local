@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2016/03/27 01:31:48.000.994,=C:\shopping10\PDV\Unit1.pas</Transaction>
+    <Transaction>2016/03/27 01:32:08.000.311,C:\shopping10\PDV\Aplicativo\UtrocaMercadoria.pas=C:\shopping10\PDV\Unit1.pas</Transaction>
+    <Transaction>2016/03/27 01:32:08.000.311,C:\shopping10\PDV\Aplicativo\UtrocaMercadoria.dfm=C:\shopping10\PDV\Unit1.dfm</Transaction>
+    <Transaction>2016/04/17 23:55:20.000.433,=C:\shopping10\PDV\Unit1.pas</Transaction>
+    <Transaction>2016/04/17 23:56:37.000.261,C:\shopping10\PDV\Unit1.dfm=C:\shopping10\PDV\Aplicativo\uPagamentoPdv.dfm</Transaction>
+    <Transaction>2016/04/17 23:56:37.000.261,C:\shopping10\PDV\Unit1.pas=C:\shopping10\PDV\Aplicativo\uPagamentoPdv.pas</Transaction>
+  </Transactions>
+</BorlandProject>

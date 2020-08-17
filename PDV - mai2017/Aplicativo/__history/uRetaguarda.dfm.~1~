@@ -1,0 +1,120 @@
+object frmRetagurda: TfrmRetagurda
+  Left = 20
+  Top = 43
+  Align = alClient
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'PDV - Retaguarda    V.2.0.1'
+  ClientHeight = 546
+  ClientWidth = 989
+  Color = 14024703
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 520
+    Width = 989
+    Height = 26
+    Panels = <
+      item
+        Text = 'Loja'
+        Width = 50
+      end
+      item
+        Text = 'NOME DA LOJA'
+        Width = 300
+      end
+      item
+        Text = 'Usu'#225'rio Logado'
+        Width = 90
+      end
+      item
+        Text = 'NOME DO USUARIO'
+        Width = 250
+      end
+      item
+        Text = 'Data'
+        Width = 35
+      end
+      item
+        Text = 'DATE'
+        Width = 160
+      end
+      item
+        Text = 'Hora'
+        Width = 50
+      end
+      item
+        Text = 'TIME'
+        Width = 50
+      end>
+  end
+  object MainMenu1: TMainMenu
+    OwnerDraw = True
+    Left = 176
+    Top = 48
+    object Cadastros1: TMenuItem
+      Caption = '&Cadastros'
+      object Vendedores1: TMenuItem
+        Caption = '&Vendedores'
+        OnClick = Vendedores1Click
+      end
+    end
+    object Relatrios1: TMenuItem
+      Caption = 'Rela&t'#243'rios'
+      object Vendas1: TMenuItem
+        Caption = '&Vendas Por Vendedor'
+        OnClick = Vendas1Click
+      end
+    end
+    object Ultilitrios1: TMenuItem
+      Caption = 'U&ltilit'#225'rios'
+      object AtualizaodeEstoqueNoServidor1: TMenuItem
+        Caption = '&Atualiza'#231#227'o de Estoque No Servidor'
+        OnClick = AtualizaodeEstoqueNoServidor1Click
+      end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object ransmitirCadastrodeVendedores1: TMenuItem
+        Caption = '&Transmitir Cadastro de Vendedores '
+      end
+    end
+    object Sair1: TMenuItem
+      Caption = 'Sai&r'
+      OnClick = Sair1Click
+    end
+  end
+  object Timer1: TTimer
+    OnTimer = Timer1Timer
+    Left = 384
+    Top = 168
+  end
+  object suiSkinEngine1: TsuiSkinEngine
+    Active = True
+    Ready = True
+    SkinFile = 'C:\shopping10\Skins\Vista2\Vista2_color1.ssk'
+    ResSysMenuMin = 'Mi&nimize'
+    ResSysMenuMax = 'Ma&ximize/Restore'
+    ResSysMenuClose = '&Close'
+    DisabledTag = 9999
+    DrawScrollBar = True
+    Version = '4.45'
+    BuiltIn = False
+    SkinDialogs = True
+    SkinAllForms = True
+    AdditionalBuiltInSkins = <>
+    NoChangeButtonsFontColor = False
+    Left = 336
+    Top = 72
+  end
+end

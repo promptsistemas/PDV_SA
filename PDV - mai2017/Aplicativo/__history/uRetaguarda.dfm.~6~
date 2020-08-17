@@ -1,0 +1,174 @@
+object frmRetagurda: TfrmRetagurda
+  Left = 20
+  Top = 43
+  Align = alClient
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'PDV - Retaguarda    V.2.0.1'
+  ClientHeight = 546
+  ClientWidth = 989
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 520
+    Width = 989
+    Height = 26
+    Panels = <
+      item
+        Text = 'Loja'
+        Width = 50
+      end
+      item
+        Text = 'NOME DA LOJA'
+        Width = 300
+      end
+      item
+        Text = 'Usu'#225'rio Logado'
+        Width = 90
+      end
+      item
+        Text = 'NOME DO USUARIO'
+        Width = 250
+      end
+      item
+        Text = 'Data'
+        Width = 35
+      end
+      item
+        Text = 'DATE'
+        Width = 160
+      end
+      item
+        Text = 'Hora'
+        Width = 50
+      end
+      item
+        Text = 'TIME'
+        Width = 50
+      end>
+  end
+  object ToolBar1: TToolBar
+    Left = 0
+    Top = 0
+    Width = 989
+    Height = 65
+    ButtonHeight = 65
+    ButtonWidth = 65
+    Caption = 'ToolBar1'
+    TabOrder = 1
+    object ToolButton1: TToolButton
+      Left = 0
+      Top = 0
+      Caption = 'ToolButton1'
+      ImageIndex = 0
+    end
+    object ToolButton2: TToolButton
+      Left = 65
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton2'
+      ImageIndex = 1
+      Style = tbsSeparator
+    end
+    object ToolButton3: TToolButton
+      Left = 73
+      Top = 0
+      Caption = 'ToolButton3'
+      ImageIndex = 1
+    end
+    object ToolButton4: TToolButton
+      Left = 138
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton4'
+      ImageIndex = 2
+      Style = tbsSeparator
+    end
+    object ToolButton5: TToolButton
+      Left = 146
+      Top = 0
+      Caption = 'ToolButton5'
+      ImageIndex = 2
+    end
+    object ToolButton6: TToolButton
+      Left = 211
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton6'
+      ImageIndex = 3
+      Style = tbsSeparator
+    end
+    object ToolButton7: TToolButton
+      Left = 219
+      Top = 0
+      Caption = 'ToolButton7'
+      ImageIndex = 3
+    end
+    object ToolButton8: TToolButton
+      Left = 284
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton8'
+      ImageIndex = 4
+      Style = tbsSeparator
+    end
+    object ToolButton9: TToolButton
+      Left = 292
+      Top = 0
+      Caption = 'ToolButton9'
+      ImageIndex = 4
+    end
+  end
+  object MainMenu1: TMainMenu
+    OwnerDraw = True
+    Left = 176
+    Top = 48
+    object Cadastros1: TMenuItem
+      Caption = '&Cadastros'
+      object Vendedores1: TMenuItem
+        Caption = '&Vendedores'
+        OnClick = Vendedores1Click
+      end
+    end
+    object Relatrios1: TMenuItem
+      Caption = 'Rela&t'#243'rios'
+      object Vendas1: TMenuItem
+        Caption = '&Vendas Por Vendedor'
+        OnClick = Vendas1Click
+      end
+    end
+    object Ultilitrios1: TMenuItem
+      Caption = 'U&ltilit'#225'rios'
+      object AtualizaodeEstoqueNoServidor1: TMenuItem
+        Caption = '&Atualiza'#231#227'o de Estoque No Servidor'
+        OnClick = AtualizaodeEstoqueNoServidor1Click
+      end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object ransmitirCadastrodeVendedores1: TMenuItem
+        Caption = '&Transmitir Cadastro de Vendedores '
+      end
+    end
+    object Sair1: TMenuItem
+      Caption = 'Sai&r'
+      OnClick = Sair1Click
+    end
+  end
+  object Timer1: TTimer
+    OnTimer = Timer1Timer
+    Left = 384
+    Top = 168
+  end
+end

@@ -1,0 +1,344 @@
+unit uCadVendedor;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, Buttons, StdCtrls, ExtCtrls, Grids, DBGrids, Mask, 
+  DBCtrls, QuickRpt, ComCtrls, QRCtrls, SUISkinEngine, ToolWin, FMTBcd, DB,
+  DBClient, Provider, SqlExpr, IniFiles, Gauges;
+
+type
+  TfrmVendedor = class(TForm)
+    DBGrid1: TDBGrid;
+    DBNavigator1: TDBNavigator;
+    suiSkinEngine1: TsuiSkinEngine;
+    CoolBar1: TCoolBar;
+    ToolBar1: TToolBar;
+    TB_PESQUISAR: TToolButton;
+    TB_SAIR: TToolButton;
+    P_BANCO: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    SB_LOJA: TSpeedButton;
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    DBEdit3: TDBEdit;
+    DBEdit6: TDBEdit;
+    DBEdit7: TDBEdit;
+    RG_ATIVO: TRadioGroup;
+    DBEdit4: TDBEdit;
+    Label4: TLabel;
+    qVendedorServer: TSQLQuery;
+    dspVendedorServer: TDataSetProvider;
+    cdsVendedorServer: TClientDataSet;
+    dsVendedorServer: TDataSource;
+    BB_ATUALIZAR: TBitBtn;
+    Panel2: TPanel;
+    Gauge1: TGauge;
+    Label5: TLabel;
+    qVendedorServerID_VENDEDOR: TIntegerField;
+    qVendedorServerID_LOJA: TIntegerField;
+    qVendedorServerID_GRUPO: TIntegerField;
+    qVendedorServerNOME: TStringField;
+    qVendedorServerDT_ADMISSAO: TDateField;
+    qVendedorServerATIVO: TStringField;
+    qVendedorServerVL_COMISSAO: TFMTBCDField;
+    qVendedorServerFANTASIA: TStringField;
+    cdsVendedorServerID_VENDEDOR: TIntegerField;
+    cdsVendedorServerID_LOJA: TIntegerField;
+    cdsVendedorServerID_GRUPO: TIntegerField;
+    cdsVendedorServerNOME: TStringField;
+    cdsVendedorServerDT_ADMISSAO: TDateField;
+    cdsVendedorServerATIVO: TStringField;
+    cdsVendedorServerVL_COMISSAO: TFMTBCDField;
+    cdsVendedorServerFANTASIA: TStringField;
+    DBGrid2: TDBGrid;
+    spDelVendedor: TSQLStoredProc;
+    dspDelVendedor: TDataSetProvider;
+    cdsDelVendedor: TClientDataSet;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormShow(Sender: TObject);
+    procedure TB_PESQUISARClick(Sender: TObject);
+    procedure TB_SAIRClick(Sender: TObject);
+    procedure DBEdit2KeyPress(Sender: TObject; var Key: Char);
+    procedure DBGrid1CellClick(Column: TColumn);
+    procedure DBGrid1DblClick(Sender: TObject);
+    procedure DBNavigator1DblClick(Sender: TObject);
+    procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBEdit4Exit(Sender: TObject);
+    procedure AtualizarCadastro;
+    procedure BB_ATUALIZARClick(Sender: TObject);
+  private
+    { Private declarations }
+    procedure Atualizavendedor;
+  public
+    { Public declarations }
+    IniControle : TIniFile;
+  end;
+
+var
+  frmVendedor: TfrmVendedor;
+  tpMov : String;
+  sSql : String;
+  ConexaoAtiva : String;  
+
+implementation
+
+uses U_LIB, UD_PESQUISA, uDm,  uRetaguarda;
+
+{$R *.dfm}
+
+procedure TfrmVendedor.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := caFree;
+  frmVendedor := nil;
+end;
+
+
+procedure TfrmVendedor.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end;
+end;
+
+procedure TfrmVendedor.FormShow(Sender: TObject);
+begin
+  suiSkinEngine1.Active := True;
+  suiSkinEngine1.SkinFile := frmRetagurda.suiSkinEngine1.SkinFile;
+  DM.cdsVendedor.Close;
+  DM.cdsVendedor.Params[0].AsInteger := StrToInt(frmRetagurda.recInformacoes.lojaCredenciada);
+  DM.cdsVendedor.IndexFieldNames :='ID_VENDEDOR';
+  DM.cdsVendedor.Open;
+
+   if DM.cdsVendedorATIVO.Value = 'S' then
+     RG_ATIVO.ItemIndex := 0
+   else
+     RG_ATIVO.ItemIndex := 1;
+end;
+
+procedure TfrmVendedor.TB_PESQUISARClick(Sender: TObject);
+begin
+  Pesquisa(DM.cdsVendedor,['ID_VENDEDOR','NOME','FANTASIA'],['Cód.Vendedor','Nome do Vendedor','Loja'],
+    [8,25,25],'','','','','Cadastro Vendedor','Cadastro Vendedor');
+
+   if DM.cdsVendedorATIVO.Value = 'S' then
+     RG_ATIVO.ItemIndex := 0
+   else
+     RG_ATIVO.ItemIndex := 1;
+
+end;
+
+procedure TfrmVendedor.TB_SAIRClick(Sender: TObject);
+begin
+  DM.cdsVendedor.Close;
+  cdsVendedorServer.Close;
+  DM.ConexaoServidor.Connected := False;  
+
+  Close;
+end;
+
+procedure TfrmVendedor.DBEdit2KeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end
+  else if Key = #32 then
+  begin
+    Key := #0;
+  end;
+end;
+
+procedure TfrmVendedor.DBGrid1CellClick(Column: TColumn);
+begin
+  if DM.cdsVendedorATIVO.Value = 'S' then
+   RG_ATIVO.ItemIndex := 0
+  else
+   RG_ATIVO.ItemIndex := 1;
+end;
+
+procedure TfrmVendedor.DBGrid1DblClick(Sender: TObject);
+begin
+  if DM.cdsVendedorATIVO.Value = 'S' then
+   RG_ATIVO.ItemIndex := 0
+  else
+   RG_ATIVO.ItemIndex := 1;
+end;
+
+procedure TfrmVendedor.DBNavigator1DblClick(Sender: TObject);
+begin
+  if DM.cdsVendedorATIVO.Value = 'S' then
+   RG_ATIVO.ItemIndex := 0
+  else
+   RG_ATIVO.ItemIndex := 1;
+end;
+
+procedure TfrmVendedor.DBNavigator1Click(Sender: TObject;
+  Button: TNavigateBtn);
+begin
+  if DM.cdsVendedorATIVO.Value = 'S' then
+   RG_ATIVO.ItemIndex := 0
+  else
+   RG_ATIVO.ItemIndex := 1;
+end;
+
+procedure TfrmVendedor.DBGrid1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  If DM.cdsVendedorATIVO.AsString = 'N'  then // condição
+   DBGrid1.Canvas.Font.Color:= clRed // coloque aqui a cor desejada
+  ELSE
+   DBGrid1.Canvas.Font.Color:= clBlue; // coloque aqui a cor desejada
+   DBGrid1.DefaultDrawDataCell(Rect, DBGrid1.columns[datacol].field, State);
+   DBGrid1.Canvas.Font.Style :=(Sender as TDBGrid).Canvas.Font.Style + [FSBOLD]; //Deixa em negrito
+end;
+
+procedure TfrmVendedor.DBEdit4Exit(Sender: TObject);
+begin
+  if DM.cdsVendedorVL_COMISSAO.IsNull then
+     DM.cdsVendedorVL_COMISSAO.AsFloat := 0;
+end;
+
+procedure TfrmVendedor.AtualizarCadastro;
+var F:Tform;
+MSG: Tlabel;
+Borda: TShape;
+begin
+  F:=  TForm.Create(Application);
+  F.BorderStyle:= bsNone;
+  F.Position:= poDesktopCenter;
+  F.Width:= 170;
+  F.Height:= 50; //até aqui criamos o form
+
+  Borda:= TShape.Create(Application);
+  Borda.Parent:= F;
+  Borda.Align:= alClient; // uma borda envolta do form
+
+  MSG:=  TLabel.Create(Application);
+  MSG.Parent:=F;
+  MSG.Transparent:= true;
+  MSG.AutoSize:= false;
+  MSG.Width:= 160;
+  MSG.Font.Size := 12;
+  Msg.Caption:='Aguarde....';
+  MSG.Alignment:= taCenter;//label com a mensagem "Aguarde"
+
+  F.Show;
+  F.Update;
+
+    if (not DM.ConexaoServidor.Connected) then
+    begin
+      try
+         IniControle := TIniFile.Create(ExtractFilePath(Application.ExeName)+'PDV_SERVIDOR.INI');
+        if Trim(IniControle.ReadString('SERVIDOR', 'DATABASE', '')) <> '' then
+        begin
+          DM.ConexaoServidor.Params.Clear;
+          DM.ConexaoServidor.Params.Values['DATABASE'] := Inicontrole.ReadString('SERVIDOR','DATABASE','');
+          DM.ConexaoServidor.Params.Values['User_Name'] := Inicontrole.ReadString('SERVIDOR','User_Name','');
+          DM.ConexaoServidor.Params.Values['PASSWORD'] := Inicontrole.ReadString('SERVIDOR','PASSWORD','masterkey');
+          DM.ConexaoServidor.Params.Values['SQLDialect'] := Trim(Inicontrole.ReadString('SERVIDOR','SQLDialect','3'));
+          DM.ConexaoServidor.connected:= true;
+          Inicontrole.Free;
+          //Application.MessageBox('Servidor Conectado Com Sucesso.','Atenção.',MB_OK+MB_ICONWARNING);
+          ConexaoAtiva := 'Sim';
+        end;
+      except
+        Application.MessageBox( 'Não Foi Possivél fazer a Conexão Com o Servidor.' + #13 +
+                                'verifique sua Conexão com a Internet, ' + #13 +
+                                'Desconecte e Conecte a VPN, ' + #13 +
+                                'Se o Problema persistir Entre em contato com suporte para esclarecer qualquer dúvida.'+ #13 +
+                                'Fones(77) 8801-3982/8847-3778/8142-4546/3425-2703/9808-1573',
+                                'Error Interno',mb_ok + mb_IconError );
+        //Application.Terminate;
+       // L_CONEXAO_SERVIDOR.Caption := 'Servidor Desconectado';
+        frmVendedor.Close;
+      end;
+//    end
+//    else
+//    begin
+//      Application.MessageBox('Conexão Com o Servidor Já Está Ativa.','Atenção!!!',MB_OK + MB_ICONWARNING);
+    end;
+   Atualizavendedor;
+  F.Free; //
+end;
+
+procedure TfrmVendedor.BB_ATUALIZARClick(Sender: TObject);
+begin
+  Application.MessageBox('Dependendo da Velocidade de Sua Conexão'+#13+
+                         'Este Processo Poderá Levar Vários Minutos.','Atenção!!!!',MB_OK +MB_ICONWARNING);
+
+  if Application.MessageBox('Antes de Continuar é Necessário Fechar o PDV.'+#13+
+                            '             Deseja Continuar?','Atenção!!!!',MB_YESNO+MB_ICONQUESTION )= idyes then
+  begin
+    AtualizarCadastro;
+  end
+  else
+    ShowMessage('Atualização Cancelada.');
+end;
+
+procedure TfrmVendedor.Atualizavendedor;
+begin
+  if ConexaoAtiva = 'Sim' then
+  begin
+    cdsDelVendedor.Execute;
+    DM.cdsVendedor.ApplyUpdates(0);
+    DM.cdsVendedor.Refresh;
+
+
+
+    cdsVendedorServer.Close;
+    cdsVendedorServer.Params[0].AsInteger := StrToInt(frmRetagurda.recInformacoes.lojaCredenciada);
+    cdsVendedorServer.IndexFieldNames:='ID_VENDEDOR';
+    cdsVendedorServer.Open;
+
+    cdsVendedorServer.DisableControls;
+    Panel2.Visible := True;
+    Gauge1.MaxValue := cdsVendedorServer.RecordCount;
+    Gauge1.Progress := 0;
+    cdsVendedorServer.First;
+
+    while NOT cdsVendedorServer.Eof do
+    begin
+      DM.cdsVendedor.Insert;
+      DM.cdsVendedorID_VENDEDOR.AsInteger := cdsVendedorServerID_VENDEDOR.AsInteger;
+      DM.cdsVendedorID_LOJA.AsInteger     := cdsVendedorServerID_LOJA.AsInteger;
+      DM.cdsVendedorID_GRUPO.AsInteger    := cdsVendedorServerID_GRUPO.AsInteger;
+      DM.cdsVendedorNOME.AsString         := cdsVendedorServerNOME.AsString;
+      DM.cdsVendedorDT_ADMISSAO.AsDateTime:= cdsVendedorServerDT_ADMISSAO.AsDateTime;
+      DM.cdsVendedorATIVO.AsString        := cdsVendedorServerATIVO.AsString;
+      DM.cdsVendedorVL_COMISSAO.AsFloat   := cdsVendedorServerVL_COMISSAO.AsFloat;
+      DM.cdsVendedor.ApplyUpdates(0);
+      cdsVendedorServer.Next;
+      Gauge1.Progress := Gauge1.Progress +1;
+    end;
+      cdsVendedorServer.EnableControls;
+      Panel2.Visible := False;
+
+
+      DM.cdsVendedor.Close;
+      DM.cdsVendedor.Params[0].AsInteger := StrToInt(frmRetagurda.recInformacoes.lojaCredenciada);
+      DM.cdsVendedor.IndexFieldNames :='ID_VENDEDOR';
+      DM.cdsVendedor.Open;
+
+       if DM.cdsVendedorATIVO.Value = 'S' then
+         RG_ATIVO.ItemIndex := 0
+       else
+         RG_ATIVO.ItemIndex := 1;
+
+      ShowMessage('Registros Atualizados Com Sucesso.');
+  end;
+end;
+
+end.

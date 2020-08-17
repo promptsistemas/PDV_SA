@@ -1,0 +1,80 @@
+unit uAtuPlanoPagmto;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, IniFiles;
+
+type
+  TfrmAtuPlanoPagmto = class(TForm)
+    Panel6: TPanel;
+    SpeedButton3: TSpeedButton;
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    { Private declarations }
+    Procedure VerificaConexao;
+  public
+    { Public declarations }
+    IniControle : TIniFile;
+
+  end;
+
+var
+  frmAtuPlanoPagmto: TfrmAtuPlanoPagmto;
+
+implementation
+
+{$R *.dfm}
+
+uses uDm, U_LIB, UD_PESQUISA;
+
+{ TForm1 }
+
+procedure TfrmAtuPlanoPagmto.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := caFree;
+  frmAtuPlanoPagmto := nil;
+end;
+
+procedure TfrmAtuPlanoPagmto.FormShow(Sender: TObject);
+begin
+  VerificaConexao;
+end;
+
+procedure TfrmAtuPlanoPagmto.VerificaConexao;
+begin
+    if (not DM.ConexaoServidor.Connected) then
+    begin
+      try
+         IniControle := TIniFile.Create(ExtractFilePath(Application.ExeName)+'PDV_SERVIDOR.INI');
+        if Trim(IniControle.ReadString('SERVIDOR', 'DATABASE', '')) <> '' then
+        begin
+          DM.ConexaoServidor.Params.Clear;
+          DM.ConexaoServidor.Params.Values['DATABASE'] := Inicontrole.ReadString('SERVIDOR','DATABASE','');
+          DM.ConexaoServidor.Params.Values['User_Name'] := Inicontrole.ReadString('SERVIDOR','User_Name','');
+          DM.ConexaoServidor.Params.Values['PASSWORD'] := Inicontrole.ReadString('SERVIDOR','PASSWORD','masterkey');
+          DM.ConexaoServidor.Params.Values['SQLDialect'] := Trim(Inicontrole.ReadString('SERVIDOR','SQLDialect','3'));
+          DM.ConexaoServidor.Params.Values['LOJA'] := Trim(Inicontrole.ReadString('SERVIDOR','LOJA',''));
+          DM.ConexaoServidor.connected:= true;
+         // LOJA := Inicontrole.ReadString('SERVIDOR','LOJA','');
+          Inicontrole.Free;
+          Application.MessageBox('Servidor Conectado Com Sucesso.','Atenção.',MB_OK+MB_ICONWARNING);
+        end;
+      except
+        Application.MessageBox( 'Não Foi Possivél fazer a Conexão Com o Servidor.' + #13 +
+                                'verifique sua Conexão com a Internet, ' + #13 +
+                                'Desconecte e Conecte a VPN, ' + #13 +
+                                'Se o Problema persistir Entre em contato com suporte para esclarecer qualquer dúvida.'+ #13 +
+                                'Fone(77) 98847-3778','Error Interno',mb_ok + mb_IconError );
+      end;
+    end
+    else
+    begin
+
+    end;
+
+end;
+
+end.

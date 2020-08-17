@@ -1,0 +1,216 @@
+unit uAtuProdDJDV;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.FMTBcd, Data.DB, Datasnap.Provider,
+  Data.SqlExpr, Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids, Data.DBXFirebird,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.Samples.Gauges, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+
+type
+  TfrmAutProdDJPDV = class(TForm)
+    cdsProdutoPDV: TClientDataSet;
+    qProdutoPDV: TSQLQuery;
+    dspProdutoPDV: TDataSetProvider;
+    dsProdutoPDV: TDataSource;
+    qProdutoPDVCOD_BARRA: TStringField;
+    qProdutoPDVNCM_PRODUTO: TStringField;
+    qProdutoPDVID_PRODUTO: TIntegerField;
+    qProdutoPDVDESCRICAO: TStringField;
+    qProdutoPDVUNIDADE: TStringField;
+    qProdutoPDVTAMANHO: TStringField;
+    qProdutoPDVVL_UNIT: TFMTBCDField;
+    qProdutoPDVVL_VENDA: TFMTBCDField;
+    qProdutoPDVVL_VENDA_ATAC: TFMTBCDField;
+    qProdutoPDVVL_VENDA_PRAZO1: TFMTBCDField;
+    qProdutoPDVVL_VENDA_PRAZO2: TFMTBCDField;
+    qProdutoPDVVL_VENDA_PRAZO3: TFMTBCDField;
+    qProdutoPDVDT_ULT_COMPRA: TDateField;
+    qProdutoPDVDT_ULT_VENDA: TDateField;
+    qProdutoPDVCOD_PRODUTO: TIntegerField;
+    qProdutoPDVID_FORNECEDOR: TIntegerField;
+    qProdutoPDVR_SOCIAL: TStringField;
+    cdsProdutoPDVCOD_BARRA: TStringField;
+    cdsProdutoPDVNCM_PRODUTO: TStringField;
+    cdsProdutoPDVID_PRODUTO: TIntegerField;
+    cdsProdutoPDVDESCRICAO: TStringField;
+    cdsProdutoPDVUNIDADE: TStringField;
+    cdsProdutoPDVTAMANHO: TStringField;
+    cdsProdutoPDVVL_UNIT: TFMTBCDField;
+    cdsProdutoPDVVL_VENDA: TFMTBCDField;
+    cdsProdutoPDVVL_VENDA_ATAC: TFMTBCDField;
+    cdsProdutoPDVVL_VENDA_PRAZO1: TFMTBCDField;
+    cdsProdutoPDVVL_VENDA_PRAZO2: TFMTBCDField;
+    cdsProdutoPDVVL_VENDA_PRAZO3: TFMTBCDField;
+    cdsProdutoPDVDT_ULT_COMPRA: TDateField;
+    cdsProdutoPDVDT_ULT_VENDA: TDateField;
+    cdsProdutoPDVCOD_PRODUTO: TIntegerField;
+    cdsProdutoPDVID_FORNECEDOR: TIntegerField;
+    cdsProdutoPDVR_SOCIAL: TStringField;
+    DBGrid1: TDBGrid;
+    DBGrid2: TDBGrid;
+    ConexaoDJ: TSQLConnection;
+    qProdutoDJ: TSQLQuery;
+    qProdutoDJID_PRODUTO: TIntegerField;
+    qProdutoDJID_GRUPO_PRODUTO: TIntegerField;
+    qProdutoDJID_FORNECEDOR: TIntegerField;
+    qProdutoDJCOD_CST: TStringField;
+    qProdutoDJDESCRICAO: TStringField;
+    qProdutoDJUNIDADE: TStringField;
+    qProdutoDJEMBALGEM: TStringField;
+    qProdutoDJCD_BARRA: TStringField;
+    qProdutoDJREFERENCIA: TStringField;
+    qProdutoDJCODIGO: TStringField;
+    qProdutoDJVL_CUSTO: TFMTBCDField;
+    qProdutoDJVL_VENDA_ATAC: TFMTBCDField;
+    qProdutoDJVL_VENDA_VARE: TFMTBCDField;
+    qProdutoDJVL_MARGEM: TFMTBCDField;
+    qProdutoDJNCM: TStringField;
+    qProdutoDJCFOP_BA: TIntegerField;
+    qProdutoDJCFOP_OUTROS: TIntegerField;
+    qProdutoDJEXPORTADO: TStringField;
+    qProdutoDJALIQUOTA: TFMTBCDField;
+    qProdutoDJTIPO_ALIQ: TStringField;
+    qProdutoDJCOD_TRIBUTARIO: TStringField;
+    qProdutoDJCOD_COFINS: TStringField;
+    qProdutoDJALIQUOTA_IPI: TFMTBCDField;
+    qProdutoDJALIQUOTA_COFINS: TFMTBCDField;
+    qProdutoDJCOD_IPI: TStringField;
+    qProdutoDJID_ORIGEM_PRODUTO: TIntegerField;
+    qProdutoDJCOD_CSOSN: TStringField;
+    qProdutoDJBALANCA: TStringField;
+    qProdutoDJALIQUOTA_OUTROS: TFMTBCDField;
+    qProdutoDJMVA: TFMTBCDField;
+    qProdutoDJMVA_OUTROS: TFMTBCDField;
+    qProdutoDJATIVO: TStringField;
+    dspProdutoDJ: TDataSetProvider;
+    cdsProdutoDJ: TClientDataSet;
+    dsProdutoDJ: TDataSource;
+    cdsProdutoDJID_PRODUTO: TIntegerField;
+    cdsProdutoDJID_GRUPO_PRODUTO: TIntegerField;
+    cdsProdutoDJID_FORNECEDOR: TIntegerField;
+    cdsProdutoDJCOD_CST: TStringField;
+    cdsProdutoDJDESCRICAO: TStringField;
+    cdsProdutoDJUNIDADE: TStringField;
+    cdsProdutoDJEMBALGEM: TStringField;
+    cdsProdutoDJCD_BARRA: TStringField;
+    cdsProdutoDJREFERENCIA: TStringField;
+    cdsProdutoDJCODIGO: TStringField;
+    cdsProdutoDJVL_CUSTO: TFMTBCDField;
+    cdsProdutoDJVL_VENDA_ATAC: TFMTBCDField;
+    cdsProdutoDJVL_VENDA_VARE: TFMTBCDField;
+    cdsProdutoDJVL_MARGEM: TFMTBCDField;
+    cdsProdutoDJNCM: TStringField;
+    cdsProdutoDJCFOP_BA: TIntegerField;
+    cdsProdutoDJCFOP_OUTROS: TIntegerField;
+    cdsProdutoDJEXPORTADO: TStringField;
+    cdsProdutoDJALIQUOTA: TFMTBCDField;
+    cdsProdutoDJTIPO_ALIQ: TStringField;
+    cdsProdutoDJCOD_TRIBUTARIO: TStringField;
+    cdsProdutoDJCOD_COFINS: TStringField;
+    cdsProdutoDJALIQUOTA_IPI: TFMTBCDField;
+    cdsProdutoDJALIQUOTA_COFINS: TFMTBCDField;
+    cdsProdutoDJCOD_IPI: TStringField;
+    cdsProdutoDJID_ORIGEM_PRODUTO: TIntegerField;
+    cdsProdutoDJCOD_CSOSN: TStringField;
+    cdsProdutoDJBALANCA: TStringField;
+    cdsProdutoDJALIQUOTA_OUTROS: TFMTBCDField;
+    cdsProdutoDJMVA: TFMTBCDField;
+    cdsProdutoDJMVA_OUTROS: TFMTBCDField;
+    cdsProdutoDJATIVO: TStringField;
+    spRecebeProdutoPDV: TSQLStoredProc;
+    dspRecebeProdutoPDV: TDataSetProvider;
+    cdsRecebeProdutoPDV: TClientDataSet;
+    BitBtn1: TBitBtn;
+    Image1: TImage;
+    Gauge1: TGauge;
+    procedure BitBtn1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmAutProdDJPDV: TfrmAutProdDJPDV;
+
+implementation
+
+{$R *.dfm}
+
+uses uDm;
+
+procedure TfrmAutProdDJPDV.BitBtn1Click(Sender: TObject);
+begin
+// 0- ID_PRODUTO
+// 1- DESCRICAO
+// 2- UNIDADE
+// 3- EMBALAGEM
+// 4- COD_BARRA
+// 5- CODIGO
+// 6- VL_CUSTO
+// 7- VL_VENDA
+// 8- NCM
+
+   cdsProdutoPDV.Open;
+
+   cdsProdutoPDV.DisableControls;
+   Gauge1.Visible := True;
+   Gauge1.MaxValue := cdsProdutoPDV.RecordCount;
+   Gauge1.Progress := 0;
+   cdsProdutoPDV.First;
+  while NOT cdsProdutoPDV.Eof do
+  begin
+    cdsProdutoDJ.Close;
+    cdsProdutoDJ.Open;
+
+    cdsRecebeProdutoPDV.Params[0].AsInteger:= cdsProdutoPDVID_PRODUTO.AsInteger;
+    cdsRecebeProdutoPDV.Params[1].AsString := cdsProdutoPDVDESCRICAO.AsString;
+    cdsRecebeProdutoPDV.Params[2].AsString := cdsProdutoPDVUNIDADE.AsString;
+    cdsRecebeProdutoPDV.Params[3].AsString := cdsProdutoPDVUNIDADE.AsString;
+    cdsRecebeProdutoPDV.Params[4].AsString := cdsProdutoPDVCOD_BARRA.AsString;
+    cdsRecebeProdutoPDV.Params[5].AsString := cdsProdutoPDVCOD_PRODUTO.AsString;
+    cdsRecebeProdutoPDV.Params[6].AsString := cdsProdutoPDVCOD_PRODUTO.AsString;
+    cdsRecebeProdutoPDV.Params[7].AsFloat  := cdsProdutoPDVVL_VENDA.AsFloat;
+    cdsRecebeProdutoPDV.Params[8].AsString := cdsProdutoPDVNCM_PRODUTO.AsString;
+    cdsRecebeProdutoPDV.Execute;
+
+    cdsProdutoDJ.ApplyUpdates(0);
+    cdsProdutoDJ.Refresh;
+    cdsProdutoPDV.Next;
+    Gauge1.Progress := Gauge1.Progress +1 ;
+  end;
+
+    cdsProdutoPDV.EnableControls;
+    Application.MessageBox('Produtos Importados Com Sucesso!!!','Atenção!!!!',MB_OK+MB_ICONINFORMATION);
+    Gauge1.Visible := False;
+
+end;
+
+procedure TfrmAutProdDJPDV.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  cdsProdutoPDV.Close;
+
+  if ConexaoDJ.Connected = True then
+    ConexaoDJ.Connected := False;
+
+  cdsProdutoDJ.Close;
+
+end;
+
+procedure TfrmAutProdDJPDV.FormShow(Sender: TObject);
+begin
+  cdsProdutoPDV.Close;
+  cdsProdutoPDV.Open;
+
+  if ConexaoDJ.Connected = False then
+    ConexaoDJ.Connected := True;
+
+  cdsProdutoDJ.Close;
+  cdsProdutoDJ.Open;
+end;
+
+end.

@@ -1,0 +1,683 @@
+object frmReimpressaoOrcamento: TfrmReimpressaoOrcamento
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Reimpress'#227'o de Or'#231'amento'
+  ClientHeight = 411
+  ClientWidth = 769
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnClose = FormClose
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object DBGrid1: TDBGrid
+    Left = 0
+    Top = 47
+    Width = 769
+    Height = 153
+    Color = clYellow
+    DataSource = dsOrcamento
+    FixedColor = clMoneyGreen
+    GradientEndColor = clGreen
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clNavy
+    Font.Height = -12
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold]
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'DT_ORCAMENTO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NR_ORCAMENTO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NOME_CLIENTE'
+        Width = 188
+        Visible = True
+      end
+      item
+        Color = clCream
+        Expanded = False
+        FieldName = 'VL_LIQUIDO'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlue
+        Font.Height = -13
+        Font.Name = 'Segoe UI Semibold'
+        Font.Style = [fsBold]
+        Width = 71
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CAIXA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NOME'
+        Width = 166
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'LOGIN'
+        Width = 86
+        Visible = True
+      end>
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = -4
+    Width = 769
+    Height = 45
+    Caption = 'Selecione Um Registro Para Imprimir'
+    Color = clHighlight
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWhite
+    Font.Height = -19
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold, fsItalic]
+    ParentBackground = False
+    ParentFont = False
+    TabOrder = 1
+  end
+  object DBGrid2: TDBGrid
+    Left = 0
+    Top = 205
+    Width = 769
+    Height = 153
+    Color = clInfoBk
+    DataSource = dsReimpressao
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clGreen
+    Font.Height = -12
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold]
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 2
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'COD_BARRA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DESCRICAO'
+        Width = 319
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'UNIDADE'
+        Width = 54
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'QUANT'
+        Width = 49
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'VL_UNIT'
+        Width = 70
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'VL_TOTAL'
+        Width = 124
+        Visible = True
+      end>
+  end
+  object BB_IMPRIMIR: TBitBtn
+    Left = 0
+    Top = 359
+    Width = 97
+    Height = 52
+    Caption = 'Im&primir'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlue
+    Font.Height = -12
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FF9F9D9EFF00FFFF00FFFF00FF8281818281818E8A
+      8BFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF9F9D9E9F9D9ED4D1D196
+      93933B393A545253999797C5C2C4D7D5D5828181FF00FFFF00FFFF00FFFF00FF
+      9F9D9E9F9D9EFAFAFAFFFFFFD7D4D59E9C9C4443451C1C1E1C1C1F3534356766
+      678281818E8A8BFF00FF918E8F9F9D9EF0EEEFFFFFFFEEEBEBCAC9C99F9D9E8E
+      8A8A9793958786866463633C3B3D1F2022201F21747273FF00FF9C9899E9E7E7
+      E5E5E5BDBBBBA6A4A4B4B1B1C2C1C1A4A1A19692939290909793959A98988E8A
+      8B6B6A6A828181FF00FF959192ADABACA4A1A1B0AFAFC9C9C9D1D3D3EDEDEBF0
+      EEF0DCDADAC5C4C4ADABAB9A98999390909793958E8A8BFF00FF918E8FAFADAF
+      C9C7C7CECECEC9C9C9E2E2E2D1CFCFA1ABA1BDBCBCCBCECFD5D5D5D3D3D3C6C5
+      C5B6B6B6989797FF00FFFF00FF9C999AD0D1D1CFCFCFDCDCDCC9C6C6B5B0B4A5
+      D1A7BAC4BCC5A7A1ADA4A3000000000000000000000000FF00FFFF00FFFF00FF
+      9C999AC1BFBFAFADADB1B0B0E3E3E3F6F3F3EEEDEEEDE1DEDCD8D8000000B4B4
+      B40125FF000000FF00FFFF00FFFF00FFFF00FF9C999AD8DADACACACB9D9FA0BB
+      BFC1D3D5D7D4D9D9D5D5D5000000AFADADFF00FF0125FFFF00FFFF00FFFF00FF
+      FF00FFFF00FFFBE5E1F8E0D4E9C9BDE3C7BDE2CCC7DED3CED0CECC0000000000
+      000000000000000125FFFF00FFFF00FFFF00FFFF00FFCE9F9DFFDECEFFCFBDFF
+      C4AFFFBAA3FFB199FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+      FF00FFFF00FFCE9F9DFFDDCEFFCCBCFEC2B0FFBBA4F7A992FF00FF0000000000
+      00000000000000FF00FFFF00FFFF00FFFF00FFFF00FFCE9F9DFFDDCEFFCCBCFE
+      C2B0FEB8A3FAB099FF00FF000000FF00FF0125FF000000FF00FFFF00FFFF00FF
+      FF00FFCE9F9DFAE0D5FFDACCFFCEBDFFC6B1FCB8A3F8AD99FF00FF000000FF00
+      FFFF00FF0125FFFF00FFFF00FFFF00FFFF00FFCE9F9DCE9F9DCE9F9DCE9F9DF3
+      AD9DF3AD9DFF00FFFF00FF0000000000000000000000000125FF}
+    Layout = blGlyphTop
+    ParentFont = False
+    TabOrder = 3
+    OnClick = BB_IMPRIMIRClick
+  end
+  object BB_SAIR: TBitBtn
+    Left = 100
+    Top = 359
+    Width = 97
+    Height = 52
+    Caption = '&Sair'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clRed
+    Font.Height = -12
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FF824B4B4E1E1FFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF824B4B824B4BA64B4BA9
+      4D4D4E1E1FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+      824B4B824B4BB64F50C24F50C54D4EB24D4E4E1E1F824B4B824B4B824B4B824B
+      4B824B4B824B4BFF00FFFF00FFFF00FF824B4BD45859CB5556C95455C95253B7
+      4F524E1E1FFE8B8CFB9A9CF8AAABF7B5B6F7B5B6824B4BFF00FFFF00FFFF00FF
+      824B4BD75C5DD05A5BCF595ACF5758BD53564E1E1F23B54A13C14816BD480CBC
+      41F7B5B6824B4BFF00FFFF00FFFF00FF824B4BDD6364D75F60D55E5FD55C5DC2
+      575A4E1E1F2AB44D1CBF4C1EBC4C13BC45F7B5B6824B4BFF00FFFF00FFFF00FF
+      824B4BE36869DD6566DA6364DE6667C6595B4E1E1F26B14916BC481BBB4910BB
+      43F7B5B6824B4BFF00FFFF00FFFF00FF824B4BEB6D6EE26768E67E7FFAD3D4CC
+      6E704E1E1FA5D89750D16F42C9662DC758F7B5B6824B4BFF00FFFF00FFFF00FF
+      824B4BF27374E96C6DEB8182FCD1D3CF6E704E1E1FFFF2CCFFFFD7FFFFD4E6FC
+      C7F7B5B6824B4BFF00FFFF00FFFF00FF824B4BF87879F07576EE7273F07374D1
+      65664E1E1FFCEFC7FFFFD5FFFFD3FFFFD7F7B5B6824B4BFF00FFFF00FFFF00FF
+      824B4BFE7F80F77A7BF6797AF77779D76B6B4E1E1FFCEFC7FFFFD5FFFFD3FFFF
+      D5F7B5B6824B4BFF00FFFF00FFFF00FF824B4BFF8384FC7F80FB7E7FFE7F80DA
+      6E6F4E1E1FFCEFC7FFFFD5FFFFD3FFFFD5F7B5B6824B4BFF00FFFF00FFFF00FF
+      824B4BFF8889FF8283FF8182FF8283E073744E1E1FFCEFC7FFFFD5FFFFD3FFFF
+      D5F7B5B6824B4BFF00FFFF00FFFF00FF824B4B824B4BE27576FE8182FF8687E5
+      76774E1E1FFAEBC5FCFBD1FCFBCFFCFBD1F7B5B6824B4BFF00FFFF00FFFF00FF
+      FF00FFFF00FF824B4B9C5657CB6C6DCF6E6E4E1E1F824B4B824B4B824B4B824B
+      4B824B4B824B4BFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF824B4B82
+      4B4B4E1E1FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+    Layout = blGlyphTop
+    ParentFont = False
+    TabOrder = 4
+    OnClick = BB_SAIRClick
+  end
+  object Memo2: TMemo
+    Left = 373
+    Top = 75
+    Width = 460
+    Height = 350
+    BorderStyle = bsNone
+    Color = clGradientInactiveCaption
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -9
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    Lines.Strings = (
+      '')
+    ParentFont = False
+    TabOrder = 5
+    Visible = False
+  end
+  object qOrcamento: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10' PDV.ID_PDV,'#13#10' PDV.NR_ORCAMENTO,'#13#10' PDV.ID_LOJA,'#13#10' PDV.ID' +
+      '_GRUPO,'#13#10' PDV.DT_ORCAMENTO,'#13#10' PDV.VL_ORCAMENTO,'#13#10' PDV.VL_DESCONT' +
+      'O,'#13#10' PDV.VL_LIQUIDO,'#13#10' PDV.STATUS,'#13#10' PDV.TRANSF,'#13#10' PDV.NOME_CLIE' +
+      'NTE,'#13#10' PDV.CPF_CLIENTE,'#13#10' PDV.ID_VENDEDOR,'#13#10' PDV.CAIXA,'#13#10' PDV.ID' +
+      '_USUARIO,'#13#10' V.NOME,'#13#10' U.LOGIN'#13#10'FROM'#13#10' TB_PDV PDV'#13#10'JOIN TB_VENDED' +
+      'OR V ON (V.ID_VENDEDOR = PDV.ID_VENDEDOR)'#13#10'JOIN TB_USUARIOS U ON' +
+      ' (U.ID_USUARIO = PDV.ID_USUARIO)'#13#10'WHERE'#13#10' PDV.STATUS = '#39'F'#39#13#10'AND ' +
+      'PDV.CAIXA = :CAIXA'#13#10'AND PDV.DT_ORCAMENTO = :DT_ORCAMENTO'#13#10'ORDER ' +
+      'BY PDV.DT_ORCAMENTO, PDV.NR_ORCAMENTO'
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'CAIXA'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftDate
+        Name = 'DT_ORCAMENTO'
+        ParamType = ptInput
+      end>
+    SQLConnection = DM.ConexaoLocal
+    Left = 600
+    Top = 112
+    object qOrcamentoID_PDV: TIntegerField
+      FieldName = 'ID_PDV'
+      Required = True
+    end
+    object qOrcamentoNR_ORCAMENTO: TIntegerField
+      FieldName = 'NR_ORCAMENTO'
+      Required = True
+    end
+    object qOrcamentoID_LOJA: TIntegerField
+      FieldName = 'ID_LOJA'
+      Required = True
+    end
+    object qOrcamentoID_GRUPO: TIntegerField
+      FieldName = 'ID_GRUPO'
+      Required = True
+    end
+    object qOrcamentoDT_ORCAMENTO: TDateField
+      FieldName = 'DT_ORCAMENTO'
+    end
+    object qOrcamentoVL_ORCAMENTO: TFMTBCDField
+      FieldName = 'VL_ORCAMENTO'
+      Precision = 18
+      Size = 2
+    end
+    object qOrcamentoVL_DESCONTO: TFMTBCDField
+      FieldName = 'VL_DESCONTO'
+      Precision = 18
+      Size = 2
+    end
+    object qOrcamentoVL_LIQUIDO: TFMTBCDField
+      FieldName = 'VL_LIQUIDO'
+      Precision = 18
+      Size = 2
+    end
+    object qOrcamentoSTATUS: TStringField
+      FieldName = 'STATUS'
+      Size = 1
+    end
+    object qOrcamentoTRANSF: TStringField
+      FieldName = 'TRANSF'
+      Size = 1
+    end
+    object qOrcamentoNOME_CLIENTE: TStringField
+      FieldName = 'NOME_CLIENTE'
+      Size = 40
+    end
+    object qOrcamentoCPF_CLIENTE: TStringField
+      FieldName = 'CPF_CLIENTE'
+      Size = 14
+    end
+    object qOrcamentoID_VENDEDOR: TIntegerField
+      FieldName = 'ID_VENDEDOR'
+    end
+    object qOrcamentoCAIXA: TIntegerField
+      FieldName = 'CAIXA'
+    end
+    object qOrcamentoID_USUARIO: TIntegerField
+      FieldName = 'ID_USUARIO'
+    end
+    object qOrcamentoNOME: TStringField
+      FieldName = 'NOME'
+      Size = 30
+    end
+    object qOrcamentoLOGIN: TStringField
+      FieldName = 'LOGIN'
+      Size = 10
+    end
+  end
+  object dspOrcamento: TDataSetProvider
+    DataSet = qOrcamento
+    Options = [poIncFieldProps, poAllowMultiRecordUpdates, poAutoRefresh, poAllowCommandText, poUseQuoteChar]
+    Left = 632
+    Top = 112
+  end
+  object cdsOrcamento: TClientDataSet
+    Aggregates = <>
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'CAIXA'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftDate
+        Name = 'DT_ORCAMENTO'
+        ParamType = ptInput
+      end>
+    ProviderName = 'dspOrcamento'
+    Left = 664
+    Top = 112
+    object cdsOrcamentoID_PDV: TIntegerField
+      FieldName = 'ID_PDV'
+      Required = True
+    end
+    object cdsOrcamentoNR_ORCAMENTO: TIntegerField
+      DisplayLabel = 'N'#186' Or'#231'amento'
+      FieldName = 'NR_ORCAMENTO'
+      Required = True
+    end
+    object cdsOrcamentoID_LOJA: TIntegerField
+      FieldName = 'ID_LOJA'
+      Required = True
+    end
+    object cdsOrcamentoID_GRUPO: TIntegerField
+      FieldName = 'ID_GRUPO'
+      Required = True
+    end
+    object cdsOrcamentoDT_ORCAMENTO: TDateField
+      DisplayLabel = 'Data'
+      FieldName = 'DT_ORCAMENTO'
+      EditMask = '##/##/####'
+    end
+    object cdsOrcamentoVL_ORCAMENTO: TFMTBCDField
+      FieldName = 'VL_ORCAMENTO'
+      Precision = 18
+      Size = 2
+    end
+    object cdsOrcamentoVL_DESCONTO: TFMTBCDField
+      FieldName = 'VL_DESCONTO'
+      Precision = 18
+      Size = 2
+    end
+    object cdsOrcamentoVL_LIQUIDO: TFMTBCDField
+      DisplayLabel = 'Valor'
+      FieldName = 'VL_LIQUIDO'
+      DisplayFormat = '###,###0.00'
+      EditFormat = '###,###0.00'
+      Precision = 18
+      Size = 2
+    end
+    object cdsOrcamentoSTATUS: TStringField
+      FieldName = 'STATUS'
+      Size = 1
+    end
+    object cdsOrcamentoTRANSF: TStringField
+      FieldName = 'TRANSF'
+      Size = 1
+    end
+    object cdsOrcamentoNOME_CLIENTE: TStringField
+      DisplayLabel = 'Cliente'
+      FieldName = 'NOME_CLIENTE'
+      Size = 40
+    end
+    object cdsOrcamentoCPF_CLIENTE: TStringField
+      FieldName = 'CPF_CLIENTE'
+      Size = 14
+    end
+    object cdsOrcamentoID_VENDEDOR: TIntegerField
+      FieldName = 'ID_VENDEDOR'
+    end
+    object cdsOrcamentoCAIXA: TIntegerField
+      DisplayLabel = 'Caixa'
+      FieldName = 'CAIXA'
+    end
+    object cdsOrcamentoID_USUARIO: TIntegerField
+      FieldName = 'ID_USUARIO'
+    end
+    object cdsOrcamentoNOME: TStringField
+      DisplayLabel = 'Vendedor'
+      FieldName = 'NOME'
+      Size = 30
+    end
+    object cdsOrcamentoLOGIN: TStringField
+      DisplayLabel = 'Usu'#225'rio Caixa'
+      FieldName = 'LOGIN'
+      Size = 10
+    end
+  end
+  object dsOrcamento: TDataSource
+    DataSet = cdsOrcamento
+    Left = 696
+    Top = 112
+  end
+  object qReimpressao: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftInteger
+        Name = 'NR_ORCAMENTO'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftInteger
+        Name = 'ID_LOJA'
+        ParamType = ptInput
+      end>
+    SQL.Strings = (
+      'SELECT'
+      ' PDV.ID_ITEM_PDV,'
+      ' PDV.NR_ORCAMENTO,'
+      ' PDV.ID_PRODUTO,'
+      ' PDV.QUANT,'
+      ' PDV.VL_UNIT,'
+      ' PDV.VL_TOTAL,'
+      ' PDV.DESC_ITEM,'
+      ' PDV.PERC_DES,'
+      ' PDV.TRANSF,'
+      ' PDV.ID_LOJA,'
+      ' PDV.STATUS,'
+      ' PD.DT_ORCAMENTO,'
+      ' p.cod_barra,'
+      ' P.DESCRICAO,'
+      ' P.UNIDADE'
+      'FROM'
+      ' TB_ITEM_PDV PDV'
+      'LEFT OUTER JOIN TB_PRODUTO P ON (P.ID_PRODUTO = PDV.ID_PRODUTO)'
+      'LEFT OUTER JOIN TB_LOJAS   L ON (L.ID_LOJA    = PDV.ID_LOJA)'
+      
+        'LEFT OUTER JOIN TB_PDV     PD ON (PD.NR_ORCAMENTO = PDV.NR_ORCAM' +
+        'ENTO)'
+      'WHERE'
+      ' PDV.NR_ORCAMENTO = :NR_ORCAMENTO'
+      'AND'
+      ' PD.ID_LOJA       = :ID_LOJA'
+      'AND'
+      ' PDV.STATUS = '#39'V'#39
+      '')
+    SQLConnection = DM.ConexaoLocal
+    Left = 601
+    Top = 154
+    object qReimpressaoID_ITEM_PDV: TIntegerField
+      FieldName = 'ID_ITEM_PDV'
+      Required = True
+    end
+    object qReimpressaoNR_ORCAMENTO: TIntegerField
+      FieldName = 'NR_ORCAMENTO'
+      Required = True
+    end
+    object qReimpressaoID_PRODUTO: TIntegerField
+      FieldName = 'ID_PRODUTO'
+      Required = True
+    end
+    object qReimpressaoQUANT: TIntegerField
+      FieldName = 'QUANT'
+    end
+    object qReimpressaoVL_UNIT: TFMTBCDField
+      FieldName = 'VL_UNIT'
+      Precision = 18
+      Size = 2
+    end
+    object qReimpressaoVL_TOTAL: TFMTBCDField
+      FieldName = 'VL_TOTAL'
+      Precision = 18
+      Size = 2
+    end
+    object qReimpressaoDESC_ITEM: TFMTBCDField
+      FieldName = 'DESC_ITEM'
+      Precision = 18
+      Size = 2
+    end
+    object qReimpressaoPERC_DES: TFMTBCDField
+      FieldName = 'PERC_DES'
+      Precision = 18
+      Size = 2
+    end
+    object qReimpressaoTRANSF: TStringField
+      FieldName = 'TRANSF'
+      Size = 1
+    end
+    object qReimpressaoID_LOJA: TIntegerField
+      FieldName = 'ID_LOJA'
+    end
+    object qReimpressaoSTATUS: TStringField
+      FieldName = 'STATUS'
+      Size = 1
+    end
+    object qReimpressaoCOD_BARRA: TStringField
+      FieldName = 'COD_BARRA'
+      Size = 13
+    end
+    object qReimpressaoDESCRICAO: TStringField
+      FieldName = 'DESCRICAO'
+      Size = 50
+    end
+    object qReimpressaoUNIDADE: TStringField
+      FieldName = 'UNIDADE'
+      FixedChar = True
+      Size = 18
+    end
+    object qReimpressaoDT_ORCAMENTO: TDateField
+      FieldName = 'DT_ORCAMENTO'
+    end
+  end
+  object dspReimpressao: TDataSetProvider
+    DataSet = qReimpressao
+    Options = [poIncFieldProps, poAllowMultiRecordUpdates, poAutoRefresh, poAllowCommandText]
+    Left = 633
+    Top = 154
+  end
+  object cdsReimpressao: TClientDataSet
+    Aggregates = <>
+    IndexFieldNames = 'NR_ORCAMENTO'
+    MasterFields = 'NR_ORCAMENTO'
+    MasterSource = dsOrcamento
+    PacketRecords = 0
+    Params = <
+      item
+        DataType = ftInteger
+        Name = 'NR_ORCAMENTO'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftInteger
+        Name = 'ID_LOJA'
+        ParamType = ptInput
+      end>
+    ProviderName = 'dspReimpressao'
+    Left = 661
+    Top = 154
+    object cdsReimpressaoID_ITEM_PDV: TIntegerField
+      FieldName = 'ID_ITEM_PDV'
+      Required = True
+    end
+    object cdsReimpressaoNR_ORCAMENTO: TIntegerField
+      FieldName = 'NR_ORCAMENTO'
+      Required = True
+    end
+    object cdsReimpressaoID_PRODUTO: TIntegerField
+      FieldName = 'ID_PRODUTO'
+      Required = True
+    end
+    object cdsReimpressaoQUANT: TIntegerField
+      DisplayLabel = 'Quant'
+      FieldName = 'QUANT'
+    end
+    object cdsReimpressaoVL_UNIT: TFMTBCDField
+      DisplayLabel = 'Vl. Unit'
+      FieldName = 'VL_UNIT'
+      DisplayFormat = '###,###0.00'
+      EditFormat = '###,###0.00'
+      Precision = 18
+      Size = 2
+    end
+    object cdsReimpressaoVL_TOTAL: TFMTBCDField
+      DisplayLabel = 'Vl. Total'
+      FieldName = 'VL_TOTAL'
+      DisplayFormat = '###,###0.00'
+      EditFormat = '###,###0.00'
+      Precision = 18
+      Size = 2
+    end
+    object cdsReimpressaoDESC_ITEM: TFMTBCDField
+      FieldName = 'DESC_ITEM'
+      Precision = 18
+      Size = 2
+    end
+    object cdsReimpressaoPERC_DES: TFMTBCDField
+      FieldName = 'PERC_DES'
+      Precision = 18
+      Size = 2
+    end
+    object cdsReimpressaoTRANSF: TStringField
+      FieldName = 'TRANSF'
+      Size = 1
+    end
+    object cdsReimpressaoID_LOJA: TIntegerField
+      FieldName = 'ID_LOJA'
+    end
+    object cdsReimpressaoSTATUS: TStringField
+      FieldName = 'STATUS'
+      Size = 1
+    end
+    object cdsReimpressaoCOD_BARRA: TStringField
+      DisplayLabel = 'C'#243'd.Barra'
+      FieldName = 'COD_BARRA'
+      Size = 13
+    end
+    object cdsReimpressaoDESCRICAO: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DESCRICAO'
+      Size = 50
+    end
+    object cdsReimpressaoUNIDADE: TStringField
+      DisplayLabel = 'Unid'
+      FieldName = 'UNIDADE'
+      FixedChar = True
+      Size = 18
+    end
+    object cdsReimpressaoDT_ORCAMENTO: TDateField
+      FieldName = 'DT_ORCAMENTO'
+      EditMask = '##/##/####'
+    end
+  end
+  object dsReimpressao: TDataSource
+    DataSet = cdsReimpressao
+    Left = 693
+    Top = 154
+  end
+end

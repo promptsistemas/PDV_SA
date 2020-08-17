@@ -1,0 +1,33 @@
+object frmPagamentoTroca: TfrmPagamentoTroca
+  Left = 0
+  Top = 0
+  BorderStyle = bsNone
+  Caption = 'Recebimento de Troca'
+  ClientHeight = 403
+  ClientWidth = 552
+  Color = 13485168
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 550
+    Height = 32
+    Caption = 'Recebimento de Troca'
+    Color = clBlue
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWhite
+    Font.Height = -19
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold, fsItalic]
+    ParentBackground = False
+    ParentFont = False
+    TabOrder = 0
+  end
+end
